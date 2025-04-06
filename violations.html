@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Violation Details</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="burger" onclick="toggleSidebar()">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div class="sidebar">
+        <h2>XU OSA</h2>
+        <h3>ENTRY VIOLATION SYSTEM</h3>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="#">Statistics</a>
+        <a href="#">Tally</a>
+        <a href="#">Violations Table</a>
+        <a href="#">Settings</a>
+        <a href="#">Logout</a>
+    </div>
+    <div class="content">
+        <div class="header">
+            <h1>Violations Table</h1>
+        </div>
+        <div class="violation-details">
+            <h2>Violations Details</h2>
+            <div class="ticket-details">
+                <div>
+                    <h3>Ticket # 1203</h3>
+                    <p>Reported on<br>March 24, 2025 - 4:40 PM</p>
+                    <p>Reported by<br>Pepito, Rem.</p>
+                    <p>Violation Type<br>Dress Code<br>ID Violation</p>
+                </div>
+                <div>
+                    <h3>Photo Proof</h3>
+                    <div class="photo-proof">
+                        <a href="#">View Photo</a>
+                    </div>
+                </div>
+                <div>
+                    <h3>Student Details</h3>
+                    <p>Name<br>Mary Kate A. Saguin</p>
+                    <p>Student ID<br>20220025024</p>
+                </div>
+            </div>
+            <div class="osa-review">
+                <h3>OSA REVIEW</h3>
+                <h4>Reason for Violation</h4>
+                <p>Check applicable reasons / excuse from student.</p>
+                <div class="reasons">
+                    <div>
+                        <h5>ID Violation</h5>
+                        <ul>
+                            <li><input type="checkbox"> Forgotten or misplaced</li>
+                            <li><input type="checkbox"> ID not claimed on time</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5>Uniform</h5>
+                        <ul>
+                            <li><input type="checkbox"> Lack of Awareness of Specific Policy</li>
+                            <li><input type="checkbox"> Unforeseen Circumstances</li>
+                            <li><input type="checkbox"> Misinterpretation of dress code compliance</li>
+                            <li><input type="checkbox"> Substitution of footwear (Unexpected damage/unavailability)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5>Dress Code</h5>
+                        <ul>
+                            <li><input type="checkbox"> Unawareness of mandated garment length requirements</li>
+                            <li><input type="checkbox"> Oversight in compliance</li>
+                            <li><input type="checkbox"> Personal style preference conflicting with policy</li>
+                            <li><input type="checkbox"> Temporary use of restricted footwear due to convenience/necessity</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="others">
+                    <label for="other-reasons">Others (If list is unapplicable)</label>
+                    <textarea id="other-reasons"></textarea>
+                </div>
+                <div class="actions">
+                    <button class="btn btn-danger">Invalidate</button>
+                    <button class="btn btn-primary">Confirm Violation</button>
+                    <button class="btn btn-secondary">Edit Details</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const content = document.querySelector('.content');
+            sidebar.classList.toggle('show');
+            if (sidebar.classList.contains('show')) {
+                content.style.marginLeft = '250px';
+            } else {
+                content.style.marginLeft = '0';
+            }
+        }
+    </script>
+</body>
+</html>
