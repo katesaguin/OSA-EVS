@@ -1,0 +1,26 @@
+DJANGO 
+
+<!-- Pagination Controls -->
+<div class="pagination">
+    <ul>
+        {% if violations.has_previous %}
+            <li><a href="?page={{ violations.previous_page_number }}">&laquo; Previous</a></li>
+        {% else %}
+            <li class="disabled"><span>&laquo; Previous</span></li>
+        {% endif %}
+
+        {% for i in violations.paginator.page_range %}
+            {% if violations.number == i %}
+                <li class="active"><span>{{ i }}</span></li>
+            {% else %}
+                <li><a href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+        {% endfor %}
+
+        {% if violations.has_next %}
+            <li><a href="?page={{ violations.next_page_number }}">Next &raquo;</a></li>
+        {% else %}
+            <li class="disabled"><span>Next &raquo;</span></li>
+        {% endif %}
+    </ul>
+</div>

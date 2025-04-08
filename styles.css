@@ -3,7 +3,10 @@ body, .content {
     margin: 0;
     padding: 0;
     background-color: #f4f4f9;
+    height: 100%;
 }
+
+
 /* Override Bootstrap button styles */
 .btn {
     font-family: 'Overpass', sans-serif;
@@ -84,6 +87,10 @@ h5.style1 {
 .sidebar.show {
     left: 0px;
 }
+.sidebar .active {
+    background-color:#19387E;
+}
+
 .sidebar a {
     padding: 15px;
     text-decoration: none;
@@ -96,8 +103,10 @@ h5.style1 {
 }
 .sidebar i {
     margin-right: -30px;
-    margin-top: -1;
+    margin-top: 3px;
 }
+
+
 .sidebar a:hover {
     background-color: #1c51cc;
 }
@@ -124,13 +133,21 @@ h5.style1 {
 /**/
 /* Main Content   -  TRBL*/
 .main-content {
+    display:flex;
+    flex-direction: column;
+    min-height: 100vh;
     margin-left: 0; /* Adjusted dynamically */
     transition: margin-left 0.3s ease;
+
 }
 
 .content {
+    flex: 1;
     padding: 20px 20px 20px 35px;
     transition: margin-left 0.3s;
+    overflow-y: auto;
+
+    
 }
 .header {
     display: flex;
@@ -160,6 +177,7 @@ h5.style1 {
     color: #4E647C; /* Text color */
 }
 
+/* Table */
 .table {
     margin-top: 23px;
     width: 100%;
@@ -169,8 +187,10 @@ h5.style1 {
     font-size: 14px;
     border: 1px solid #e0e0e0; /* Light grey border */
     border-radius: 10px; /* Rounded corners */
+    overflow-x: auto;
     overflow: hidden; /* Ensures borders are clipped properly */
 }
+
 
 /* Status indicators */
 .status-pending::before {
@@ -189,7 +209,7 @@ h5.style1 {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background-color: green;
+    background-color: rgb(60, 196, 60);
     margin-right: 5px;
 }
 
@@ -199,7 +219,7 @@ h5.style1 {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background-color: blue;
+    background-color: rgb(0, 68, 255);
     margin-right: 5px;
 }
 /* Actions column */
@@ -251,8 +271,7 @@ h5.style1 {
 
 .icon-container {
     width: 40px;
-    height: 40px;
-    background: #ccc; /* Placeholder for icon styling */
+    height: 40px;/* Placeholder for icon styling */
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -311,16 +330,52 @@ h5.style1 {
   }
 
 
+/**/
+/* Pagination Styles */
+.pagination {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.pagination ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: inline-flex;
+}
+
+.pagination li {
+    margin: 0 5px;
+}
+
+.pagination a,
+.pagination span {
+    display: block;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    text-decoration: none;
+    color: #333;
+}
+
+.pagination a:hover {
+    background-color: #f0f0f0;
+}
+
+.pagination .active span {
+    background-color: #2b4f81;
+    color: white;
+    border-color: #2b4f81;
+}
+
+.pagination .disabled span {
+    color: #ccc;
+    cursor: not-allowed;
+}
+/**/
 
 @media (max-width: 768px) {
-    .main-content {
-        margin-left: 0;
-    }
-    .content {
-        margin-left: 0;
-    }
+
     .statistics {
-        display: flex;
         flex-wrap: wrap;
     }
     .statistics > div {
@@ -328,11 +383,16 @@ h5.style1 {
         margin: 5px;
         background-color: #f4f4f9;
         padding: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 
     }
     
-    
-    
+    .dashboard-title h5 {
+        display: flex;
+        margin: 0;
+        font-weight: bold;
+        color: #4E647C;
+    }
 }
+
+
 
