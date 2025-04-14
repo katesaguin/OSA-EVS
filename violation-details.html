@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entry Violation System Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-DQvkBjpPgn7RC31MCQoOeC9TI2kdqa4+BSgNMNj8v77fdC77Kj5zpWFTJaaAoMbC" crossorigin="anonymous">
+</head>
+<body>
+    <!--NAVIGATION BAR-->
+    <div class="sidebar">
+        <div class="sidebar-content">
+            <h5>XU OSA</h5>
+            <h3>ENTRY VIOLATION SYSTEM</h3>               
+                <a href="dashboard.html" ><i class='bx bx-home-alt'></i> Dashboard</a>
+                <a href="#"><i class='bx bx-bar-chart'></i> Statistics</a>
+                <a href="tally.html"><i class='bx bx-list-ul'></i> Tally</a>
+                <a href="violations.html" class="active"><i class='bx bx-table'></i> Violations Table</a>
+                <a href="#"><i class='bx bx-cog'></i> Settings</a>
+                <a href="#"><i class='bx bx-log-out'></i> Logout</a>
+         </div>
+    </div>
+
+    <!--MAIN CONTENT-->
+<div class="main-content">
+        <div class="header">
+            <div class="dashboard-title">
+                <button class="burger btn" arial-label="Toggle Sidebar" onclick="toggleSidebar()">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </button>
+                <h5><i class='bx bx-table'></i>Violations Table</h5>
+            </div>
+        </div>
+    
+     <!-- Container for Header and Ticket Content -->
+    <div class="content">
+        <div class="container">
+            <!-- Placeholder Header -->
+            <div class="placeholder-header">
+                <h3 class="style1">
+                    <i class='bx bx-table'></i> VIOLATIONS DETAILS
+                </h3>
+                <a href="violations.html" class="go-back">Go Back</a>
+            </div>
+    
+            <!-- Ticket Content -->
+            <div class="ticket-content">
+                <h2>Ticket # 1203</h2>
+                <div class="details-grid">
+                    <!-- Left Column -->
+                    <div class="left-column">
+                        <p><strong>Reported on</strong><br>March 24, 2023 - 4:40 PM</p>
+                    
+                    <!--REPORTED BY-->
+                        <p><strong>Reported by</strong><br>Pepito, Rem.</p>
+
+                    <!--VIOLATION TYPE-->
+                        <p><strong>Violation Type</strong><br>Dress Code Violation</p>
+                    </div>
+    
+                    <!-- Center Column (Photo Proof) -->
+                    <div class="center-column">
+                        <p><strong>Photo Proof</strong></p>
+                        <img src="placeholder-image.jpg" alt="Photo Proof" class="photo-proof">
+                        
+                        <a href="#" class="view-photo">
+                            <svg width="12" height="9" viewBox="0 0 12 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1.5974 8.99979H10.4026C11.4659 8.99979 12 8.49149 12 7.4845V1.5153C12 0.508296 11.4659 0 10.4026 0H1.5974C0.539338 0.000208575 0 0.503708 0 1.5153V7.4847C0 8.4965 0.539338 8.99979 1.5974 8.99979ZM8.44927 4.4879C8.22029 4.29247 7.96093 4.18964 7.68638 4.18964C7.40141 4.18964 7.15203 4.28266 6.91807 4.48311L4.61899 6.4581L3.67792 5.63673C3.46413 5.4559 3.23516 5.35808 2.99121 5.35808C2.76723 5.35808 2.54845 5.4511 2.3401 5.63193L0.819099 6.94658V1.55492C0.819099 1.04642 1.10385 0.787369 1.61259 0.787369H10.3874C10.8909 0.787369 11.1809 1.04642 11.1809 1.55492V6.9518L8.44927 4.4879ZM3.78969 4.54172C4.44601 4.54172 4.98513 4.02361 4.98513 3.38809C4.98513 2.75757 4.44601 2.23446 3.78969 2.23446C3.12859 2.23446 2.58947 2.75757 2.58947 3.38809C2.58999 3.69386 2.7166 3.98697 2.94157 4.2032C3.16653 4.41944 3.47151 4.54116 3.78969 4.54172Z" fill="#245FE9"/>
+                                </svg>                                
+                            View Photo</a>
+                    </div>
+    
+                    <!-- Right Column (Student Details) -->
+                    <div class="right-column">
+                        <p><strong>Student Details</strong></p>
+                        <p><strong>Name</strong><br><input type="text" value="Mary Kate A. Saguin" disabled></p>
+                        <p><strong>Student ID</strong><br><input type="text" value="20220025024" disabled></p>
+                        <p>
+                            <strong>ID Status</strong>
+                            <button class="edit-btn btn" onclick="toggleDropdown()">Edit</button>
+                            <br>
+                            <input type="text" id="id-status" value="Unclaimed" disabled>
+                            <!-- Dropdown Menu -->
+                            <div id="status-dropdown" class="dropdown-menu">
+                                <div onclick="updateStatus('Unclaimed')">Unclaimed</div>
+                                <div onclick="updateStatus('Returned')">Returned</div>
+                            </div>
+                        </p>
+                        
+                    </div>
+                </div>
+    
+                <!-- OSA Review Section -->
+                <section class="osa-review">
+                    <h3>OSA REVIEW</h3>
+                    <p><strong>Reason for Violation</strong><br>Check applicable reasons / excuse from student.</p>
+                    <!-- Add checkboxes and input fields here -->
+                    <div class="reasons-grid">
+                        <!-- Column 1: ID Violation -->
+                        <div class="column">
+                            <p><strong>ID Violation</strong></p>
+                            <label><input type="checkbox"> Forgotten or misplaced</label><br>
+                            <label><input type="checkbox"> ID not claimed on time</label>
+                        </div>
+    
+                        <!-- Column 2: Uniform -->
+                        <div class="column">
+                            <p><strong>Uniform</strong></p>
+                            <label><input type="checkbox"> Lack of Awareness of Specific Policy</label><br>
+                            <label><input type="checkbox"> Unforeseen Circumstances</label><br>
+                            <label><input type="checkbox"> Misinterpretation of dress code compliance</label><br>
+                            <label><input type="checkbox"> Substitution of footwear (Unexpected damage/unavailability)</label>
+                        </div>
+    
+                        <!-- Column 3: Dress Code -->
+                        <div class="column">
+                            <p><strong>Dress Code</strong></p>
+                            <label><input type="checkbox"> Unawareness of mandated garment length requirements</label><br>
+                            <label><input type="checkbox"> Oversight in compliance</label><br>
+                            <label><input type="checkbox"> Personal style preference conflicting with policy</label><br>
+                            <label><input type="checkbox"> Temporary use of restricted footwear due to convenience or necessity</label>
+                        </div>
+                    </div>
+    
+                    <!-- Others Input Field -->
+                    <div class="others">
+                        <p><strong>Others (If list is unapplicable)</strong></p>
+                        <textarea placeholder="Text Here" rows="3"></textarea>
+                    </div>
+    
+                </section>
+    
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="buttons clear-violation">CLEAR VIOLATION</button>
+                    <button class="buttons confirm-violation">CONFIRM VIOLATION</button>
+                </div>
+            </div>
+        </div>
+    
+    </div>
+</div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+    
+            sidebar.classList.toggle('show');
+    
+            if (sidebar.classList.contains('show')) {
+                mainContent.style.marginLeft = '250px';
+            } else {
+                mainContent.style.marginLeft = '0';
+            }
+        }
+
+        // Add event listeners to sidebar links
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', function () {
+                // Remove the 'active' class from all links
+                document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+
+                // Add the 'active' class to the clicked link
+                this.classList.add('active');
+            });
+        });
+
+        function toggleDropdown() {
+            const dropdown = document.getElementById('status-dropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+        
+        // Function to update the ID Status field
+        function updateStatus(status) {
+            const idStatusInput = document.getElementById('id-status');
+            idStatusInput.value = status; // Update the input field value
+            document.getElementById('status-dropdown').style.display = 'none'; // Hide the dropdown
+        }
+    </script>
+</body>
+</html>

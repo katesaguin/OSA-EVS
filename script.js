@@ -1,14 +1,23 @@
-// script.js
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const mainContent = document.querySelector('.main-content');
 
-document.querySelector('.toggle-sidebar').addEventListener('click', () => {
-    const sidebar = document.querySelector('.sidebar');
-    const mainContent = document.querySelector('.main-content');
-  
-    if (sidebar.classList.contains('hidden')) {
-      sidebar.classList.remove('hidden');
-      mainContent.classList.remove('hidden');
-    } else {
-      sidebar.classList.add('hidden');
-      mainContent.classList.add('hidden');
-    }
+  sidebar.classList.toggle('show');
+
+  if (sidebar.classList.contains('show')) {
+      mainContent.style.marginLeft = '250px';
+  } else {
+      mainContent.style.marginLeft = '0';
+  }
+}
+
+// Add event listeners to sidebar links
+document.querySelectorAll('.sidebar a').forEach(link => {
+  link.addEventListener('click', function () {
+      // Remove the 'active' class from all links
+      document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+
+      // Add the 'active' class to the clicked link
+      this.classList.add('active');
   });
+});
