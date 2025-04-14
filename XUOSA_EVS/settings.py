@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'EVS'
 ]
 
 MIDDLEWARE = [
@@ -54,7 +55,7 @@ ROOT_URLCONF = 'XUOSA_EVS.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,10 +77,10 @@ WSGI_APPLICATION = 'XUOSA_EVS.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'XUOSA_DB',
-        'USER': 'xuosa_admin',
-        'PASSWORD': '4dm!n',
-        'HOST': 'db',
+        'NAME': 'xuosa_evs',
+        'USER': 'root',
+        'PASSWORD': '1234',
+        'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS':{
             'sql_mode': 'STRICT_TRANS_TABLES'
@@ -123,8 +124,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [ BASE_DIR / "static" ]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+

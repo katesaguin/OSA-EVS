@@ -1,0 +1,135 @@
+{% extends 'evs_index.html' %}
+{% block title %}
+<title>XU OSA - Tickets</title>
+{% endblock title %}
+{% block page_name %}
+<h5><i class='bx bx-home-alt'></i>Tickets</h5>
+{% endblock page_name %}
+{% block content %}
+<div class="content">
+    <!-- TOOLBAR -->
+<div class="toolbar">
+    <h5 class="style1" style="margin-top: 20px">
+        <i class='bx bx-table'></i> Recent Violations </h5>
+    <div class="controls">
+        <button>Filter</button>
+        <button>Sort By: Date</button>
+        <input id="search" type="text" placeholder="Search Student">
+    </div>
+</div>
+    <!-- TABLE -->
+    <table class="table" >
+    <thead>
+        <tr>
+            <th>Student Name</th>
+            <th>Student ID</th>
+            <th>Ticket #</th>
+            <th>Violation Type</th>
+            <th>Date/Time</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Saguin, Mary Kate</td>
+            <td>20220025024</td>
+            <td>1203</td>
+            <td>Dress Code</td>
+            <td>3/24/2025, 4:40PM</td>
+            <td class="status-pending">Pending</td>
+            <td class="actions">
+                <button><i class="fas fa-eye"></i> View</button>
+                <button><i class="fas fa-edit"></i> Edit</button>
+            </td>
+        </tr>
+        <tr>
+            <td>Flores, Kim</td>
+            <td>20220025024</td>
+            <td>1202</td>
+            <td>No ID</td>
+            <td>3/24/2025, 3:10PM</td>
+            <td class="status-pending">Pending</td>
+            <td class="actions">
+                <button><i class="fas fa-eye"></i> View</button>
+                <button><i class="fas fa-edit"></i> Edit</button>
+            </td>
+        </tr>
+        <tr>
+            <td>Ylanan, Nesyl</td>
+            <td>20220025024</td>
+            <td>1201</td>
+            <td>No ID</td>
+            <td>3/24/2025, 12:24PM</td>
+            <td class="status-pending">Pending</td>
+            <td class="actions">
+                <button><i class="fas fa-eye"></i> View</button>
+                <button><i class="fas fa-edit"></i> Edit</button>
+            </td>
+        </tr>
+        <tr>
+            <td>Pepito, Rem Well</td>
+            <td>20220025024</td>
+            <td>1200</td>
+            <td>Uniform Violation</td>
+            <td>3/24/2025, 11:31AM</td>
+            <td class="status-resolved">Resolved</td>
+            <td class="actions">
+                <button><i class="fas fa-eye"></i> View</button>
+                <button><i class="fas fa-edit"></i> Edit</button>
+            </td>
+        </tr>
+        <tr>
+            <td>Deguit, Glenn Michael</td>
+            <td>20220025024</td>
+            <td>1199</td>
+            <td>Dress Code</td>
+            <td>3/22/2025, 8:34AM</td>
+            <td class="status-cleared">Cleared</td>
+            <td class="actions">
+                <button><i class="fas fa-eye"></i> View</button>
+                <button><i class="fas fa-edit"></i> Edit</button>
+            </td>
+        </tr>
+        <tr>
+            <td>Uyquangco, Francis </td>
+            <td>20220025024</td>
+            <td>1198</td>
+            <td>Dress Code</td>
+            <td>3/21/2025, 3:34PM</td>
+            <td class="status-resolved">Resolved</td>
+            <td class="actions">
+                <button><i class="fas fa-eye"></i> View</button>
+                <button><i class="fas fa-edit"></i> Edit</button>
+            </td>
+        </tr>
+        <tr>
+            <td>Pepito, Rem Well</td>
+            <td>20220025024</td>
+            <td>1197</td>
+            <td>Uniform Violation</td>
+            <td>3/21/2025, 7:46AM</td>
+            <td class="status-pending">Pending</td>
+            <td class="actions">
+                <button><i class="fas fa-eye"></i> View</button>
+                <button><i class="fas fa-edit"></i> Edit</button>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="7">
+                <div class="pagination">
+                    <ul>
+                        <li><a href="?page=1">&laquo; Previous</a></li>
+                        <li class="active"><span>1</span></li>
+                        <li><a href="?page=2">2</a></li>
+                        <li><a href="?page=3">3</a></li>
+                        <li><a href="?page=4">4</a></li>
+                        <li><a href="?page=2">Next &raquo;</a></li>
+                    </ul>
+                </div>
+                
+            </td>
+        </tr>
+    </tbody>
+</table>
+{% endblock content %}
