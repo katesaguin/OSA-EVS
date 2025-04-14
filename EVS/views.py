@@ -19,3 +19,6 @@ def statistics_view(request):
 
 def settings_views(request):
     return render(request, 'system/settings.html')
+
+def ticketDetails_views(request):
+    return render(request, 'system/ticket-details.html')

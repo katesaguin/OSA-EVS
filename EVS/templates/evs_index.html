@@ -67,5 +67,18 @@
                 this.classList.add('active');
             });
         });
+
+        function toggleDropdown() {
+            const dropdown = document.getElementById('status-dropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+        
+        // Function to update the ID Status field @ticket-details ni sha 
+        // TO BE EDITED
+        function updateStatus(status) {
+            const idStatusInput = document.getElementById('id-status');
+            idStatusInput.value = status; // Update the input field value
+            document.getElementById('status-dropdown').style.display = 'none'; // Hide the dropdown
+        }
     </script>
 </html>

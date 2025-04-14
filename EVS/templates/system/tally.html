@@ -2,3 +2,195 @@
 {% block page_name %}
 <h5><i class='bx bx-home-alt'></i>Tally</h5>
 {% endblock page_name %}
+
+
+{% block content %}
+
+        <div class="content">
+            <!-- TOOLBAR -->
+        <div class="toolbar">
+            <h5 class="style1" style="margin-top: 20px">
+                <i class='bx bx-table'></i> Recent Violations </h5>
+            <div class="controls">
+                <button>Filter</button>
+                <button>Sort By: Date</button>
+                <input id="search" type="text" placeholder="Search Student">
+            </div>
+     </div>
+            <!-- TABLE -->
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Student ID</th>
+                        <th>ID Violation</th>
+                        <th>Dress Code</th>
+                        <th>Uniform Violation</th>
+                        <th>Community Service</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Saguin, Mary Kate</td>
+                        <td>20220025024</td>
+                        <td>0</td>
+                        <td>3</td>
+                        <td>0</td>
+                        <td><span class="status status-awaiting">Awaiting</span></td>
+                        <td>
+                            <button><i class="fas fa-eye"></i> View</button>
+                            <button><i class="fas fa-edit"></i> Edit</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Flores, Kim</td>
+                        <td>20220092180</td>
+                        <td>0</td>
+                        <td>3</td>
+                        <td>0</td>
+                        <td><span class="status status-completed">Completed</span></td>
+                        <td>
+                            <button><i class="fas fa-eye"></i> View</button>
+                            <button><i class="fas fa-edit"></i> Edit</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Ylanan, Nesyl</td>
+                        <td>20180012390</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>1</td>
+                        <td><span class="status status-not-required">Not Required</span></td>
+                        <td>
+                            <button><i class="fas fa-eye"></i> View</button>
+                            <button><i class="fas fa-edit"></i> Edit</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Pepito, Rem Well</td>
+                        <td>20040024857</td>
+                        <td>0</td>
+                        <td>2</td>
+                        <td>0</td>
+                        <td><span class="status status-not-required">Not Required</span></td>
+                        <td>
+                            <button><i class="fas fa-eye"></i> View</button>
+                            <button><i class="fas fa-edit"></i> Edit</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Dequit, Glenn Mic..</td>
+                        <td>20123004967</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td><span class="status status-not-required">Not Required</span></td>
+                        <td>
+                            <button><i class="fas fa-eye"></i> View</button>
+                            <button><i class="fas fa-edit"></i> Edit</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Uyquangco, Franc..</td>
+                        <td>20119002345</td>
+                        <td>0</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td><span class="status status-awaiting">Awaiting</span></td>
+                        <td>
+                            <button><i class="fas fa-eye"></i> View</button>
+                            <button><i class="fas fa-edit"></i> Edit</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Pepito, Rem Well</td>
+                        <td>20040024857</td>
+                        <td>2</td>
+                        <td>0</td>
+                        <td>2</td>
+                        <td><span class="status status-not-required">Not Required</span></td>
+                        <td>
+                            <button><i class="fas fa-eye"></i> View</button>
+                            <button><i class="fas fa-edit"></i> Edit</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Bliss, Sefton Ray..</td>
+                        <td>20220025024</td>
+                        <td>0</td>
+                        <td>3</td>
+                        <td>0</td>
+                        <td><span class="status status-completed">Completed</span></td>
+                        <td>
+                            <button><i class="fas fa-eye"></i> View</button>
+                            <button><i class="fas fa-edit"></i> Edit</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Jamito, Daren Ang..</td>
+                        <td>20220025327</td>
+                        <td>0</td>
+                        <td>3</td>
+                        <td>0</td>
+                        <td><span class="status status-completed">Completed</span></td>
+                        <td>
+                            <button><i class="fas fa-eye"></i> View</button>
+                            <button><i class="fas fa-edit"></i> Edit</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Santocides, Nicole</td>
+                        <td>20240025129</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td><span class="status status-not-required">Not Required</span></td>
+                        <td>
+                            <button><i class="fas fa-eye"></i> View</button>
+                            <button><i class="fas fa-edit"></i> Edit</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Hawkins, Stephen</td>
+                        <td>20210015298</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>1</td>
+                        <td><span class="status status-not-required">Not Required</span></td>
+                        <td>
+                            <button><i class="fas fa-eye"></i> View</button>
+                            <button><i class="fas fa-edit"></i> Edit</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>James, LeBron</td>
+                        <td>20210025124</td>
+                        <td>0</td>
+                        <td>2</td>
+                        <td>0</td>
+                        <td><span class="status status-not-required">Not Required</span></td>
+                        <td>
+                            <button><i class="fas fa-eye"></i> View</button>
+                            <button><i class="fas fa-edit"></i> Edit</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Federer, Roger</td>
+                        <td>20220025021</td>
+                        <td>1</td>
+                        <td>3</td>
+                        <td>1</td>
+                        <td><span class="status status-completed">Completed</span></td>
+                        <td>
+                            <button><i class="fas fa-eye"></i> View</button>
+                            <button><i class="fas fa-edit"></i> Edit</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+
+{% endblock content %}
