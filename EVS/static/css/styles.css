@@ -2,7 +2,6 @@ body, .content {
     font-family: 'Overpass', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f9;
     height: 100%;
 }
 
@@ -80,7 +79,7 @@ h5.style1 {
     color: white;
     position: fixed;
     height: 100%;
-    padding-top: 20px;
+    padding-top: 9px;
     left: 0;
     transition: all 0.3s ease;
     overflow: hidden;
@@ -93,6 +92,10 @@ h5.style1 {
     background-color:#19387E;
 }
 
+.sidebar-title:hover, .sidebar-title.active {
+    background: none !important;
+}
+
 .sidebar a {
     text-decoration: none;
     color: white;
@@ -102,6 +105,26 @@ h5.style1 {
     align-items: center;
     white-space: nowrap;
 }
+
+.sidebar-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    background: none !important;
+    cursor: default;
+    pointer-events: none;
+    margin-bottom: -2px;
+    color: #fff;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.sidebar-title i {
+    margin-bottom: 10px;
+}
+.sidebar-title2 {
+    margin-left: 20px;
+}
+
 .sidebar i {
     margin-right: 20px;
     font-size: 20px;
@@ -114,29 +137,13 @@ h5.style1 {
     background-color: #1c51cc;
 }
 .sidebar-content {
-    margin-top: 50px;
     width: 250px; /* Ensure content is full width */
     
 }
-.sidebar-content h5 {
-    padding: 20px 60px 0px 40px;
-    margin-left: 20px;
-}
-.sidebar-content h3 {
-    font-weight: 900;
-    padding: 0px 60px 0px 40px;
-    margin-bottom: 40px;
-    margin-left: 20px;
-}
 
-.burger div {
-    width: 25px;
-    height: 3px;
-    background-color:#19387E;
-    margin: 5px;
-    transition: 0.4s;
-}
 /**/
+
+
 /* Main Content   -  TRBL*/
 .main-content {
     display:flex;
@@ -144,6 +151,7 @@ h5.style1 {
     min-height: 100vh;
     margin-left: 60px; /* Default margin for collapsed sidebar */
     transition: margin-left 0.3s ease;
+    background-color: #f4f4f9;
 }
 
 .main-content.expanded {
@@ -160,10 +168,22 @@ h5.style1 {
     display: flex;
     font-weight: 600;
     align-items: center;
-    background-color: #ffffff;
+    background-color: white;
     padding: 20px;
     color: #4E647C;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Shadow for depth */
+    font-weight: 600;
+}
+.header h5 {
+    margin: 0;
+    font-weight: bold;
+    color: #4E647C;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.header i {
+    margin-bottom: 5px;
 }
 
 .dashboard-title {
@@ -429,20 +449,6 @@ h5.style1 {
     gap: 10px;
 }
 
-.edit-btn {
-    padding: 3px 8px;
-    background-color: #245FE9;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.8rem;
-    transition: background-color 0.3s ease;
-}
-
-.edit-btn:hover {
-    background-color: #1c51cc;
-}
 
 .dropdown-menu {
     display: none; /* Hidden by default */
