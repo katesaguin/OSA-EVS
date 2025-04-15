@@ -75,35 +75,38 @@ h5.style1 {
 
 /*SIDEBAR NAVIGATION*/
 .sidebar {
-    width: 250px;
+    width: 60px; /* Collapsed width - just enough for icons */
     background-color: #245FE9;
     color: white;
     position: fixed;
     height: 100%;
     padding-top: 20px;
-    left: -250px;
-    transition: 0.3s;
+    left: 0;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    z-index: 1000;
 }
-.sidebar.show {
-    left: 0px;
+.sidebar.show, .sidebar:hover {
+    width: 250px; /* Expanded width */
 }
 .sidebar .active {
     background-color:#19387E;
 }
 
 .sidebar a {
-    padding: 15px;
     text-decoration: none;
     color: white;
     display: flex;
-    width: 250px;
-    padding: 15px 20px 15px 45px;
-    align-items: flex-start;
-    gap: 46px;
+    width: 250px; /* Full width for expanded state */
+    padding: 15px 20px 15px 20px;
+    align-items: center;
+    white-space: nowrap;
 }
 .sidebar i {
-    margin-right: -30px;
-    margin-top: 3px;
+    margin-right: 20px;
+    font-size: 20px;
+    min-width: 20px;
+    text-align: center;
 }
 
 
@@ -112,15 +115,18 @@ h5.style1 {
 }
 .sidebar-content {
     margin-top: 50px;
-
+    width: 250px; /* Ensure content is full width */
+    
 }
 .sidebar-content h5 {
     padding: 20px 60px 0px 40px;
+    margin-left: 20px;
 }
 .sidebar-content h3 {
     font-weight: 900;
     padding: 0px 60px 0px 40px;
     margin-bottom: 40px;
+    margin-left: 20px;
 }
 
 .burger div {
@@ -136,9 +142,12 @@ h5.style1 {
     display:flex;
     flex-direction: column;
     min-height: 100vh;
-    margin-left: 0; /* Adjusted dynamically */
+    margin-left: 60px; /* Default margin for collapsed sidebar */
     transition: margin-left 0.3s ease;
+}
 
+.main-content.expanded {
+    margin-left: 250px; /* Margin when sidebar is expanded */
 }
 
 .content {
