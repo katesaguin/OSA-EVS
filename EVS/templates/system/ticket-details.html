@@ -11,28 +11,31 @@
                 <h3 class="style1">
                     <i class='bx bx-table'></i> VIOLATIONS DETAILS
                 </h3>
-                <a href="violations.html" class="go-back">Go Back</a>
+                <a href="{% url 'evs:ViolationTickets' %}" class="go-back">Go Back</a>
             </div>
     
             <!-- Ticket Content -->
             <div class="ticket-content">
-                <h2>Ticket # 1203</h2>
+                <h2>Ticket # {{ ticket.ticket_id }}</h2>
                 <div class="details-grid">
                     <!-- Left Column -->
                     <div class="left-column">
-                        <p><strong>Reported on</strong><br>March 24, 2023 - 4:40 PM</p>
+                        <p><strong>Reported on</strong><br>{{ticket.date_created}}</p>
                     
                     <!--REPORTED BY-->
-                        <p><strong>Reported by</strong><br>Pepito, Rem.</p>
+                        <p><strong>Reported by</strong><br>{{ticket.submitted_by}}</p>
 
                     <!--VIOLATION TYPE-->
-                        <p><strong>Violation Type</strong><br>Dress Code Violation</p>
+                        <p><strong>Violation Type</strong><br>
+                            {% if ticket.id_violation %} ID Violation<br> {% endif %}
+                            {% if ticket.dress_code_violation %} Dress Code Violation<br> {% endif %}
+                            {% if ticket.uniform_violation %} Uniform Violation<br> {% endif %}
+                        </p>
                     </div>
     
                     <!-- Center Column (Photo Proof) -->
                     <div class="center-column">
                         <p><strong>Photo Proof</strong></p>
-                        <img src="placeholder-image.jpg" alt="Photo Proof" class="photo-proof">
                         
                         <a href="#" class="view-photo">
                             <svg width="12" height="9" viewBox="0 0 12 9" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -44,18 +47,14 @@
                     <!-- Right Column (Student Details) -->
                     <div class="right-column">
                         <p><strong>Student Details</strong></p>
-                        <p><strong>Name</strong><br><input type="text" value="Mary Kate A. Saguin" disabled></p>
-                        <p><strong>Student ID</strong><br><input type="text" value="20220025024" disabled></p>
+                        <p><strong>Name</strong><br><input type="text" value="{{ student.last_name }}, {{ student.first_name }} {{ student.middle_name }}" disabled>
+                        <p><strong>Student ID</strong><br><input type="text" value="{{ student.student_id }}" disabled></p>
                         <p>
                             <strong>ID Status</strong>
-                            <button class="edit-btn btn" onclick="toggleDropdown()">Edit</button>
-                            <br>
-                            <input type="text" id="id-status" value="Unclaimed" disabled>
-                            <!-- Dropdown Menu -->
-                            <div id="status-dropdown" class="dropdown-menu">
-                                <div onclick="updateStatus('Unclaimed')">Unclaimed</div>
-                                <div onclick="updateStatus('Returned')">Returned</div>
-                            </div>
+                            <select id="id_status">
+                                <option value="0" {% if ticket.id_status == 0 %}selected{% endif %}>Unclaimed</option>
+                                <option value="1" {% if ticket.id_status == 1 %}selected{% endif %}>Claimed</option>
+                            </select>
                         </p>
                         
                     </div>
@@ -70,42 +69,119 @@
                         <!-- Column 1: ID Violation -->
                         <div class="column">
                             <p><strong>ID Violation</strong></p>
-                            <label><input type="checkbox"> Forgotten or misplaced</label><br>
-                            <label><input type="checkbox"> ID not claimed on time</label>
+                            {% for reason in reasons %}
+                                {% if reason.reason_type == 'ID' %}
+                                <label>
+                                    <input type="checkbox" value="{{ reason.reason_id }}"
+                                           {% if reason.reason_id in selected %}checked{% endif %}>
+                                     {{ reason.description }}
+                                  </label><br>
+                                {% endif %}
+                            {% endfor %}
                         </div>
     
                         <!-- Column 2: Uniform -->
                         <div class="column">
                             <p><strong>Uniform</strong></p>
-                            <label><input type="checkbox"> Lack of Awareness of Specific Policy</label><br>
-                            <label><input type="checkbox"> Unforeseen Circumstances</label><br>
-                            <label><input type="checkbox"> Misinterpretation of dress code compliance</label><br>
-                            <label><input type="checkbox"> Substitution of footwear (Unexpected damage/unavailability)</label>
+                            {% for reason in reasons %}
+                                {% if reason.reason_type == 'Uniform' %}
+                                <label>
+                                    <input type="checkbox" value="{{ reason.reason_id }}"
+                                           {% if reason.reason_id in selected %}checked{% endif %}>
+                                     {{ reason.description }}
+                                  </label><br>
+                                {% endif %}
+                            {% endfor %}
                         </div>
     
                         <!-- Column 3: Dress Code -->
                         <div class="column">
                             <p><strong>Dress Code</strong></p>
-                            <label><input type="checkbox"> Unawareness of mandated garment length requirements</label><br>
-                            <label><input type="checkbox"> Oversight in compliance</label><br>
-                            <label><input type="checkbox"> Personal style preference conflicting with policy</label><br>
-                            <label><input type="checkbox"> Temporary use of restricted footwear due to convenience or necessity</label>
+                            {% for reason in reasons %}
+                                {% if reason.reason_type == 'DressCode' %}
+                                <label>
+                                    <input type="checkbox" value="{{ reason.reason_id }}"
+                                           {% if reason.reason_id in selected %}checked{% endif %}>
+                                     {{ reason.description }}
+                                  </label><br>
+                                {% endif %}
+                            {% endfor %}
                         </div>
                     </div>
     
                     <!-- Others Input Field -->
                     <div class="others">
-                        <p><strong>Others (If list is unapplicable)</strong></p>
-                        <textarea placeholder="Text Here" rows="3"></textarea>
+                        <p><strong>Remarks</strong></p>
+                        <textarea id="remarks" placeholder="Text Here" rows="3">{{ ticket.remarks }}</textarea>
                     </div>
     
+                    <input type="hidden" name="selected_reasons" id="selected-reasons">
+
                 </section>
     
                 <!-- Action Buttons -->
                 <div class="action-buttons">
-                    <button class="buttons clear-violation">CLEAR VIOLATION</button>
-                    <button class="buttons confirm-violation">CONFIRM VIOLATION</button>
+                    <a href="{% url 'evs:ClearTicket' ticket.ticket_id %}" class="buttons clear-violation" style="text-decoration: none;">CLEAR VIOLATION</a>
+                    <button type="button" class="buttons confirm-violation" id="submitReason">CONFIRM</button>
+
                 </div>
             </div>
         </div>
 {% endblock content %}
+{% block scripts%}
+<script>
+    document.getElementById('submitReason').addEventListener('click', function() {
+        const checkedBoxes = document.querySelectorAll('input[type="checkbox"]:checked');
+        const remarks = document.getElementById('remarks').value;
+        const selectedValues = Array.from(checkedBoxes).map(cb => cb.value);
+    
+        fetch('/xu-entry-violation/{{ ticket.ticket_id }}/validate', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken(),
+            },
+            body: JSON.stringify({
+                reasons: selectedValues,
+                remarks: remarks
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("Violation confirmed."); window.location.href = "{% url 'evs:ViolationTickets' %}";
+            } else {
+                alert("Failed to submit.");
+            }
+        });
+    });
+
+    function getCSRFToken() {
+        const token = document.querySelector('meta[name="csrf-token"]');
+        if (token) return token.getAttribute('content')
+    }
+
+    document.getElementById('id_status').addEventListener('change', function() {
+        const id_status = this.value;
+        fetch('/xu-entry-violation/{{ ticket.ticket_id }}/update/id-status', {
+            method: "POST",
+            headers: {
+                "Content-Type": 'application/json',
+                "X-CSRFToken": getCSRFToken(),
+            },
+            body: JSON.stringify ({
+                status: id_status,
+            })
+        })
+        .then(response => {
+            if (response.ok)
+            {
+                alert("ID Status Changed"); window.location.href = "{% url 'evs:TicketDetails' ticket.ticket_id %}";
+            }
+            else
+            {
+                alert("Failed to change ID Status"); window.location.href = "{% url 'evs:TicketDetails' ticket.ticket_id %}";
+            }
+        })
+    });
+</script>
+{% endblock scripts%}

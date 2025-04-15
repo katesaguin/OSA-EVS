@@ -1,17 +1,14 @@
 from django.shortcuts import render, redirect
-<<<<<<< HEAD
-from .models import Student, Ticket
+from .models import Student, Ticket, TicketReason, Reason
 from datetime import datetime
-
-=======
-from .models import Ticket
 from django.core.paginator import Paginator
->>>>>>> fb7719002b574f6ede2cde7f5afaa3a62d162405
+import json
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+from django.http import JsonResponse
 #import login_required
 
 # Create your views here.
 def dashboard_view(request):
-<<<<<<< HEAD
     current_month = datetime.now().month
     month_name = datetime(1900, current_month, 1).strftime('%B')
     tickets = Ticket.objects.all()
@@ -27,9 +24,6 @@ def dashboard_view(request):
         'tickets': tickets,
         'students': students
     })
-=======
-    return render(request, 'system/dashboard.html')
->>>>>>> fb7719002b574f6ede2cde7f5afaa3a62d162405
 
 #@login_required (ALL FUNCTION)
 def violation_views(request):
@@ -52,5 +46,69 @@ def statistics_view(request):
 def settings_views(request):
     return render(request, 'system/settings.html')
 
-def ticketDetails_views(request):
-    return render(request, 'system/ticket-details.html')
+@ensure_csrf_cookie
+def ticketDetails_views(request, ticket_id):
+    ticket = Ticket.objects.get(ticket_id=ticket_id)
+    student = Student.objects.get(student_id=ticket.student.student_id)
+    reasons = Reason.objects.all()
+    selected_reason_ids = TicketReason.objects.filter(ticket_id=ticket_id).values_list('reason_id', flat=True)
+    return render(request, 'system/ticket-details.html', {
+        'ticket': ticket,
+        'student': student,
+        'reasons': reasons,
+        'selected': selected_reason_ids
+    })
+
+def clear_violation(request, ticket_id):
+    ticket = Ticket.objects.get(ticket_id=ticket_id)
+    ticket.ticket_status = 2
+    ticket.date_viladated = datetime.now()
+    ticket.save()
+    TicketReason.objects.filter(ticket_id=ticket_id).delete()
+
+    return redirect('evs:ViolationTickets')
+
+def validated_ticket(request, ticket_id):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            selected_reasons = data.get('reasons', [])
+            remarks = data.get('remarks', '')
+
+            ticket = Ticket.objects.get(ticket_id=ticket_id)
+            ticket.ticket_status = 1
+            ticket.remarks = remarks
+            ticket.date_viladated = datetime.now()
+            ticket.save()
+
+            TicketReason.objects.filter(ticket_id=ticket_id).delete()
+
+            for reason in selected_reasons:
+                TicketReason.objects.create(
+                    ticket_id = ticket_id,
+                    reason_id = reason
+                )
+
+            return JsonResponse({'message': 'Violation updated successfully'})
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    
+    return redirect('evs:ViolationTickets')
+
+def update_id_status(request, ticket_id):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            new_status = data.get('status')
+
+            ticket = Ticket.objects.get(ticket_id=ticket_id)
+            ticket.id_status = new_status
+            ticket.save()
+
+            return JsonResponse({'message': 'ID Status updated successfully'})
+        
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    
+    return redirect('evs:ViolationTickets')
