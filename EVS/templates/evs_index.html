@@ -14,7 +14,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-DQvkBjpPgn7RC31MCQoOeC9TI2kdqa4+BSgNMNj8v77fdC77Kj5zpWFTJaaAoMbC" crossorigin="anonymous">
 </head>
 <body>
-<<<<<<< HEAD
         <!--NAVIGATION BAR-->
         <div class="sidebar">
             <div class="sidebar-content">
@@ -33,36 +32,6 @@
             <div class="dashboard-title">
                 {%block page_name %}{% endblock page_name %}
             </div>
-=======
-    <!--NAVIGATION BAR-->
-    <div class="sidebar">
-        <div class="sidebar-content">
-            <div class="dashboard-title">
-                <button class="burger btn" arial-label="Toggle Sidebar" onclick="toggleSidebar()">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                </button>
-                
-            </div>
-            <h5>XU OSA</h5>
-            <h3>ENTRY VIOLATION SYSTEM</h3>               
-                <a href="{% url 'evs:Dashboard' %}" class="active"><i class='bx bx-home-alt'></i> Dashboard</a>
-                <a href="{% url 'evs:Statistics' %}"><i class='bx bx-bar-chart'></i> Statistics</a>
-                <a href="{% url 'evs:Tally' %}"><i class='bx bx-list-ul'></i> Tally</a>
-                <a href="{% url 'evs:ViolationTickets' %}"><i class='bx bx-table'></i> Tickets</a>
-                <a href="{% url 'evs:Settings' %}"><i class='bx bx-cog'></i> Settings</a>
-                <a href="#"><i class='bx bx-log-out'></i> Logout</a>
-         </div>
-    </div>
-
-    <!--MAIN CONTENT-->
-    <div class="main-content">
-        <div class="header">
-            {%block page_name %}{% endblock page_name %}
-            
->>>>>>> fb7719002b574f6ede2cde7f5afaa3a62d162405
-            
         </div>
         {% block content %}{% endblock content %}
     </body>

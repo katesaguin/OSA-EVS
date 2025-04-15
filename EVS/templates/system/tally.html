@@ -6,190 +6,90 @@
 
 {% block content %}
 
-        <div class="content">
-            <!-- TOOLBAR -->
-        <div class="toolbar">
-            <h5 class="style1" style="margin-top: 20px">
-                <i class='bx bx-table'></i> Recent Violations </h5>
-            <div class="controls">
-                <button>Filter</button>
-                <button>Sort By: Date</button>
-                <input id="search" type="text" placeholder="Search Student">
-            </div>
-     </div>
-            <!-- TABLE -->
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Student Name</th>
-                        <th>Student ID</th>
-                        <th>ID Violation</th>
-                        <th>Dress Code</th>
-                        <th>Uniform Violation</th>
-                        <th>Community Service</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Saguin, Mary Kate</td>
-                        <td>20220025024</td>
-                        <td>0</td>
-                        <td>3</td>
-                        <td>0</td>
-                        <td><span class="status status-awaiting">Awaiting</span></td>
-                        <td>
-                            <button><i class="fas fa-eye"></i> View</button>
-                            <button><i class="fas fa-edit"></i> Edit</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Flores, Kim</td>
-                        <td>20220092180</td>
-                        <td>0</td>
-                        <td>3</td>
-                        <td>0</td>
-                        <td><span class="status status-completed">Completed</span></td>
-                        <td>
-                            <button><i class="fas fa-eye"></i> View</button>
-                            <button><i class="fas fa-edit"></i> Edit</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Ylanan, Nesyl</td>
-                        <td>20180012390</td>
-                        <td>1</td>
-                        <td>2</td>
-                        <td>1</td>
-                        <td><span class="status status-not-required">Not Required</span></td>
-                        <td>
-                            <button><i class="fas fa-eye"></i> View</button>
-                            <button><i class="fas fa-edit"></i> Edit</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Pepito, Rem Well</td>
-                        <td>20040024857</td>
-                        <td>0</td>
-                        <td>2</td>
-                        <td>0</td>
-                        <td><span class="status status-not-required">Not Required</span></td>
-                        <td>
-                            <button><i class="fas fa-eye"></i> View</button>
-                            <button><i class="fas fa-edit"></i> Edit</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Dequit, Glenn Mic..</td>
-                        <td>20123004967</td>
-                        <td>1</td>
-                        <td>0</td>
-                        <td>1</td>
-                        <td><span class="status status-not-required">Not Required</span></td>
-                        <td>
-                            <button><i class="fas fa-eye"></i> View</button>
-                            <button><i class="fas fa-edit"></i> Edit</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Uyquangco, Franc..</td>
-                        <td>20119002345</td>
-                        <td>0</td>
-                        <td>2</td>
-                        <td>3</td>
-                        <td><span class="status status-awaiting">Awaiting</span></td>
-                        <td>
-                            <button><i class="fas fa-eye"></i> View</button>
-                            <button><i class="fas fa-edit"></i> Edit</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Pepito, Rem Well</td>
-                        <td>20040024857</td>
-                        <td>2</td>
-                        <td>0</td>
-                        <td>2</td>
-                        <td><span class="status status-not-required">Not Required</span></td>
-                        <td>
-                            <button><i class="fas fa-eye"></i> View</button>
-                            <button><i class="fas fa-edit"></i> Edit</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Bliss, Sefton Ray..</td>
-                        <td>20220025024</td>
-                        <td>0</td>
-                        <td>3</td>
-                        <td>0</td>
-                        <td><span class="status status-completed">Completed</span></td>
-                        <td>
-                            <button><i class="fas fa-eye"></i> View</button>
-                            <button><i class="fas fa-edit"></i> Edit</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Jamito, Daren Ang..</td>
-                        <td>20220025327</td>
-                        <td>0</td>
-                        <td>3</td>
-                        <td>0</td>
-                        <td><span class="status status-completed">Completed</span></td>
-                        <td>
-                            <button><i class="fas fa-eye"></i> View</button>
-                            <button><i class="fas fa-edit"></i> Edit</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Santocides, Nicole</td>
-                        <td>20240025129</td>
-                        <td>1</td>
-                        <td>0</td>
-                        <td>1</td>
-                        <td><span class="status status-not-required">Not Required</span></td>
-                        <td>
-                            <button><i class="fas fa-eye"></i> View</button>
-                            <button><i class="fas fa-edit"></i> Edit</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Hawkins, Stephen</td>
-                        <td>20210015298</td>
-                        <td>1</td>
-                        <td>2</td>
-                        <td>1</td>
-                        <td><span class="status status-not-required">Not Required</span></td>
-                        <td>
-                            <button><i class="fas fa-eye"></i> View</button>
-                            <button><i class="fas fa-edit"></i> Edit</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>James, LeBron</td>
-                        <td>20210025124</td>
-                        <td>0</td>
-                        <td>2</td>
-                        <td>0</td>
-                        <td><span class="status status-not-required">Not Required</span></td>
-                        <td>
-                            <button><i class="fas fa-eye"></i> View</button>
-                            <button><i class="fas fa-edit"></i> Edit</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Federer, Roger</td>
-                        <td>20220025021</td>
-                        <td>1</td>
-                        <td>3</td>
-                        <td>1</td>
-                        <td><span class="status status-completed">Completed</span></td>
-                        <td>
-                            <button><i class="fas fa-eye"></i> View</button>
-                            <button><i class="fas fa-edit"></i> Edit</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+<div class="content">
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+        <div class="controls">
+            <button for="sort"> Sort Ticket:</button>
+            <form action="{% url 'evs:Tally' %}" method="get" class="search-form">
+                <input id="student_name" name="student_name" type="text" placeholder="Search Student Name" value="{{ request.GET.student_name|default:'' }}">
+                <input id="student_id" name="student_id" type="text" placeholder="Search Student ID" value="{{ request.GET.student_id|default:'' }}">
+                <button type="submit" id='tallySearch'>Search</button>
+                {% if request.GET.student_name or request.GET.student_id %}
+                    <a href="{% url 'evs:Tally' %}"><button type="button">Clear</button></a>
+                {% endif %}
+            </form>
         </div>
+    </div>
+    <!-- TABLE -->
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Student ID</th>
+                <th>ID Violation</th>
+                <th>Dress Code</th>
+                <th>Uniform Violation</th>
+                <th>Community Service</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for violation in student_violations %}
+            <tr>
+                <td>{{ violation.student.last_name }}, {{ violation.student.first_name }} {% if violation.student.middle_name %}{{ violation.student.middle_name }}{% endif %}</td>
+                <td>{{ violation.student.student_id }}</td>
+                <td>{{ violation.id_violation_count }}</td>
+                <td>{{ violation.dress_code_count }}</td>
+                <td>{{ violation.uniform_count }}</td>
+                <td>
+                    {% if violation.community_service_status == 'Awaiting' %}
+                    <span class="status status-awaiting">Awaiting</span>
+                    {% elif violation.community_service_status == 'Completed' %}
+                    <span class="status status-completed">Completed</span>
+                    {% else %}
+                    <span class="status status-not-required">Not Required</span>
+                    {% endif %}
+                </td>
+                <td class="actions">
+                    <a href="" class="btn btn-outline-primary btn-sm">View/Edit</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">No violation records found.</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="7">
+                    <div class="pagination">
+                        <ul>
+                            {% if student_violations.has_previous %}
+                            <li><a href="{% url 'evs:Tally' %}?page={{ student_violations.previous_page_number }}">&laquo; Previous</a></li>
+                            {% else %}
+                            <li class="disabled"><span>&laquo; Previous</span></li>
+                            {% endif %}
+                            
+                            {% for i in student_violations.paginator.page_range %}
+                                {% if student_violations.number == i %}
+                                    <li class="active"><span>{{ i }}</span></li>
+                                {% else %}
+                                    <li><a href="{% url 'evs:Tally' %}?page={{ i }}">{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if student_violations.has_next %}
+                            <li><a href="{% url 'evs:Tally' %}?page={{ student_violations.next_page_number }}">Next &raquo;</a></li>
+                            {% else %}
+                            <li class="disabled"><span>Next &raquo;</span></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
 
 
