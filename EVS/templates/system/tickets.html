@@ -8,31 +8,36 @@
 {% block content %}
 <div class="content">
     <!-- TOOLBAR -->
-<div class="controls">
-                   <button>Filter</button>
-                   <button for="sort"> Sort Ticket:</button>
-                   <select id="sort">
-                        <option value="Up">Ascending</option>
-                        <option value="Down">Descending</option>
-                    </select>
-                   <input id="search" type="text" placeholder="Search Student">
-                   <button id='dashboardSearch'>Search</button>
-               </div>
+    <div class="controls">
+        <button for="sort"> Sort Ticket:</button>
+        <select id="sort">
+            <option value="Up">Ascending</option>
+            <option value="Down">Descending</option>
+        </select>
+        <form action="{% url 'evs:ViolationTickets' %}" method="get" class="search-form">
+            <input id="student_name" name="student_name" type="text" placeholder="Search Student Name" value="{{ request.GET.student_name|default:'' }}">
+            <input id="student_id" name="student_id" type="text" placeholder="Search Student ID" value="{{ request.GET.student_id|default:'' }}">
+            <button type="submit" id='dashboardSearch'>Search</button>
+            {% if request.GET.student_name or request.GET.student_id %}
+                <a href="{% url 'evs:ViolationTickets' %}"><button type="button">Clear</button></a>
+            {% endif %}
+        </form>
+    </div>
     <!-- TABLE -->
     <table class="table" id="tickets">
-    <thead>
-        <tr>
-            <th>Student Name</th>
-            <th>Student ID</th>
-            <th>Ticket #</th>
-            <th>Violation Type</th>
-            <th>Date/Time</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for ticket in tickets %}
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Student ID</th>
+                <th>Ticket #</th>
+                <th>Violation Type</th>
+                <th>Date/Time</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ticket in tickets %}
             <tr>
                 <td>{{ ticket.student.first_name }} {{ ticket.student.middle_name }} {{ ticket.student.last_name }}</td>
                 <td>{{ ticket.student.student_id }}</td>
@@ -65,11 +70,23 @@
                 <div class="pagination">
                     <ul>
                         {% if tickets.has_previous %}
-                        <li><a href="{% url 'ViolationTickets' %}?page={{ tickets.previous_page_number }}">&laquo; Previous</a></li>
+                        <li><a href="{% url 'evs:ViolationTickets' %}?page={{ tickets.previous_page_number }}{% if request.GET.student_name %}&student_name={{ request.GET.student_name }}{% endif %}{% if request.GET.student_id %}&student_id={{ request.GET.student_id }}{% endif %}">&laquo; Previous</a></li>
+                        {% else %}
+                        <li class="disabled"><span>&laquo; Previous</span></li>
                         {% endif %}
-                        <li class="active"><span>{{ tickets.number }}</span></li>
+                        
+                        {% for i in tickets.paginator.page_range %}
+                            {% if tickets.number == i %}
+                                <li class="active"><span>{{ i }}</span></li>
+                            {% else %}
+                                <li><a href="{% url 'evs:ViolationTickets' %}?page={{ i }}{% if request.GET.student_name %}&student_name={{ request.GET.student_name }}{% endif %}{% if request.GET.student_id %}&student_id={{ request.GET.student_id }}{% endif %}">{{ i }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        
                         {% if tickets.has_next %}
-                        <li><a href="{% url 'ViolationTickets' %}?page={{ tickets.next_page_number }}">Next &raquo;</a></li>
+                        <li><a href="{% url 'evs:ViolationTickets' %}?page={{ tickets.next_page_number }}{% if request.GET.student_name %}&student_name={{ request.GET.student_name }}{% endif %}{% if request.GET.student_id %}&student_id={{ request.GET.student_id }}{% endif %}">Next &raquo;</a></li>
+                        {% else %}
+                        <li class="disabled"><span>Next &raquo;</span></li>
                         {% endif %}
                     </ul>
                 </div>
