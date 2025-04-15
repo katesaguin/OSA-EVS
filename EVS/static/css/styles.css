@@ -72,6 +72,36 @@ h5.style1 {
     margin-right: 5px;
 }
 
+.controls-unclaimed{
+    padding: 3px 16px;
+    border: none;
+    border-radius: 20px;
+    background-color: #fff;
+    color: #19387E;
+}
+
+.controls-unclaimed:disabled{
+    padding: 3px 16px;
+    border: none;
+    border-radius: 20px;
+    background-color: #fff;
+    color: #19387E;
+}
+
+.controls-unclaimed:not(:disabled):hover {
+    background-color: #E0E9FF;
+    cursor: pointer;
+}
+
+.controls-claimed{
+    padding: 3px 16px;
+    border: none;
+    border-radius: 20px;
+    background-color: #fff;
+    color: rgb(60, 196, 60);
+}
+
+
 .search-form {
     display: inline-flex;
     align-items: center;

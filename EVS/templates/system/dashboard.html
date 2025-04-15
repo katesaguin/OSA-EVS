@@ -103,12 +103,17 @@
         <!-- TOOLBAR -->
         <div class="toolbar">
                <h5 class="style1" style="margin-top: 20px">
-                   <i class='bx bx-table'></i> Recent Tickets </h5>
+                <i class='bx bx-table'></i> Recent Tickets </h5>
+                <div class="controls">
+                    <form action="{% url 'evs:ViolationTickets' %}" class="search-form">
+                        <button>Validate Tickets</button>
+                    </form>
+                </div>
         </div>
           
        
        <!-- TABLE -->
-           <table class="table" id="tickets">
+           <table class="table text-center" id="tickets">
                <thead>
                    <tr>
                        <th>Ticket #</th>
@@ -116,8 +121,9 @@
                        <th>Student ID</th>
                        <th>Violation</th>
                        <th>Date/Time</th>
-                       <th>Status</th>
-                       <th>Actions</th>
+                       <th>Ticket Status</th>
+                       <!--<th>ID Status</th>
+                       <th>Actions</th>-->
                    </tr>
                </thead>
                <tbody>
@@ -134,6 +140,7 @@
                                 {% if ticket.id_violation %} ID Violation<br> {% endif %}
                                 {% if ticket.dress_code_violation %} Dress Code Violation<br> {% endif %}
                                 {% if ticket.uniform_violation %} Uniform Violation<br> {% endif %}
+                                {% if ticket.id_not_claimed_violation %}ID Not Claimed Violation{% endif %}
                             </td>
                             <td>{{ticket.date_created}}</td>
                             <td {% if ticket.ticket_status != 1 and ticket.ticket_status != 2 %} class="status-pending"
@@ -143,12 +150,23 @@
                                 {% elif ticket.ticket_status != 0 and ticket.ticket_status != 2 %} Resolved 
                                 {% else %} Cleared {% endif %}
                             </td>
-                            <td><a href="{% url 'evs:TicketDetails' ticket.ticket_id %}" class="btn btn-outline-primary btn-sm">View/Edit</a></td>
+                            <!--!<td>
+                                {% if ticket.id_status == 0 %}
+                                    <form method="POST" action="/xu-entry-violation/{{ ticket.ticket_id }}/update/id-status">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="status" value="1">
+                                        <button type="submit" class="controls-unclaimed" {% if ticket.ticket_status == 0 %} disabled {% endif %}>Unclaimed</button>
+                                    </form>
+                                {% else %}
+                                    <button type="button" class="controls-claimed" disabled>Claimed</button>
+                                {% endif %}
+                            </td>
+                            <td><a href="{% url 'evs:TicketDetails' ticket.ticket_id %}" class="btn btn-outline-primary btn-sm">View/Edit</a></td>-->
                         </tr>
                     {% endfor %}
                     <tr>
                         <td colspan="7" style="text-align:center">
-                            <a href="{% url 'evs:ViolationTickets' %}"><button class="btn">View More</button></a>
+                            <a href="{% url 'evs:ViolationTickets' %}"><button class="btn">View More Tickets</button></a>
                         </td>
                     </tr>
                </tbody>

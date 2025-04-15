@@ -50,8 +50,8 @@
                         <p><strong>Name</strong><br><input type="text" value="{{ student.last_name }}, {{ student.first_name }} {{ student.middle_name }}" disabled>
                         <p><strong>Student ID</strong><br><input type="text" value="{{ student.student_id }}" disabled></p>
                         <p>
-                            <strong>ID Status</strong>
-                            <select id="id_status">
+                            <strong>ID Status</strong><br>
+                            <select id="id_status" {% if ticket.ticket_status == 0 %} disabled {% endif %} style="height: 30px; ">
                                 <option value="0" {% if ticket.id_status == 0 %}selected{% endif %}>Unclaimed</option>
                                 <option value="1" {% if ticket.id_status == 1 %}selected{% endif %}>Claimed</option>
                             </select>
@@ -123,7 +123,6 @@
                 <div class="action-buttons">
                     <a href="{% url 'evs:ClearTicket' ticket.ticket_id %}" class="buttons clear-violation" style="text-decoration: none;">CLEAR VIOLATION</a>
                     <button type="button" class="buttons confirm-violation" id="submitReason">CONFIRM</button>
-
                 </div>
             </div>
         </div>

@@ -41,16 +41,16 @@ class Reason(models.Model):
 
 class Ticket(models.Model):
     ticket_id = models.AutoField(primary_key=True)
-    uniform_violation = models.BooleanField(default=False)
-    dress_code_violation = models.BooleanField(default=False)
-    id_violation = models.BooleanField(default=False)
-    id_not_claimed_violation = models.BooleanField(default=False)
+    uniform_violation = models.BooleanField(default=0)
+    dress_code_violation = models.BooleanField(default=0)
+    id_violation = models.BooleanField(default=0)
+    id_not_claimed_violation = models.BooleanField(default=0)
     osa_id = models.IntegerField()
     submitted_by = models.CharField(max_length=200)
-    id_status = models.IntegerField()
-    ticket_status = models.IntegerField()
-    remarks = models.CharField(max_length=200, blank=True)
-    photo_path = models.CharField(max_length=200, blank=True)
+    id_status = models.IntegerField(default=0)
+    ticket_status = models.IntegerField(default=0)
+    remarks = models.CharField(max_length=200, blank=True, null=True)
+    photo_path = models.CharField(max_length=200, blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_validated = models.DateTimeField(null=True, blank=True)
     
@@ -69,10 +69,10 @@ class StudentViolation(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     violation = models.ForeignKey(Violation, on_delete=models.CASCADE)
     count = models.IntegerField(default=1)
-    community_service = models.BooleanField(default=False)
-    community_service_status = models.SmallIntegerField(default=0)
-    apology_letter = models.BooleanField(default=False)
-    apology_letter_status = models.SmallIntegerField(default=0)
+    community_service = models.BooleanField(default=0)
+    community_service_status = models.SmallIntegerField(default=0, null=True)
+    apology_letter = models.BooleanField(default=0)
+    apology_letter_status = models.SmallIntegerField(default=0, null=True)
 
     def __str__(self):
         return f"{self.student} - {self.violation} (x{self.count})"

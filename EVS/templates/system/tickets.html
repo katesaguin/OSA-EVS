@@ -9,158 +9,144 @@
 <div class="content">
     <!-- TOOLBAR -->
     <div class="controls">
-        <button for="sort"> Sort Ticket:</button>
-        <select id="sort">
-            <option value="Up">Ascending</option>
-            <option value="Down">Descending</option>
-        </select>
-        <form action="{% url 'evs:ViolationTickets' %}" method="get" class="search-form">
+        <form action="{% url 'evs:ViolationTickets' %}" class="search-form">
+            <button>Filters:</button>
+            <input id="filter_date" name="filter_date" type="date" value="{{ request.GET.filter_date|default:'' }}">
             <input id="student_name" name="student_name" type="text" placeholder="Search Student Name" value="{{ request.GET.student_name|default:'' }}">
             <input id="student_id" name="student_id" type="text" placeholder="Search Student ID" value="{{ request.GET.student_id|default:'' }}">
-            <button type="submit" id='dashboardSearch'>Search</button>
-            {% if request.GET.student_name or request.GET.student_id %}
+            <button type="submit" id="dashboardSearch">Search</button>
+            {% if request.GET.student_name or request.GET.student_id or request.GET.filter_date %}
                 <a href="{% url 'evs:ViolationTickets' %}"><button type="button">Clear</button></a>
             {% endif %}
         </form>
     </div>
     <!-- TABLE -->
-    <table class="table" id="tickets">
-        <thead>
-            <tr>
-                <th>Student Name</th>
-                <th>Student ID</th>
-                <th>Ticket #</th>
-                <th>Violation Type</th>
-                <th>Date/Time</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for ticket in tickets %}
-            <tr>
-                <td>{{ ticket.student.first_name }} {{ ticket.student.middle_name }} {{ ticket.student.last_name }}</td>
-                <td>{{ ticket.student.student_id }}</td>
-                <td>{{ ticket.ticket_id }}</td>
-                <td>
-                    {% if ticket.uniform_violation %}Uniform Violation, {% endif %}
-                    {% if ticket.dress_code_violation %}Dress Code Violation, {% endif %}
-                    {% if ticket.id_violation %}ID Violation, {% endif %}
-                    {% if ticket.id_not_claimed_violation %}ID Not Claimed Violation{% endif %}
-                </td>
-                <td>{{ ticket.date_created }}</td>
-                <td {% if ticket.ticket_status != 1 and ticket.ticket_status != 2 %} class="status-pending"
-                    {% elif ticket.ticket_status != 0 and ticket.ticket_status != 2 %} class="status-resolved"
-                    {% else %} class="status-cleared" {% endif %}>
-                    {% if ticket.ticket_status != 1 and ticket.ticket_status != 2 %} Pending
-                    {% elif ticket.ticket_status != 0 and ticket.ticket_status != 2 %} Resolved 
-                    {% else %} Cleared {% endif %}
-                </td>
-                <td class="actions">
-                    <a href="{% url 'evs:TicketDetails' ticket.ticket_id %}" class="btn btn-sm btn-outline-primary">View & Edit</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="7">No tickets found.</td>
-            </tr>
-            {% endfor %}
-        <tr>
-            <td colspan="7">
-                <div class="pagination">
-                    <ul>
-                        {% if tickets.has_previous %}
-                        <li><a href="{% url 'evs:ViolationTickets' %}?page={{ tickets.previous_page_number }}{% if request.GET.student_name %}&student_name={{ request.GET.student_name }}{% endif %}{% if request.GET.student_id %}&student_id={{ request.GET.student_id }}{% endif %}">&laquo; Previous</a></li>
+    <div class="table-responsive" style="overflow-x: auto; width: 100%;">
+        <table class="table text-center" id="tickets">
+            <thead>
+                <tr>
+                    <th>Ticket #</th>
+                    <th>Student Name</th>
+                    <th>Student ID</th>
+                    <th>Violation Type</th>
+                    <th>Date/Time</th>
+                    <th>Ticket Status</th>
+                    <th>ID Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in tickets %}
+                <tr>
+                    <td>{{ ticket.ticket_id }}</td>
+                    <td>{{ ticket.student.first_name }} {{ ticket.student.middle_name }} {{ ticket.student.last_name }}</td>
+                    <td>{{ ticket.student.student_id }}</td>
+                    <td>
+                        {% if ticket.uniform_violation %}Uniform Violation<br> {% endif %}
+                        {% if ticket.dress_code_violation %}Dress Code Violation<br> {% endif %}
+                        {% if ticket.id_violation %}ID Violation<br> {% endif %}
+                        {% if ticket.id_not_claimed_violation %}ID Not Claimed Violation{% endif %}
+                    </td>
+                    <td>{{ ticket.date_created }}</td>
+                    <td {% if ticket.ticket_status != 1 and ticket.ticket_status != 2 %} class="status-pending"
+                        {% elif ticket.ticket_status != 0 and ticket.ticket_status != 2 %} class="status-resolved"
+                        {% else %} class="status-cleared" {% endif %}>
+                        {% if ticket.ticket_status != 1 and ticket.ticket_status != 2 %} Pending
+                        {% elif ticket.ticket_status != 0 and ticket.ticket_status != 2 %} Resolved 
+                        {% else %} Cleared {% endif %}
+                    </td>
+                    <td>
+                        {% if ticket.id_status == 0 %}
+                            <form method="POST" action="/xu-entry-violation/{{ ticket.ticket_id }}/update/id-status">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="1">
+                                <button type="submit" class="controls-unclaimed" {% if ticket.ticket_status == 0 %} disabled {% endif %}>Unclaimed</button>
+                            </form>
                         {% else %}
-                        <li class="disabled"><span>&laquo; Previous</span></li>
+                            <button type="button" class="controls-claimed" disabled>Claimed</button>
                         {% endif %}
-                        
-                        {% for i in tickets.paginator.page_range %}
-                            {% if tickets.number == i %}
-                                <li class="active"><span>{{ i }}</span></li>
-                            {% else %}
-                                <li><a href="{% url 'evs:ViolationTickets' %}?page={{ i }}{% if request.GET.student_name %}&student_name={{ request.GET.student_name }}{% endif %}{% if request.GET.student_id %}&student_id={{ request.GET.student_id }}{% endif %}">{{ i }}</a></li>
-                            {% endif %}
-                        {% endfor %}
-                        
-                        {% if tickets.has_next %}
-                        <li><a href="{% url 'evs:ViolationTickets' %}?page={{ tickets.next_page_number }}{% if request.GET.student_name %}&student_name={{ request.GET.student_name }}{% endif %}{% if request.GET.student_id %}&student_id={{ request.GET.student_id }}{% endif %}">Next &raquo;</a></li>
-                        {% else %}
-                        <li class="disabled"><span>Next &raquo;</span></li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </td>
-        </tr>
-    </tbody>
-</table>
+                    </td>
+                    <td>
+                        <div class="controls">
+                            <form action="{% url 'evs:TicketDetails' ticket.ticket_id %}" class="search-form">
+                                <button>View/Edit</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7">No tickets found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+<div class="pagination">
+    <ul>
+        {% if tickets.has_previous %}
+        <li><a href="{% url 'evs:ViolationTickets' %}?page={{ tickets.previous_page_number }}{% if request.GET.student_name %}&student_name={{ request.GET.student_name }}{% endif %}{% if request.GET.student_id %}&student_id={{ request.GET.student_id }}{% endif %}">&laquo; Previous</a></li>
+        {% else %}
+        <li class="disabled"><span>&laquo; Previous</span></li>
+        {% endif %}
+        
+        {% for i in tickets.paginator.page_range %}
+            {% if tickets.number == i %}
+                <li class="active"><span>{{ i }}</span></li>
+            {% else %}
+                <li><a href="{% url 'evs:ViolationTickets' %}?page={{ i }}{% if request.GET.student_name %}&student_name={{ request.GET.student_name }}{% endif %}{% if request.GET.student_id %}&student_id={{ request.GET.student_id }}{% endif %}">{{ i }}</a></li>
+            {% endif %}
+        {% endfor %}
+        
+        {% if tickets.has_next %}
+        <li><a href="{% url 'evs:ViolationTickets' %}?page={{ tickets.next_page_number }}{% if request.GET.student_name %}&student_name={{ request.GET.student_name }}{% endif %}{% if request.GET.student_id %}&student_id={{ request.GET.student_id }}{% endif %}">Next &raquo;</a></li>
+        {% else %}
+        <li class="disabled"><span>Next &raquo;</span></li>
+        {% endif %}
+    </ul>
+</div>
 {% endblock content %}
 {% block scripts%}
-    <script>
-        document.getElementById('sort').addEventListener("change", function () {
-            const sortOrder = this.value;
-            const table = document.getElementById('tickets');
-            if (!table) return; // Exit if table not found
-            
-            const tbody = table.querySelector('tbody');
-            
-            // Save a copy of the original HTML before sorting
-            const originalHTML = tbody.innerHTML;
-            
-            // Get all the ticket rows (those with actual ticket data)
-            const allRows = Array.from(tbody.querySelectorAll('tr'));
-            
-            // Find the ticket data rows - those with at least 3 cells and not containing colspan
-            const ticketRows = allRows.filter(row => {
-                return row.cells.length >= 3 && 
-                       !row.querySelector('td[colspan]') &&
-                       row.cells[2] && row.cells[2].textContent.trim() !== '';
-            });
-            
-            // Make a copy of the ticket rows for sorting
-            const ticketRowsCopy = ticketRows.map(row => row.cloneNode(true));
-            
-            // Sort the copied rows based on Ticket # (index 2)
-            ticketRowsCopy.sort((a, b) => {
-                const aVal = a.cells[2].textContent.trim();
-                const bVal = b.cells[2].textContent.trim();
-                
-                // Compare as numbers if possible
-                if (!isNaN(aVal) && !isNaN(bVal)) {
-                    return sortOrder === "Up" ? 
-                        parseInt(aVal) - parseInt(bVal) : 
-                        parseInt(bVal) - parseInt(aVal);
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const table = document.getElementById('tickets');
+        const headers = table.querySelectorAll('th');
+        let sortDirection = 1; // 1 = asc, -1 = desc
+        let currentSortedColumn = -1;
+    
+        headers.forEach((header, index) => {
+            header.style.cursor = 'pointer';
+            header.addEventListener('click', () => {
+                if (currentSortedColumn === index) {
+                    sortDirection *= -1; // Toggle direction
+                } else {
+                    sortDirection = 1; // Default to ascending
+                    currentSortedColumn = index;
                 }
-                
-                // Fall back to string comparison
-                return sortOrder === "Up" ? 
-                    aVal.localeCompare(bVal) : 
-                    bVal.localeCompare(aVal);
+    
+                const tbody = table.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr'))
+                    .filter(row => row.querySelectorAll('td').length > 0); // Ignore empty or no-data rows
+    
+                rows.sort((a, b) => {
+                    const cellA = a.querySelectorAll('td')[index].innerText.trim().toLowerCase();
+                    const cellB = b.querySelectorAll('td')[index].innerText.trim().toLowerCase();
+    
+                    // Try to compare as numbers first
+                    const numA = parseFloat(cellA);
+                    const numB = parseFloat(cellB);
+    
+                    if (!isNaN(numA) && !isNaN(numB)) {
+                        return (numA - numB) * sortDirection;
+                    }
+    
+                    return cellA.localeCompare(cellB) * sortDirection;
+                });
+    
+                // Clear existing rows
+                rows.forEach(row => tbody.appendChild(row));
             });
-            
-            // Create a document fragment to build the new table content
-            const fragment = document.createDocumentFragment();
-            
-            // Find the index where ticket rows start in the original table
-            const firstTicketRowIndex = allRows.indexOf(ticketRows[0]);
-            
-            // Add rows before the ticket rows
-            for (let i = 0; i < firstTicketRowIndex; i++) {
-                fragment.appendChild(allRows[i].cloneNode(true));
-            }
-            
-            // Add the sorted ticket rows
-            ticketRowsCopy.forEach(row => fragment.appendChild(row));
-            
-            if (ticketRows.length > 0) {
-                const lastTicketRowIndex = allRows.indexOf(ticketRows[ticketRows.length - 1]);
-                for (let i = lastTicketRowIndex + 1; i < allRows.length; i++) {
-                    fragment.appendChild(allRows[i].cloneNode(true));
-                }
-            }
-            
-            tbody.innerHTML = '';
-            tbody.appendChild(fragment);
         });
-    </script>
+    });
+</script>
 {% endblock scripts%}
