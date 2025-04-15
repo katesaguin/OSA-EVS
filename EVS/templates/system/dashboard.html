@@ -9,7 +9,7 @@
             <h5 class="style1" style="margin-top: 20px">
                 
                 <i class='bx bx-table'></i> STATISTICS</h5>
-                
+
                <div class="stats-container">
                    <!-- First Statistic Card -->
                    <div class="stats-card">
@@ -23,11 +23,11 @@
                            </div>
                            <div class="stats-info">
                                <div class="stats-title">ID Violation</div>
-                               <div class="value">123</div>
+                               <div class="value">{{ id_violation }}</div>
                            </div>
                        </div>
                        <div class="stats-footer">
-                           <div class="view-all">View All</div>
+                           <a href="{% url 'evs:Statistics' %}" class="view-all">View All</a>
                        </div>
                    </div>
            
@@ -44,11 +44,11 @@
                            </div>
                            <div class="stats-info">
                                <div class="stats-title">Uniform Violation</div>
-                               <div class="value">345</div>
+                               <div class="value">{{ uniform_violation }}</div>
                            </div>
                        </div> 
                        <div class="stats-footer">
-                           <div class="view-all">View All</div>
+                           <a href="{% url 'evs:Statistics' %}" class="view-all">View All</a>
                        </div>
                    </div>
            
@@ -66,11 +66,11 @@
                            </div>
                            <div class="stats-info">
                                <div class="stats-title">Dress Code Violation</div>
-                               <div class="value">678</div>
+                               <div class="value">{{ dress_code_violation }}</div>
                            </div>
                        </div>
                        <div class="stats-footer">
-                           <div class="view-all">View All</div>
+                           <a href="{% url 'evs:Statistics' %}" class="view-all">View All</a>
                        
                        </div>
                    </div>
@@ -89,7 +89,7 @@
                            </div>
                            <div class="stats-info">
                                <div class="stats-title">View Full Report</div>
-                               <div class="value">March</div>
+                               <div class="value">{{ month }}</div>
                            </div>
                        </div>
                        <div class="stats-footer">
@@ -104,116 +104,55 @@
         <div class="toolbar">
                <h5 class="style1" style="margin-top: 20px">
                    <i class='bx bx-table'></i> Recent Tickets </h5>
-               <div class="controls">
-                   <button>Filter</button>
-                   <button>Sort By: Date</button>
-                   <input id="search" type="text" placeholder="Search Student">
-               </div>
         </div>
           
        
        <!-- TABLE -->
-           <table class="table" >
+           <table class="table" id="tickets">
                <thead>
                    <tr>
+                       <th>Ticket #</th>
                        <th>Student Name</th>
                        <th>Student ID</th>
-                       <th>Ticket #</th>
-                       <th>Violation Type</th>
+                       <th>Violation</th>
                        <th>Date/Time</th>
                        <th>Status</th>
                        <th>Actions</th>
                    </tr>
                </thead>
                <tbody>
-                   <tr>
-                       <td>Saguin, Mary Kate</td>
-                       <td>20220025024</td>
-                       <td>1203</td>
-                       <td>Dress Code</td>
-                       <td>3/24/2025, 4:40PM</td>
-                       <td class="status-pending">Pending</td>
-                       <td class="actions">
-                           <a href="{% url 'evs:TicketDetails' %}"><button><i class="fas fa-eye"></i> View & Edit</button></a>
-                       </td>
-                   </tr>
-                   <tr>
-                       <td>Flores, Kim</td>
-                       <td>20220025024</td>
-                       <td>1202</td>
-                       <td>No ID</td>
-                       <td>3/24/2025, 3:10PM</td>
-                       <td class="status-pending">Pending</td>
-                       <td class="actions">
-                        <a href="{% url 'evs:TicketDetails' %}"><button><i class="fas fa-eye"></i> View & Edit</button></a>
-                       </td>
-                   </tr>
-                   <tr>
-                       <td>Ylanan, Nesyl</td>
-                       <td>20220025024</td>
-                       <td>1201</td>
-                       <td>No ID</td>
-                       <td>3/24/2025, 12:24PM</td>
-                       <td class="status-pending">Pending</td>
-                       <td class="actions">
-                            <a href="{% url 'evs:TicketDetails' %}"><button><i class="fas fa-eye"></i> View & Edit</button></a>
-                       </td>
-                   </tr>
-                   <tr>
-                       <td>Pepito, Rem Well</td>
-                       <td>20220025024</td>
-                       <td>1200</td>
-                       <td>Uniform Violation</td>
-                       <td>3/24/2025, 11:31AM</td>
-                       <td class="status-resolved">Resolved</td>
-                       <td class="actions">
-                        <a href="{% url 'evs:TicketDetails' %}"><button><i class="fas fa-eye"></i> View & Edit</button></a>
-                       </td>
-                   </tr>
-                   <tr>
-                       <td>Deguit, Glenn Michael</td>
-                       <td>20220025024</td>
-                       <td>1199</td>
-                       <td>Dress Code</td>
-                       <td>3/22/2025, 8:34AM</td>
-                       <td class="status-cleared">Cleared</td>
-                       <td class="actions">
-                        <a href="{% url 'evs:TicketDetails' %}"><button><i class="fas fa-eye"></i> View & Edit</button></a>
-                       </td>
-                   </tr>
-                   <tr>
-                       <td>Uyquangco, Francis </td>
-                       <td>20220025024</td>
-                       <td>1198</td>
-                       <td>Dress Code</td>
-                       <td>3/21/2025, 3:34PM</td>
-                       <td class="status-resolved">Resolved</td>
-                       <td class="actions">
-                        <a href="{% url 'evs:TicketDetails' %}"><button><i class="fas fa-eye"></i> View & Edit</button></a>
-                       </td>
-                   </tr>
-                   <tr>
-                       <td>Pepito, Rem Well</td>
-                       <td>20220025024</td>
-                       <td>1197</td>
-                       <td>Uniform Violation</td>
-                       <td>3/21/2025, 7:46AM</td>
-                       <td class="status-pending">Pending</td>
-                       <td class="actions">
-                        <a href="{% url 'evs:TicketDetails' %}"><button><i class="fas fa-eye"></i> View & Edit</button></a>
-                       </td>
-                   </tr>
-                   <tr>
-                       <td colspan="7" style="text-align:center">
-                           <a href="{% url 'evs:ViolationTickets' %}"><button class="btn">View More</button></a>
-                       </td>
-                   </tr>
+                    {% for ticket in tickets %}
+                        <tr>
+                            <td>{{ticket.ticket_id}}</td>
+                            {% for student in students%}
+                                {% if student.student_id == ticket.student_id %}
+                                    <td>{{student.last_name}}, {{student.first_name}} {{student.middle_name}}</td>
+                                    <td>{{student.student_id}}</td>
+                                {% endif %}
+                            {% endfor %}
+                            <td>
+                                {% if ticket.id_violation %} ID Violation<br> {% endif %}
+                                {% if ticket.dress_code_violation %} Dress Code Violation<br> {% endif %}
+                                {% if ticket.uniform_violation %} Uniform Violation<br> {% endif %}
+                            </td>
+                            <td>{{ticket.date_created}}</td>
+                            <td {% if ticket.ticket_status != 1 and ticket.ticket_status != 2 %} class="status-pending"
+                                {% elif ticket.ticket_status != 0 and ticket.ticket_status != 2 %} class="status-resolved"
+                                {% else %} class="status-cleared" {% endif %}>
+                                {% if ticket.ticket_status != 1 and ticket.ticket_status != 2 %} Pending
+                                {% elif ticket.ticket_status != 0 and ticket.ticket_status != 2 %} Resolved 
+                                {% else %} Cleared {% endif %}
+                            </td>
+                            <td><a href="" class="btn btn-outline-primary btn-sm">View/Edit</a></td>
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <td colspan="7" style="text-align:center">
+                            <a href="{% url 'evs:ViolationTickets' %}"><button class="btn">View More</button></a>
+                        </td>
+                    </tr>
                </tbody>
-           </table>
-   
-   
-           
-               
+           </table>  
        </div>
     </div>
 {% endblock content %}

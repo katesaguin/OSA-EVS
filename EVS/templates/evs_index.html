@@ -14,29 +14,22 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-DQvkBjpPgn7RC31MCQoOeC9TI2kdqa4+BSgNMNj8v77fdC77Kj5zpWFTJaaAoMbC" crossorigin="anonymous">
 </head>
 <body>
-    <!--NAVIGATION BAR-->
-    <div class="sidebar">
-        <div class="sidebar-content">
-            <h5>XU OSA</h5>
-            <h3>ENTRY VIOLATION SYSTEM</h3>               
-                <a href="{% url 'evs:Dashboard' %}" class="active"><i class='bx bx-home-alt'></i> Dashboard</a>
-                <a href="{% url 'evs:Statistics' %}"><i class='bx bx-bar-chart'></i> Statistics</a>
-                <a href="{% url 'evs:Tally' %}"><i class='bx bx-list-ul'></i> Tally</a>
-                <a href="{% url 'evs:ViolationTickets' %}"><i class='bx bx-table'></i> Tickets</a>
-                <a href="{% url 'evs:Settings' %}"><i class='bx bx-cog'></i> Settings</a>
-                <a href="#"><i class='bx bx-log-out'></i> Logout</a>
-         </div>
-    </div>
-
+        <!--NAVIGATION BAR-->
+        <div class="sidebar">
+            <div class="sidebar-content">
+                <br>      
+                    <a href="{% url 'evs:Dashboard' %}" class="active"><i class='bx bx-home-alt'></i> Dashboard</a>
+                    <a href="{% url 'evs:Statistics' %}"><i class='bx bx-bar-chart'></i> Statistics</a>
+                    <a href="{% url 'evs:Tally' %}"><i class='bx bx-list-ul'></i> Tally</a>
+                    <a href="{% url 'evs:ViolationTickets' %}"><i class='bx bx-table'></i> Tickets</a>
+                    <a href="{% url 'evs:Settings' %}"><i class='bx bx-cog'></i> Settings</a>
+                    <a href="#"><i class='bx bx-log-out'></i> Logout</a>
+             </div>
+        </div>
     <!--MAIN CONTENT-->
     <div class="main-content">
         <div class="header">
             <div class="dashboard-title">
-                <button class="burger btn" arial-label="Toggle Sidebar" onclick="toggleSidebar()">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                </button>
                 {%block page_name %}{% endblock page_name %}
             </div>
             
@@ -49,13 +42,28 @@
             const mainContent = document.querySelector('.main-content');
     
             sidebar.classList.toggle('show');
-    
-            if (sidebar.classList.contains('show')) {
-                mainContent.style.marginLeft = '250px';
-            } else {
-                mainContent.style.marginLeft = '0';
-            }
+            mainContent.classList.toggle('expanded');
         }
+        
+        // Add hover functionality to sidebar
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            
+            // Expand main content when sidebar is hovered
+            sidebar.addEventListener('mouseenter', function() {
+                if (!sidebar.classList.contains('show')) { // Only if not already toggled
+                    mainContent.classList.add('expanded');
+                }
+            });
+            
+            // Return main content to normal when sidebar is not hovered
+            sidebar.addEventListener('mouseleave', function() {
+                if (!sidebar.classList.contains('show')) { // Only if not toggled
+                    mainContent.classList.remove('expanded');
+                }
+            });
+        });
     
         // Add event listeners to sidebar links
         document.querySelectorAll('.sidebar a').forEach(link => {
@@ -80,5 +88,72 @@
             idStatusInput.value = status; // Update the input field value
             document.getElementById('status-dropdown').style.display = 'none'; // Hide the dropdown
         }
+        
+
+        document.getElementById('sort').addEventListener("change", function () {
+            const sortOrder = this.value;
+            const table = document.getElementById('tickets');
+            if (!table) return; // Exit if table not found
+            
+            const tbody = table.querySelector('tbody');
+            
+            // Save a copy of the original HTML before sorting
+            const originalHTML = tbody.innerHTML;
+            
+            // Get all the ticket rows (those with actual ticket data)
+            const allRows = Array.from(tbody.querySelectorAll('tr'));
+            
+            // Find the ticket data rows - those with at least 3 cells and not containing colspan
+            const ticketRows = allRows.filter(row => {
+                return row.cells.length >= 3 && 
+                       !row.querySelector('td[colspan]') &&
+                       row.cells[2] && row.cells[2].textContent.trim() !== '';
+            });
+            
+            // Make a copy of the ticket rows for sorting
+            const ticketRowsCopy = ticketRows.map(row => row.cloneNode(true));
+            
+            // Sort the copied rows based on Ticket # (index 2)
+            ticketRowsCopy.sort((a, b) => {
+                const aVal = a.cells[2].textContent.trim();
+                const bVal = b.cells[2].textContent.trim();
+                
+                // Compare as numbers if possible
+                if (!isNaN(aVal) && !isNaN(bVal)) {
+                    return sortOrder === "Up" ? 
+                        parseInt(aVal) - parseInt(bVal) : 
+                        parseInt(bVal) - parseInt(aVal);
+                }
+                
+                // Fall back to string comparison
+                return sortOrder === "Up" ? 
+                    aVal.localeCompare(bVal) : 
+                    bVal.localeCompare(aVal);
+            });
+            
+            // Create a document fragment to build the new table content
+            const fragment = document.createDocumentFragment();
+            
+            // Find the index where ticket rows start in the original table
+            const firstTicketRowIndex = allRows.indexOf(ticketRows[0]);
+            
+            // Add rows before the ticket rows
+            for (let i = 0; i < firstTicketRowIndex; i++) {
+                fragment.appendChild(allRows[i].cloneNode(true));
+            }
+            
+            // Add the sorted ticket rows
+            ticketRowsCopy.forEach(row => fragment.appendChild(row));
+            
+            if (ticketRows.length > 0) {
+                const lastTicketRowIndex = allRows.indexOf(ticketRows[ticketRows.length - 1]);
+                for (let i = lastTicketRowIndex + 1; i < allRows.length; i++) {
+                    fragment.appendChild(allRows[i].cloneNode(true));
+                }
+            }
+            
+            tbody.innerHTML = '';
+            tbody.appendChild(fragment);
+        });
     </script>
 </html>
