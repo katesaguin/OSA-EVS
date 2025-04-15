@@ -49,11 +49,15 @@
                     {% if ticket.id_not_claimed_violation %}ID Not Claimed Violation{% endif %}
                 </td>
                 <td>{{ ticket.date_created }}</td>
-                <td class="status-{{ ticket.ticket_status|yesno:'resolved,pending' }}">
-                    {{ ticket.ticket_status|yesno:'Resolved,Pending' }}
+                <td {% if ticket.ticket_status != 1 and ticket.ticket_status != 2 %} class="status-pending"
+                    {% elif ticket.ticket_status != 0 and ticket.ticket_status != 2 %} class="status-resolved"
+                    {% else %} class="status-cleared" {% endif %}>
+                    {% if ticket.ticket_status != 1 and ticket.ticket_status != 2 %} Pending
+                    {% elif ticket.ticket_status != 0 and ticket.ticket_status != 2 %} Resolved 
+                    {% else %} Cleared {% endif %}
                 </td>
                 <td class="actions">
-                    <a href="" class="btn btn-outline-primary btn-sm">View/Edit</a>
+                    <a href="{% url 'evs:TicketDetails' ticket.ticket_id %}" class="btn btn-sm btn-outline-primary">View & Edit</a>
                 </td>
             </tr>
             {% empty %}
@@ -61,35 +65,102 @@
                 <td colspan="7">No tickets found.</td>
             </tr>
             {% endfor %}
-            <tr>
-                <td colspan="7">
-                    <div class="pagination">
-                        <ul>
-                            {% if tickets.has_previous %}
-                            <li><a href="{% url 'evs:ViolationTickets' %}?page={{ tickets.previous_page_number }}">&laquo;
-                                    Previous</a></li>
-                            {% else %}
-                            <li class="disabled"><span>&laquo; Previous</span></li>
-                            {% endif %}
-
-                            {% for i in tickets.paginator.page_range %}
+        <tr>
+            <td colspan="7">
+                <div class="pagination">
+                    <ul>
+                        {% if tickets.has_previous %}
+                        <li><a href="{% url 'evs:ViolationTickets' %}?page={{ tickets.previous_page_number }}{% if request.GET.student_name %}&student_name={{ request.GET.student_name }}{% endif %}{% if request.GET.student_id %}&student_id={{ request.GET.student_id }}{% endif %}">&laquo; Previous</a></li>
+                        {% else %}
+                        <li class="disabled"><span>&laquo; Previous</span></li>
+                        {% endif %}
+                        
+                        {% for i in tickets.paginator.page_range %}
                             {% if tickets.number == i %}
-                            <li class="active"><span>{{ i }}</span></li>
+                                <li class="active"><span>{{ i }}</span></li>
                             {% else %}
-                            <li><a href="{% url 'evs:ViolationTickets' %}?page={{ i }}">{{ i }}</a></li>
+                                <li><a href="{% url 'evs:ViolationTickets' %}?page={{ i }}{% if request.GET.student_name %}&student_name={{ request.GET.student_name }}{% endif %}{% if request.GET.student_id %}&student_id={{ request.GET.student_id }}{% endif %}">{{ i }}</a></li>
                             {% endif %}
-                            {% endfor %}
-
-                            {% if tickets.has_next %}
-                            <li><a href="{% url 'evs:ViolationTickets' %}?page={{ tickets.next_page_number }}">Next
-                                    &raquo;</a></li>
-                            {% else %}
-                            <li class="disabled"><span>Next &raquo;</span></li>
-                            {% endif %}
-                        </ul>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    {% endblock content %}
+                        {% endfor %}
+                        
+                        {% if tickets.has_next %}
+                        <li><a href="{% url 'evs:ViolationTickets' %}?page={{ tickets.next_page_number }}{% if request.GET.student_name %}&student_name={{ request.GET.student_name }}{% endif %}{% if request.GET.student_id %}&student_id={{ request.GET.student_id }}{% endif %}">Next &raquo;</a></li>
+                        {% else %}
+                        <li class="disabled"><span>Next &raquo;</span></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+{% endblock content %}
+{% block scripts%}
+    <script>
+        document.getElementById('sort').addEventListener("change", function () {
+            const sortOrder = this.value;
+            const table = document.getElementById('tickets');
+            if (!table) return; // Exit if table not found
+            
+            const tbody = table.querySelector('tbody');
+            
+            // Save a copy of the original HTML before sorting
+            const originalHTML = tbody.innerHTML;
+            
+            // Get all the ticket rows (those with actual ticket data)
+            const allRows = Array.from(tbody.querySelectorAll('tr'));
+            
+            // Find the ticket data rows - those with at least 3 cells and not containing colspan
+            const ticketRows = allRows.filter(row => {
+                return row.cells.length >= 3 && 
+                       !row.querySelector('td[colspan]') &&
+                       row.cells[2] && row.cells[2].textContent.trim() !== '';
+            });
+            
+            // Make a copy of the ticket rows for sorting
+            const ticketRowsCopy = ticketRows.map(row => row.cloneNode(true));
+            
+            // Sort the copied rows based on Ticket # (index 2)
+            ticketRowsCopy.sort((a, b) => {
+                const aVal = a.cells[2].textContent.trim();
+                const bVal = b.cells[2].textContent.trim();
+                
+                // Compare as numbers if possible
+                if (!isNaN(aVal) && !isNaN(bVal)) {
+                    return sortOrder === "Up" ? 
+                        parseInt(aVal) - parseInt(bVal) : 
+                        parseInt(bVal) - parseInt(aVal);
+                }
+                
+                // Fall back to string comparison
+                return sortOrder === "Up" ? 
+                    aVal.localeCompare(bVal) : 
+                    bVal.localeCompare(aVal);
+            });
+            
+            // Create a document fragment to build the new table content
+            const fragment = document.createDocumentFragment();
+            
+            // Find the index where ticket rows start in the original table
+            const firstTicketRowIndex = allRows.indexOf(ticketRows[0]);
+            
+            // Add rows before the ticket rows
+            for (let i = 0; i < firstTicketRowIndex; i++) {
+                fragment.appendChild(allRows[i].cloneNode(true));
+            }
+            
+            // Add the sorted ticket rows
+            ticketRowsCopy.forEach(row => fragment.appendChild(row));
+            
+            if (ticketRows.length > 0) {
+                const lastTicketRowIndex = allRows.indexOf(ticketRows[ticketRows.length - 1]);
+                for (let i = lastTicketRowIndex + 1; i < allRows.length; i++) {
+                    fragment.appendChild(allRows[i].cloneNode(true));
+                }
+            }
+            
+            tbody.innerHTML = '';
+            tbody.appendChild(fragment);
+        });
+    </script>
+{% endblock scripts%}

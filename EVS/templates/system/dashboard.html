@@ -143,7 +143,7 @@
                                 {% elif ticket.ticket_status != 0 and ticket.ticket_status != 2 %} Resolved 
                                 {% else %} Cleared {% endif %}
                             </td>
-                            <td><a href="" class="btn btn-outline-primary btn-sm">View/Edit</a></td>
+                            <td><a href="{% url 'evs:TicketDetails' ticket.ticket_id %}" class="btn btn-outline-primary btn-sm">View/Edit</a></td>
                         </tr>
                     {% endfor %}
                     <tr>

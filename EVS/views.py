@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
-from .models import Student, Ticket
+from .models import Student, Ticket, TicketReason, Reason
 from datetime import datetime
 from django.core.paginator import Paginator
+import json
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+from django.http import JsonResponse
 #import login_required
 
 # Create your views here.
@@ -28,17 +31,13 @@ def violation_views(request):
     student_name = request.GET.get('student_name', '')
     student_id = request.GET.get('student_id', '')
     
-    # Start with all tickets
     tickets = Ticket.objects.all()
     
-    # Apply filters if search parameters exist
     if student_name:
-        # Split the search terms to allow searching for partial names
         name_terms = student_name.split()
         name_query = tickets
         
         for term in name_terms:
-            # Filter by each term across all name fields (similar to SQL LIKE with wildcards)
             name_query = name_query.filter(
                 student__first_name__icontains=term) | \
                 tickets.filter(student__middle_name__icontains=term) | \
@@ -54,7 +53,7 @@ def violation_views(request):
     tickets = tickets.order_by('-date_created')
     
     # Paginate results
-    paginator = Paginator(tickets, 10)
+    paginator = Paginator(tickets, 4)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -73,12 +72,10 @@ def tally_views(request):
     
     # Apply filters for student name if provided
     if student_name:
-        # Split the search terms to allow searching for partial names
         name_terms = student_name.split()
         name_query = students_with_tickets
         
         for term in name_terms:
-            # Filter by each term across all name fields (similar to SQL LIKE with wildcards)
             name_query = name_query.filter(
                 first_name__icontains=term) | \
                 students_with_tickets.filter(middle_name__icontains=term) | \
@@ -86,24 +83,18 @@ def tally_views(request):
         
         students_with_tickets = name_query
     
-    # Apply filter for student ID if provided
     if student_id:
         students_with_tickets = students_with_tickets.filter(student_id__icontains=student_id)
     
-    # Create a list to store student violation summaries
     student_violations = []
     
     for student in students_with_tickets:
-        # Count different violation types for this student
         id_violation_count = Ticket.objects.filter(student=student, id_violation=True).count()
         dress_code_count = Ticket.objects.filter(student=student, dress_code_violation=True).count()
         uniform_count = Ticket.objects.filter(student=student, uniform_violation=True).count()
         
-        # Determine community service status
-        # If total violations >= 5, community service is required
-        total_violations = id_violation_count + id_not_claimed_count + dress_code_count + uniform_count
+        total_violations = id_violation_count + dress_code_count + uniform_count
         
-        # Check if there's a StudentViolation record for this student
         community_service_status = 'Not Required'
         if total_violations >= 5:
             try:
@@ -120,7 +111,6 @@ def tally_views(request):
             except:
                 community_service_status = 'Awaiting'
         
-        # Add student data to the list
         student_violations.append({
             'student': student,
             'id_violation_count': id_violation_count,
@@ -130,11 +120,9 @@ def tally_views(request):
             'total_violations': total_violations
         })
     
-    # Sort by total violations (descending)
     student_violations.sort(key=lambda x: x['total_violations'], reverse=True)
     
-    # Paginate the results
-    paginator = Paginator(student_violations, 10)
+    paginator = Paginator(student_violations, 4)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
@@ -149,5 +137,69 @@ def statistics_view(request):
 def settings_views(request):
     return render(request, 'system/settings.html')
 
-def ticketDetails_views(request):
-    return render(request, 'system/ticket-details.html')
+@ensure_csrf_cookie
+def ticketDetails_views(request, ticket_id):
+    ticket = Ticket.objects.get(ticket_id=ticket_id)
+    student = Student.objects.get(student_id=ticket.student.student_id)
+    reasons = Reason.objects.all()
+    selected_reason_ids = TicketReason.objects.filter(ticket_id=ticket_id).values_list('reason_id', flat=True)
+    return render(request, 'system/ticket-details.html', {
+        'ticket': ticket,
+        'student': student,
+        'reasons': reasons,
+        'selected': selected_reason_ids
+    })
+
+def clear_violation(request, ticket_id):
+    ticket = Ticket.objects.get(ticket_id=ticket_id)
+    ticket.ticket_status = 2
+    ticket.date_viladated = datetime.now()
+    ticket.save()
+    TicketReason.objects.filter(ticket_id=ticket_id).delete()
+
+    return redirect('evs:ViolationTickets')
+
+def validated_ticket(request, ticket_id):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            selected_reasons = data.get('reasons', [])
+            remarks = data.get('remarks', '')
+
+            ticket = Ticket.objects.get(ticket_id=ticket_id)
+            ticket.ticket_status = 1
+            ticket.remarks = remarks
+            ticket.date_viladated = datetime.now()
+            ticket.save()
+
+            TicketReason.objects.filter(ticket_id=ticket_id).delete()
+
+            for reason in selected_reasons:
+                TicketReason.objects.create(
+                    ticket_id = ticket_id,
+                    reason_id = reason
+                )
+
+            return JsonResponse({'message': 'Violation updated successfully'})
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    
+    return redirect('evs:ViolationTickets')
+
+def update_id_status(request, ticket_id):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            new_status = data.get('status')
+
+            ticket = Ticket.objects.get(ticket_id=ticket_id)
+            ticket.id_status = new_status
+            ticket.save()
+
+            return JsonResponse({'message': 'ID Status updated successfully'})
+        
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    
+    return redirect('evs:ViolationTickets')
