@@ -23,3 +23,8 @@ This is the official repo for ITCC15 Group A
 - https://www.youtube.com/watch?v=W5Ov0H7E_o4&list=PLOLrQ9Pn6cazCfL7v4CdaykNoWMQymM_C
 - https://www.youtube.com/watch?v=JLdEbb8Hcww
 - https://www.youtube.com/watch?v=arpayEBbotI&t=1449s
+
+# PRODUCTION READY DOCKER
+- https://www.youtube.com/watch?v=1v3lqIITRJA
+- https://www.youtube.com/watch?v=cxUyrB7ZZao
+- https://www.docker.com/blog/how-to-dockerize-django-app/
