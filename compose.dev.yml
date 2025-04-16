@@ -6,10 +6,10 @@ services:
     env_file:
       - .env
     environment:
-      MYSQL_DATABASE=${DB_NAME}
-      MYSQL_USER=${DB_USER}
-      MYSQL_PASSWORD=${DB_PASSWORD}
-      MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
@@ -24,15 +24,16 @@ services:
     volumes:
       - ./manage.py:/app/manage.py
       - ./requirements.txt:/app/requirements.txt
+      - ./static:/app/static
     ports:
       - "8000:8000"
     depends_on:
       - db
     environment:
-      - DATABASE_HOST=${DB_HOST}
-      - DATABASE_NAME=${DB_NAME}
-      - DATABASE_USER=${DB_USER}
-      - DATABASE_PASSWORD=${DB_PASSWORD}
+      DATABASE_HOST: ${DB_HOST}
+      DATABASE_NAME: ${DB_NAME}
+      DATABASE_USER: ${DB_USER}
+      DATABASE_PASSWORD: ${DB_PASSWORD}
     
 volumes:
   mysql_data:
