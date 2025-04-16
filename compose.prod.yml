@@ -29,7 +29,7 @@ services:
 
   nginx:
     image: nginx
-    container_name: "nginx_server"
+    container_name: "XU_OSA_Nginx"
     ports:
       - 8001:80
     volumes: 

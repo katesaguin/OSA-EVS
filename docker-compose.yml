@@ -1,6 +1,7 @@
 services:
   db:
     image: mysql:8.0
+    container_name: "evs_db_dev"
     restart: always
     env_file:
       - .env
@@ -16,6 +17,7 @@ services:
 
   web:
     build: .
+    container_name: "evs_web_dev"
     env_file:
       - .env
     command: python manage.py runserver 0.0.0.0:8000

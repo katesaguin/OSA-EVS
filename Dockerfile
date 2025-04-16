@@ -40,13 +40,13 @@ COPY --chown=appuser:appuser . .
 # Set environment variables to optimize Python
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1 
- 
+
 # Switch to non-root user
 USER appuser
  
 # Expose the application port
 EXPOSE 8000
- 
+
 RUN chmod +x /app/entrypoint.sh
 # Start the application using Gunicorn
 CMD ["/app/entrypoint.sh"]
