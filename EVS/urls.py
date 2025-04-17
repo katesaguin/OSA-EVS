@@ -7,6 +7,7 @@ urlpatterns = [
     path('dashboard', views.dashboard_view, name="Dashboard"),
     path('tickets', views.violation_views, name="ViolationTickets"),
     path('tally', views.tally_views, name="Tally"),
+    path('tally-details', views.tallyDetails_views, name="TallyDetails"),
     path('statistics', views.statistics_view, name="Statistics"),
     path('settings', views.settings_views, name="Settings"),
     path('settings/profile', views.settingsProfile_view, name="SettingsProfile"),
