@@ -40,28 +40,169 @@
                                 <button class="btn btn-outline-danger btn-sm">Remove</button>
                             </td>
                         </tr>
-                        <tr>
-                            <td>Ariana Panganiban</td>
-                            <td>20220025024@my.xu.edu.ph</td>
-                            <td>User</td>
-                            <td>
-                                <button class="btn btn-primary btn-sm me-2">Edit</button>
-                                <button class="btn btn-outline-danger btn-sm">Remove</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Ariana Panganiban</td>
-                            <td>20220025024@my.xu.edu.ph</td>
-                            <td>User</td>
-                            <td>
-                                <button class="btn btn-primary btn-sm me-2">Edit</button>
-                                <button class="btn btn-outline-danger btn-sm">Remove</button>
-                            </td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
+<!-- Edit User Modal -->
+<div id="editUserModal" class="modal" tabindex="-1" style="display:none; background: rgba(0,0,0,0.4); position:fixed; top:0; left:0; width:100%; height:100%; z-index:1050;">
+  <div style="background:#fff; border-radius:8px; max-width:400px; margin:80px auto; padding:32px; box-shadow:0 4px 24px rgba(0,0,0,0.2); position:relative;">
+    <h5 class="mb-4"><b>Edit User Details</b></h5>
+    <div class="mb-3">
+      <label for="editName" class="form-label">Name</label>
+      <input type="text" class="form-control" id="editName">
+    </div>
+    <div class="mb-3">
+      <label for="editEmail" class="form-label">Email</label>
+      <input type="email" class="form-control" id="editEmail">
+    </div>
+    <div class="mb-4">
+      <label for="editRole" class="form-label">Role</label>
+      <select class="form-select" id="editRole">
+        <option>User</option>
+        <option>Admin</option>
+      </select>
+    </div>
+    <div class="d-flex justify-content-between">
+      <button class="btn btn-primary" id="applyChangesBtn">Apply Changes</button>
+      <button class="btn btn-outline-danger" id="removeAccessBtn">Remove Access</button>
+    </div>
+    <button id="closeModalBtn" style="position:absolute; top:16px; right:24px; background:none; border:none; font-size:1.5rem;">&times;</button>
+  </div>
+</div>
+
+<!-- Add Member Modal -->
+<div id="addUserModal" class="modal" tabindex="-1" style="display:none; background: rgba(0,0,0,0.4); position:fixed; top:0; left:0; width:100%; height:100%; z-index:1050;">
+  <div style="background:#fff; border-radius:8px; max-width:400px; margin:80px auto; padding:32px; box-shadow:0 4px 24px rgba(0,0,0,0.2); position:relative;">
+    <h5 class="mb-4"><b>Make New User</b></h5>
+    <div class="mb-3">
+      <label for="addName" class="form-label">Name</label>
+      <input type="text" class="form-control" id="addName">
+    </div>
+    <div class="mb-3">
+      <label for="addEmail" class="form-label">Email</label>
+      <input type="email" class="form-control" id="addEmail">
+    </div>
+    <div class="mb-4">
+      <label for="addRole" class="form-label">Role</label>
+      <select class="form-select" id="addRole">
+        <option>User</option>
+        <option>Admin</option>
+      </select>
+    </div>
+    <div class="d-flex justify-content-between">
+      <button class="btn btn-primary" id="addUserBtn">Add User</button>
+      <button class="btn btn-outline-secondary" id="cancelAddUserBtn">Cancel</button>
+    </div>
+    <button id="closeAddModalBtn" style="position:absolute; top:16px; right:24px; background:none; border:none; font-size:1.5rem;">&times;</button>
+  </div>
+</div>
+
+<script>
+let currentRow = null;
+// Delegate remove button click for all table rows (static and dynamic)
+document.addEventListener('click', function(e) {
+  if (e.target && e.target.matches('.btn-outline-danger')) {
+    const row = e.target.closest('tr');
+    if (row) row.remove();
+  }
+});
+// Show modal and populate fields
+Array.from(document.querySelectorAll('.btn-primary')).forEach((btn) => {
+  if (btn.textContent.trim() === 'Edit') {
+    btn.addEventListener('click', function() {
+      const row = btn.closest('tr');
+      currentRow = row;
+      document.getElementById('editName').value = row.children[0].textContent;
+      document.getElementById('editEmail').value = row.children[1].textContent;
+      document.getElementById('editRole').value = row.children[2].textContent;
+      document.getElementById('editUserModal').style.display = 'block';
+    });
+  }
+});
+// Add Member modal
+const addMembersBtn = Array.from(document.querySelectorAll('.btn-primary')).find(btn => btn.textContent.trim() === '+ Add Members');
+if(addMembersBtn){
+  addMembersBtn.addEventListener('click', function() {
+    document.getElementById('addName').value = '';
+    document.getElementById('addEmail').value = '';
+    document.getElementById('addRole').value = 'User';
+    document.getElementById('addUserModal').style.display = 'block';
+  });
+}
+// Close modals
+if(document.getElementById('closeModalBtn')){
+  document.getElementById('closeModalBtn').onclick = function() {
+    document.getElementById('editUserModal').style.display = 'none';
+  };
+}
+if(document.getElementById('closeAddModalBtn')){
+  document.getElementById('closeAddModalBtn').onclick = function() {
+    document.getElementById('addUserModal').style.display = 'none';
+  };
+}
+if(document.getElementById('cancelAddUserBtn')){
+  document.getElementById('cancelAddUserBtn').onclick = function() {
+    document.getElementById('addUserModal').style.display = 'none';
+  };
+}
+window.onclick = function(event) {
+  if (event.target == document.getElementById('editUserModal')) {
+    document.getElementById('editUserModal').style.display = 'none';
+  }
+  if (event.target == document.getElementById('addUserModal')) {
+    document.getElementById('addUserModal').style.display = 'none';
+  }
+};
+// Apply changes
+if(document.getElementById('applyChangesBtn')){
+  document.getElementById('applyChangesBtn').onclick = function() {
+    if (currentRow) {
+      currentRow.children[0].textContent = document.getElementById('editName').value;
+      currentRow.children[1].textContent = document.getElementById('editEmail').value;
+      currentRow.children[2].textContent = document.getElementById('editRole').value;
+      document.getElementById('editUserModal').style.display = 'none';
+    }
+  };
+}
+// Remove access
+if(document.getElementById('removeAccessBtn')){
+  document.getElementById('removeAccessBtn').onclick = function() {
+    if (currentRow) {
+      currentRow.remove();
+      document.getElementById('editUserModal').style.display = 'none';
+    }
+  };
+}
+// Add user
+if(document.getElementById('addUserBtn')){
+  document.getElementById('addUserBtn').onclick = function() {
+    const name = document.getElementById('addName').value.trim();
+    const email = document.getElementById('addEmail').value.trim();
+    const role = document.getElementById('addRole').value;
+    if(name && email && role) {
+      const tbody = document.querySelector('table tbody');
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `<td>${name}</td><td>${email}</td><td>${role}</td><td><button class='btn btn-primary btn-sm me-2'>Edit</button> <button class='btn btn-outline-danger btn-sm'>Remove</button></td>`;
+      tbody.appendChild(newRow);
+      // Attach edit functionality to new Edit button
+      newRow.querySelector('.btn-primary').addEventListener('click', function() {
+        currentRow = newRow;
+        document.getElementById('editName').value = name;
+        document.getElementById('editEmail').value = email;
+        document.getElementById('editRole').value = role;
+        document.getElementById('editUserModal').style.display = 'block';
+      });
+      // Attach remove functionality to new Remove button
+      newRow.querySelector('.btn-outline-danger').addEventListener('click', function() {
+        newRow.remove();
+      });
+      document.getElementById('addUserModal').style.display = 'none';
+    }
+  };
+}
+</script>
+
 {% endblock %}

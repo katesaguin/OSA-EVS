@@ -9,40 +9,40 @@
             <h5 class="card-title mb-3" style="color: #19387E; font-weight:900;">Add New Academic Year</h5>
 
             <!--FORMS HERE-->
-            <form>
-                <div class="row mb-3">
-                    <div class="col">
-                        <label class="form-label">Academic Year Label</label>
-                        <input type="text" class="form-control" placeholder="Sample: '2025-2026'">
-                    </div>
-                    <div class="col">
-                        <label class="form-label">Semester</label>
-                        <select class="form-select">
-                            <option>1st Semester</option>
-                            <option>2nd Semester</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col">
-                        <label class="form-label">Start Date</label>
-                        <input type="date" class="form-control">
-                    </div>
-                    <div class="col">
-                        <label class="form-label">End Date</label>
-                        <input type="date" class="form-control">
-                    </div>
-                </div>
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="setActive" checked>
-                            <label class="form-check-label" for="setActive">Set as Active Now</label>
-                        </div>
-                    </div>
-        <button type="submit" class="btn btn-primary">Add Year</button>
-    </div>
-            </form>
+           <form id="addAcademicYearForm">
+               <div class="row mb-3">
+                   <div class="col">
+                       <label class="form-label">Academic Year Label</label>
+                       <input type="text" class="form-control" id="ayLabel" placeholder="Sample: '2025-2026'">
+                   </div>
+                   <div class="col">
+                       <label class="form-label">Semester</label>
+                       <select class="form-select" id="aySem">
+                           <option>1st Semester</option>
+                           <option>2nd Semester</option>
+                       </select>
+                   </div>
+               </div>
+               <div class="row mb-3">
+                   <div class="col">
+                       <label class="form-label">Start Date</label>
+                       <input type="date" class="form-control" id="ayStart">
+                   </div>
+                   <div class="col">
+                       <label class="form-label">End Date</label>
+                       <input type="date" class="form-control" id="ayEnd">
+                   </div>
+               </div>
+               <div class="d-flex justify-content-between align-items-center mb-3">
+                   <div>
+                       <div class="form-check">
+                           <input class="form-check-input" type="checkbox" id="setActive" checked>
+                           <label class="form-check-label" for="setActive">Set as Active Now</label>
+                       </div>
+                   </div>
+                   <button type="submit" class="btn btn-primary">Add Year</button>
+               </div>
+           </form>
         </div>
     </div>
     <!-- Academic Years History -->
@@ -60,13 +60,13 @@
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="academicYearsTbody">
                         <tr>
                             <!--SAMPLE HISTORY-->
                             <td>2024-2025 (1st Semester)</td> <!--First Column: Academic Year and Semester-->
                             <td><span class="badge bg-success">Active</span></td> <!--Second Column: Status-->
-                            <td>Aug 2, 2025</td> <!--Third Column: Start Date-->
-                            <td>Dec 20, 2025</td> <!--Fourth Column: End Date-->
+                            <td>2025-04-02</td> <!--Third Column: Start Date-->
+                            <td>2025-12-20</td> <!--Fourth Column: End Date-->
                             <td> <!--Action Column-->
                                 <button class="btn btn-primary btn-sm me-2">Activate</button>
                                 <button class="btn btn-outline-danger btn-sm">Deactivate</button>
@@ -76,8 +76,8 @@
                             <!--SAMPLE HISTORY #2-->  
                             <td>2024-2025 (2nd Semester)</td> <!--First Column: Academic Year and Semester-->
                             <td><span class="badge bg-secondary">Inactive</span></td> <!--Second Column: Status-->
-                            <td>Jan 8, 2025</td> <!--Third Column: Start Date-->
-                            <td>May 31, 2025</td> <!--Fourth Column: End Date-->
+                            <td>2025-01-08</td> <!--Third Column: Start Date-->
+                            <td>2025-05-31</td> <!--Fourth Column: End Date-->
                             <td> <!--Action Column-->
                                 <button class="btn btn-primary btn-sm me-2">Activate</button>
                                 <button class="btn btn-outline-danger btn-sm">Deactivate</button>
@@ -87,4 +87,59 @@
                 </table>
             </div>
         </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const addAcademicYearForm = document.getElementById('addAcademicYearForm');
+  if(addAcademicYearForm){
+    addAcademicYearForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const label = document.getElementById('ayLabel').value.trim();
+      const sem = document.getElementById('aySem').value;
+      const start = document.getElementById('ayStart').value;
+      const end = document.getElementById('ayEnd').value;
+      const active = document.getElementById('setActive').checked;
+      if(!label || !sem || !start || !end) {
+        alert('Please complete all fields before adding a year.');
+        return;
+      }
+      const tbody = document.getElementById('academicYearsTbody');
+      const row = document.createElement('tr');
+      row.innerHTML = `<td>${label} (${sem})</td>
+<td><span class="badge ${active ? 'bg-success' : 'bg-secondary'}">${active ? 'Active' : 'Inactive'}</span></td>
+<td>${start}</td>
+<td>${end}</td>
+<td>
+  <button class="btn btn-primary btn-sm me-2">Activate</button>
+  <button class="btn btn-outline-danger btn-sm">Deactivate</button>
+</td>`;
+      tbody.appendChild(row);
+      this.reset();
+    });
+  }
+
+  // Delegate Activate/Deactivate button clicks for all rows (static and dynamic)
+  document.addEventListener('click', function(e) {
+    // Activate
+    if(e.target && e.target.classList.contains('btn-primary') && e.target.textContent.trim() === 'Activate') {
+      const row = e.target.closest('tr');
+      if(row) {
+        const badge = row.querySelector('td:nth-child(2) .badge');
+        badge.textContent = 'Active';
+        badge.classList.remove('bg-secondary');
+        badge.classList.add('bg-success');
+      }
+    }
+    // Deactivate
+    if(e.target && e.target.classList.contains('btn-outline-danger') && e.target.textContent.trim() === 'Deactivate') {
+      const row = e.target.closest('tr');
+      if(row) {
+        const badge = row.querySelector('td:nth-child(2) .badge');
+        badge.textContent = 'Inactive';
+        badge.classList.remove('bg-success');
+        badge.classList.add('bg-secondary');
+      }
+    }
+  });
+});
+</script>
 {% endblock %}
