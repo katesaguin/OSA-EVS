@@ -1,0 +1,197 @@
+{% extends 'evs_index.html' %}
+{% block page_name %}
+<h5><i class='bx bx-list-ul'></i>Tally</h5>
+{% endblock page_name %}
+
+
+
+{% block content %}
+<div class="content">
+    <div class="card mb-4 p-4" style="border-radius: 15px;">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5><i class='bx bx-list-ul'></i> STUDENT TALLY DETAILS</h5>
+            <a href="#" class="btn btn-outline-primary btn-sm">Go Back</a>
+        </div>
+        <div class="row mb-3">
+            <!-- Student Details -->
+            <div class="col-md-4">
+                <h6>Student Details</h6>
+                <div class="mb-2">
+                    <label class="form-label mb-0"><strong>Name</strong></label>
+                    <input type="text" class="form-control" value="Mary Kate A. Saquin" readonly>
+                </div>
+                <div>
+                    <label class="form-label mb-0"><strong>Student ID</strong></label>
+                    <input type="text" class="form-control" value="20220025024" readonly>
+                </div>
+            </div>
+            <!-- Violation Summary -->
+            <div class="col-md-8">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="mb-0">Violation Summary</h6>
+                    
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm mb-0">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Total Count</th>
+                                <th>Letter Status</th>
+                                <th>Required CS Hours</th>
+                                <th>CS Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>ID Violation</td>
+                                <td>Insert Count</td>
+                                <td>
+                                    <!--ID VIOLATION-->
+                                    <!--Letter Status-->
+                                    <select class="form-select form-select-sm">
+                                        <option></option>
+                                        <option>Awaiting</option>
+                                        <option>Received</option>
+                                        <option>Not Required</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <!--ID VIOLATION-->
+                                    <!--Required CS Hours Status-->
+                                    <select class="form-select form-select-sm">
+                                        <option></option>
+                                        <option>N/A</option>
+                                        <option>2 hrs</option>
+                                        <option>3 hrs</option>
+                                        <option>Not Required</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <!--ID VIOLATION-->
+                                    <!--Community Service Status-->
+                                    <select class="form-select form-select-sm">
+                                        <option></option>
+                                        <option class="text-muted">N/A</option>
+                                        <option class="text-primary">Awaiting</option>
+                                        <option class="text-success">Completed</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Dress Code</td>
+                                <td>Insert Count</td>
+                                <td>
+                                    <!--DRESS CODE-->
+                                    <!--Letter Status-->
+                                    <select class="form-select form-select-sm">
+                                        <option></option>
+                                        <option>Awaiting</option>
+                                        <option>Received</option>
+                                        <option>Not Required</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <!--DRESS CODE-->
+                                    <!--Required CS Hours Status-->
+                                    <select class="form-select form-select-sm">
+                                        <option></option>
+                                        <option>2 hrs</option>
+                                        <option>3 hrs</option>
+                                        <option>Not Required</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <!--DRESS CODE-->
+                                    <!--Community Service Status-->
+                                    <select class="form-select form-select-sm">
+                                        <option></option>
+                                        <option>Awaiting</option>
+                                        <option>Completed</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Uniform Violation</td>
+                                <td>Insert Count</td>
+                                <td>
+                                    <!--UNIFORM VIOLATION-->
+                                    <!--Letter Status-->
+                                    <select class="form-select form-select-sm">
+                                        <option></option>
+                                        <option>Awaiting</option>
+                                        <option>Received</option>
+                                        <option>Not Required</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <!--UNIFORM VIOLATION-->
+                                    <!--Community Service Status-->
+                                    <select class="form-select form-select-sm">
+                                        <option></option>
+                                        <option>2 hrs</option>
+                                        <option>3 hrs</option>
+                                        <option>Not Required</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <!--UNIFORM VIOLATION-->
+                                    <!--Community Service Status-->
+                                    <select class="form-select form-select-sm">
+                                        <option></option>
+                                        <option>Awaiting</option>
+                                        <option>Completed</option>
+                                        <option>Not Required</option> 
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Violation History -->
+        <div>
+            <h6>Violation History</h6>
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm mb-0">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Reported by</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>4/10/2025</td>
+                            <td>Dress Code</td>
+                            <td>Staff C</td>
+                            <td>Wear crop top</td>
+                        </tr>
+                        <tr>
+                            <td>3/29/2025</td>
+                            <td>Dress Code</td>
+                            <td>Staff C</td>
+                            <td>Invalid shoes</td>
+                        </tr>
+                        <tr>
+                            <td>2/16/2025</td>
+                            <td>ID Violation</td>
+                            <td>Staff B</td>
+                            <td>No ID worn</td>
+                        </tr>
+                        <tr>
+                            <td>3/24/2025</td>
+                            <td>Dress Code</td>
+                            <td>Staff A</td>
+                            <td>Slippers</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

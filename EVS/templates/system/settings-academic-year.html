@@ -1,0 +1,90 @@
+{% extends "system/settings.html" %}
+{% block settings_content %}
+<div class="col-md-9 col-lg-10 d-flex flex-column ps-4" style="padding: 32px 0;">
+
+
+    <!-- Add New Academic Year -->
+    <div class="card mb-4" style="width: 100%; max-width: 600px;">
+        <div class="card-body">
+            <h5 class="card-title mb-3" style="color: #19387E; font-weight:900;">Add New Academic Year</h5>
+
+            <!--FORMS HERE-->
+            <form>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label">Academic Year Label</label>
+                        <input type="text" class="form-control" placeholder="Sample: '2025-2026'">
+                    </div>
+                    <div class="col">
+                        <label class="form-label">Semester</label>
+                        <select class="form-select">
+                            <option>1st Semester</option>
+                            <option>2nd Semester</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" class="form-control">
+                    </div>
+                    <div class="col">
+                        <label class="form-label">End Date</label>
+                        <input type="date" class="form-control">
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="setActive" checked>
+                            <label class="form-check-label" for="setActive">Set as Active Now</label>
+                        </div>
+                    </div>
+        <button type="submit" class="btn btn-primary">Add Year</button>
+    </div>
+            </form>
+        </div>
+    </div>
+    <!-- Academic Years History -->
+    <div class="card" style="width: 100%; max-width: 900px;">
+        <div class="card-body">
+            <h5 class="card-title mb-3" style="color: #19387E; font-weight:900;">Academic Years History</h5>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr> <!--Table Header LABEL-->
+                            <th>Academic Year and Sem</th> 
+                            <th>Status</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <!--SAMPLE HISTORY-->
+                            <td>2024-2025 (1st Semester)</td> <!--First Column: Academic Year and Semester-->
+                            <td><span class="badge bg-success">Active</span></td> <!--Second Column: Status-->
+                            <td>Aug 2, 2025</td> <!--Third Column: Start Date-->
+                            <td>Dec 20, 2025</td> <!--Fourth Column: End Date-->
+                            <td> <!--Action Column-->
+                                <button class="btn btn-primary btn-sm me-2">Activate</button>
+                                <button class="btn btn-outline-danger btn-sm">Deactivate</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!--SAMPLE HISTORY #2-->  
+                            <td>2024-2025 (2nd Semester)</td> <!--First Column: Academic Year and Semester-->
+                            <td><span class="badge bg-secondary">Inactive</span></td> <!--Second Column: Status-->
+                            <td>Jan 8, 2025</td> <!--Third Column: Start Date-->
+                            <td>May 31, 2025</td> <!--Fourth Column: End Date-->
+                            <td> <!--Action Column-->
+                                <button class="btn btn-primary btn-sm me-2">Activate</button>
+                                <button class="btn btn-outline-danger btn-sm">Deactivate</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+{% endblock %}
