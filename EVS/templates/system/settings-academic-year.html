@@ -4,7 +4,7 @@
 
 
     <!-- Add New Academic Year -->
-    <div class="card mb-4" style="width: 100%; max-width: 600px;">
+<div class="card mb-4" style="width: 100%; max-width: 600px;">
         <div class="card-body">
             <h5 class="card-title mb-3" style="color: #19387E; font-weight:900;">Add New Academic Year</h5>
 
@@ -12,25 +12,29 @@
            <form id="addAcademicYearForm">
                <div class="row mb-3">
                    <div class="col">
-                       <label class="form-label">Academic Year Label</label>
-                       <input type="text" class="form-control" id="ayLabel" placeholder="Sample: '2025-2026'">
+                       <label class="form-label">Academic Year Label <span class="text-danger">*</span></label>
+                       <input type="text" class="form-control" id="ayLabel" placeholder="Sample: '2025-2026'" required>
+                        <div class="invalid-feedback">Academic Year Label is required.</div>
+                                          </div>
+                                          <div class="col">
+                                              <label class="form-label">Semester <span class="text-danger">*</span></label>
+                                              <select class="form-select" id="aySem" required>
+                                                  <option>1st Semester</option>
+                                                  <option>2nd Semester</option>
+                                              </select>
+                        <div class="invalid-feedback">Semester is required.</div>
+                                          </div>
+                                      </div>
+                                      <div class="row mb-3">
+                                          <div class="col">
+                                              <label class="form-label">Start Date <span class="text-danger">*</span></label>
+                                              <input type="date" class="form-control" id="ayStart" required>
+                        <div class="invalid-feedback">Start Date is required.</div>
                    </div>
                    <div class="col">
-                       <label class="form-label">Semester</label>
-                       <select class="form-select" id="aySem">
-                           <option>1st Semester</option>
-                           <option>2nd Semester</option>
-                       </select>
-                   </div>
-               </div>
-               <div class="row mb-3">
-                   <div class="col">
-                       <label class="form-label">Start Date</label>
-                       <input type="date" class="form-control" id="ayStart">
-                   </div>
-                   <div class="col">
-                       <label class="form-label">End Date</label>
-                       <input type="date" class="form-control" id="ayEnd">
+                       <label class="form-label">End Date <span class="text-danger">*</span></label>
+                       <input type="date" class="form-control" id="ayEnd" required>
+                        <div class="invalid-feedback">End Date is required.</div>
                    </div>
                </div>
                <div class="d-flex justify-content-between align-items-center mb-3">
@@ -43,6 +47,7 @@
                    <button type="submit" class="btn btn-primary">Add Year</button>
                </div>
            </form>
+
         </div>
     </div>
     <!-- Academic Years History -->
@@ -87,8 +92,14 @@
                 </table>
             </div>
         </div>
+    </div>
+  </div>
+
+  <!---->
+</div>
+
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function() {
   const addAcademicYearForm = document.getElementById('addAcademicYearForm');
   if(addAcademicYearForm){
     addAcademicYearForm.addEventListener('submit', function(e) {
@@ -105,13 +116,13 @@ document.addEventListener('DOMContentLoaded', function() {
       const tbody = document.getElementById('academicYearsTbody');
       const row = document.createElement('tr');
       row.innerHTML = `<td>${label} (${sem})</td>
-<td><span class="badge ${active ? 'bg-success' : 'bg-secondary'}">${active ? 'Active' : 'Inactive'}</span></td>
-<td>${start}</td>
-<td>${end}</td>
-<td>
-  <button class="btn btn-primary btn-sm me-2">Activate</button>
-  <button class="btn btn-outline-danger btn-sm">Deactivate</button>
-</td>`;
+            <td><span class="badge ${active ? 'bg-success' : 'bg-secondary'}">${active ? 'Active' : 'Inactive'}</span></td>
+            <td>${start}</td>
+            <td>${end}</td>
+            <td>
+            <button class="btn btn-primary btn-sm me-2">Activate</button>
+            <button class="btn btn-outline-danger btn-sm">Deactivate</button>
+            </td>`;
       tbody.appendChild(row);
       this.reset();
     });
@@ -140,6 +151,103 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   });
+});
+  </script>
+  <script>
+  const form = document.getElementById('addAcademicYearForm');
+  form.addEventListener('submit', function(e) {
+      let valid = true;
+      const ayLabel = document.getElementById('ayLabel');
+      const aySem = document.getElementById('aySem');
+      const ayStart = document.getElementById('ayStart');
+      const ayEnd = document.getElementById('ayEnd');
+      if (!ayLabel.value.trim()) {
+          ayLabel.classList.add('is-invalid');
+          valid = false;
+      } else {
+          ayLabel.classList.remove('is-invalid');
+      }
+      if (!aySem.value) {
+          aySem.classList.add('is-invalid');
+          valid = false;
+      } else {
+          aySem.classList.remove('is-invalid');
+      }
+      if (!ayStart.value) {
+          ayStart.classList.add('is-invalid');
+          valid = false;
+      } else {
+          ayStart.classList.remove('is-invalid');
+      }
+      if (!ayEnd.value) {
+          ayEnd.classList.add('is-invalid');
+          valid = false;
+      } else {
+          ayEnd.classList.remove('is-invalid');
+      }
+      if (!valid) {
+          e.preventDefault();
+          e.stopPropagation();
+      }
+  });
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmModalLabel">Confirm Action</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="confirmModalBody">
+        <!-- Message inserted by JS -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="proceedActionBtn">Proceed</button>
+      </div>
+    </div>
+  </div>
+</div>
+// Confirmation modal for Activate/Deactivate buttons
+let actionToProceed = null;
+let actionRow = null;
+let confirmModal = null;
+document.addEventListener('DOMContentLoaded', function() {
+  confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+});
+document.addEventListener('click', function(e) {
+  // Activate
+  if(e.target && e.target.textContent.trim() === 'Activate') {
+    actionRow = e.target.closest('tr');
+    actionToProceed = 'activate';
+    document.getElementById('confirmModalBody').textContent = 'You are now activating a new set of data of the new semester for the violation tally';
+    confirmModal.show();
+  }
+  // Deactivate
+  if(e.target && e.target.textContent.trim() === 'Deactivate') {
+    actionRow = e.target.closest('tr');
+    actionToProceed = 'deactivate';
+    document.getElementById('confirmModalBody').textContent = 'You are now deactivating/removing the access view of the current set data for the viol tally';
+    confirmModal.show();
+  }
+});
+document.getElementById('proceedActionBtn').addEventListener('click', function() {
+  if (actionToProceed && actionRow) {
+    const badge = actionRow.querySelector('td:nth-child(2) .badge');
+    if (actionToProceed === 'activate') {
+      badge.textContent = 'Active';
+      badge.classList.remove('bg-secondary');
+      badge.classList.add('bg-success');
+    } else if (actionToProceed === 'deactivate') {
+      badge.textContent = 'Inactive';
+      badge.classList.remove('bg-success');
+      badge.classList.add('bg-secondary');
+    }
+    confirmModal.hide();
+    actionToProceed = null;
+    actionRow = null;
+  }
 });
 </script>
 {% endblock %}
