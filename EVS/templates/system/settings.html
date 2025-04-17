@@ -20,11 +20,6 @@
                 </div>
                 <div class="list-group">
                     <!--Sidebar Linksssss-->
-                    <a href="{% url 'evs:SettingsProfile' %}"
-                       class="list-group-item list-group-item-action {% if active_page == 'profile' %}active{% endif %}"
-                       {% if active_page == 'profile' %}style="background: #e6edff; color: #2255d5; border: none; font-weight: bold;"{% endif %}>
-                        <i class="bx bx-id-card"></i> Admin Profile
-                    </a>
                     <a href="{% url 'evs:SettingsAcademicYear' %}"
                        class="list-group-item list-group-item-action {% if active_page == 'academic-year' %}active{% endif %}"
                        {% if active_page == 'academic-year' %}style="background: #e6edff; color: #2255d5; border: none; font-weight: bold;"{% endif %}>
@@ -34,6 +29,11 @@
                        class="list-group-item list-group-item-action {% if active_page == 'user-management' %}active{% endif %}"
                        {% if active_page == 'user-management' %}style="background: #e6edff; color: #2255d5; border: none; font-weight: bold;"{% endif %}>
                         <i class="bx bx-group"></i> User Management
+                    </a>
+                    <a href="{% url 'evs:SettingsProfile' %}"
+                       class="list-group-item list-group-item-action {% if active_page == 'profile' %}active{% endif %}"
+                       {% if active_page == 'profile' %}style="background: #e6edff; color: #2255d5; border: none; font-weight: bold;"{% endif %}>
+                        <i class="bx bx-id-card"></i> Admin Profile
                     </a>
                 </div>
             </div>

@@ -139,7 +139,7 @@ def statistics_view(request):
     return render(request, 'system/statistics.html')
 
 def settings_views(request):
-    return render(request, 'system/settings.html')
+    return redirect('evs:SettingsAcademicYear')
 
 def settingsProfile_view(request):
     return render(request, 'system/settings-profile.html', {'active_page': 'profile'})
