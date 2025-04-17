@@ -14,21 +14,30 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+      interval: 5s
 
   web:
     build: .
     container_name: "evs_web_dev"
     env_file:
       - .env
+    restart: on-failure:3
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./manage.py:/app/manage.py
       - ./requirements.txt:/app/requirements.txt
       - ./static:/app/static
+      - ./XUOSA_EVS:/app/XUOSA_EVS
+      - ./EVS:/app/EVS
     ports:
       - "8000:8000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       DATABASE_HOST: ${DB_HOST}
       DATABASE_NAME: ${DB_NAME}
