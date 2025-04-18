@@ -23,7 +23,7 @@
                            </div>
                            <div class="stats-info">
                                <div class="stats-title">ID Violation</div>
-                               <div class="value">{{ id_violation }}</div>
+                                 <div class="value">{{ id_violation }}</div>
                            </div>
                        </div>
                        <div class="stats-footer">
@@ -44,7 +44,7 @@
                            </div>
                            <div class="stats-info">
                                <div class="stats-title">Uniform Violation</div>
-                               <div class="value">{{ uniform_violation }}</div>
+                                <div class="value">{{ uniform_violation }}</div>
                            </div>
                        </div> 
                        <div class="stats-footer">
@@ -66,7 +66,7 @@
                            </div>
                            <div class="stats-info">
                                <div class="stats-title">Dress Code Violation</div>
-                               <div class="value">{{ dress_code_violation }}</div>
+                                <div class="value">{{ dresscode_violation }}</div>
                            </div>
                        </div>
                        <div class="stats-footer">
@@ -113,7 +113,7 @@
           
        
        <!-- TABLE -->
-           <table class="table text-center" id="tickets">
+           <table class="table text-center" id="dashboard">
                <thead>
                    <tr>
                        <th>Ticket #</th>
@@ -126,7 +126,7 @@
                        <th>Actions</th>-->
                    </tr>
                </thead>
-               <tbody>
+               <tbody id="dashboard-table-body">
                     {% for ticket in tickets %}
                         <tr>
                             <td>{{ticket.ticket_id}}</td>
@@ -164,13 +164,87 @@
                             <td><a href="{% url 'evs:TicketDetails' ticket.ticket_id %}" class="btn btn-outline-primary btn-sm">View/Edit</a></td>-->
                         </tr>
                     {% endfor %}
-                    <tr>
+                    <!--<tr>
                         <td colspan="7" style="text-align:center">
                             <a href="{% url 'evs:ViolationTickets' %}"><button class="btn">View More Tickets</button></a>
                         </td>
-                    </tr>
+                    </tr>-->
                </tbody>
            </table>  
        </div>
     </div>
 {% endblock content %}
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const table = document.getElementById('dashboard');
+        const headers = table.querySelectorAll('th');
+        let sortDirection = 1; // 1 = asc, -1 = desc
+        let currentSortedColumn = -1;
+    
+        headers.forEach((header, index) => {
+            header.style.cursor = 'pointer';
+            header.addEventListener('click', () => {
+                if (currentSortedColumn === index) {
+                    sortDirection *= -1; // Toggle direction
+                } else {
+                    sortDirection = 1; // Default to ascending
+                    currentSortedColumn = index;
+                }
+    
+                const tbody = table.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr'))
+                    .filter(row => row.querySelectorAll('td').length > 0); // Ignore empty or no-data rows
+    
+                rows.sort((a, b) => {
+                    const cellA = a.querySelectorAll('td')[index].innerText.trim().toLowerCase();
+                    const cellB = b.querySelectorAll('td')[index].innerText.trim().toLowerCase();
+    
+                    // Try to compare as numbers first
+                    const numA = parseFloat(cellA);
+                    const numB = parseFloat(cellB);
+    
+                    if (!isNaN(numA) && !isNaN(numB)) {
+                        return (numA - numB) * sortDirection;
+                    }
+    
+                    return cellA.localeCompare(cellB) * sortDirection;
+                });
+    
+                // Clear existing rows
+                rows.forEach(row => tbody.appendChild(row));
+            });
+        });
+    });
+    function getFilterParams() {
+        const studentName = document.getElementById('student_name').value;
+        const studentId = document.getElementById('student_id').value;
+        const filterDate = document.getElementById('filter_date').value;
+    
+        const params = new URLSearchParams();
+        if (studentName) params.append('student_name', studentName);
+        if (studentId) params.append('student_id', studentId);
+        if (filterDate) params.append('filter_date', filterDate);
+        return params.toString();
+    }
+    
+    function refreshTicketTable() {
+        const baseUrl = "{% url 'evs:DashboardTable' %}";
+        const queryString = getFilterParams();
+        const url = `${baseUrl}?${queryString}`;
+    
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("dashboard-table-body").innerHTML = data.html;
+            })
+            .catch(error => console.error("Error loading table:", error));
+    }
+
+    // Auto-refresh every 1 seconds
+    setInterval(refreshTicketTable, 30000);
+
+    // Refresh once on page load
+    window.addEventListener("DOMContentLoaded", refreshTicketTable);
+</script>
+{% endblock scripts %}

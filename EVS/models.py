@@ -2,11 +2,13 @@ from django.db import models
 
 class AcademicYear(models.Model):
     acad_year_id = models.AutoField(primary_key=True)
-    year_start = models.IntegerField()
-    year_end = models.IntegerField()
+    description = models.CharField(max_length=200)
+    year_start = models.DateField()
+    year_end = models.DateField()
     semester = models.IntegerField()
     date_created = models.DateField(auto_now_add=True)
     osa_id = models.IntegerField()
+    active = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.year_start}-{self.year_end} Sem {self.semester}"
@@ -73,6 +75,7 @@ class StudentViolation(models.Model):
     community_service_status = models.SmallIntegerField(default=0, null=True)
     apology_letter = models.BooleanField(default=0)
     apology_letter_status = models.SmallIntegerField(default=0, null=True)
+    acad_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.student} - {self.violation} (x{self.count})"

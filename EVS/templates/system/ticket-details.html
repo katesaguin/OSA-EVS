@@ -30,6 +30,8 @@
                             {% if ticket.id_violation %} ID Violation<br> {% endif %}
                             {% if ticket.dress_code_violation %} Dress Code Violation<br> {% endif %}
                             {% if ticket.uniform_violation %} Uniform Violation<br> {% endif %}
+                            {% if ticket.id_not_claimed_violation %} ID Not Claimed <br> {% endif %}
+                            <button type="button" class="btn btn-outline-danger btn-sm" id="openViolationModal">Override Given Violation</button>
                         </p>
                     </div>
     
@@ -72,8 +74,9 @@
                             {% for reason in reasons %}
                                 {% if reason.reason_type == 'ID' %}
                                 <label>
-                                    <input type="checkbox" value="{{ reason.reason_id }}"
-                                           {% if reason.reason_id in selected %}checked{% endif %}>
+                                    <input type="checkbox" name="reasons" value="{{ reason.reason_id }}"
+                                            {% if ticket.id_violation == 0 %} disabled {% endif %}
+                                            {% if reason.reason_id in selected %}checked{% endif %}>
                                      {{ reason.description }}
                                   </label><br>
                                 {% endif %}
@@ -86,8 +89,9 @@
                             {% for reason in reasons %}
                                 {% if reason.reason_type == 'Uniform' %}
                                 <label>
-                                    <input type="checkbox" value="{{ reason.reason_id }}"
-                                           {% if reason.reason_id in selected %}checked{% endif %}>
+                                    <input type="checkbox" name="reasons" value="{{ reason.reason_id }}"
+                                            {% if ticket.uniform_violation == 0 %} disabled {% endif %}
+                                            {% if reason.reason_id in selected %}checked{% endif %}>
                                      {{ reason.description }}
                                   </label><br>
                                 {% endif %}
@@ -100,8 +104,9 @@
                             {% for reason in reasons %}
                                 {% if reason.reason_type == 'DressCode' %}
                                 <label>
-                                    <input type="checkbox" value="{{ reason.reason_id }}"
-                                           {% if reason.reason_id in selected %}checked{% endif %}>
+                                    <input type="checkbox" name="reasons" value="{{ reason.reason_id }}"
+                                            {% if ticket.dress_code_violation == 0 %} disabled {% endif %}
+                                            {% if reason.reason_id in selected %}checked{% endif %}>
                                      {{ reason.description }}
                                   </label><br>
                                 {% endif %}
@@ -126,14 +131,34 @@
                 </div>
             </div>
         </div>
+
+
+        <div id="violationModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close-btn" id="closeModal">&times;</span>
+                <h3>Select Violation Types to Override</h3>
+                <form id="violationForm">
+                    <label><input type="checkbox" name="violation_types" value="id_violation" {% if ticket.id_violation == 1 %}checked{% endif %}> ID Violation</label><br>
+                    <label><input type="checkbox" name="violation_types" value="dress_code_violation" {% if ticket.dress_code_violation == 1 %}checked{% endif %}> Dress Code Violation</label><br>
+                    <label><input type="checkbox" name="violation_types" value="uniform_violation" {% if ticket.uniform_violation == 1 %}checked{% endif %}> Uniform Violation</label><br>
+                    <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}">
+                    <button type="submit" class="buttons confirm-violation">Submit</button>
+                </form>
+            </div>
+        </div>
 {% endblock content %}
 {% block scripts%}
 <script>
     document.getElementById('submitReason').addEventListener('click', function() {
-        const checkedBoxes = document.querySelectorAll('input[type="checkbox"]:checked');
+        const checkedBoxes = document.querySelectorAll('input[type="checkbox"][name="reasons"]:checked');
         const remarks = document.getElementById('remarks').value;
         const selectedValues = Array.from(checkedBoxes).map(cb => cb.value);
     
+        if (selectedValues.length === 0 && remarks === '') {
+            alert("Please select at least one reason or add a remark to proceed.");
+            return;
+        }
+
         fetch('/xu-entry-violation/{{ ticket.ticket_id }}/validate', {
             method: "POST",
             headers: {
@@ -181,6 +206,59 @@
                 alert("Failed to change ID Status"); window.location.href = "{% url 'evs:TicketDetails' ticket.ticket_id %}";
             }
         })
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const openBtn = document.getElementById("openViolationModal");
+        const modal = document.getElementById("violationModal");
+        const closeBtn = document.getElementById("closeModal");
+        const form = document.getElementById("violationForm");
+    
+        // Open modal
+        openBtn.addEventListener("click", () => modal.style.display = "flex");
+    
+        // Close modal
+        closeBtn.addEventListener("click", () => modal.style.display = "none");
+    
+        // Close modal when clicking outside modal content
+        window.addEventListener("click", function (e) {
+            if (e.target === modal) {
+                modal.style.display = "none";
+            }
+        });
+    
+        // Submit form via AJAX
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const selected = formData.getAll("violation_types");
+            const ticketId = formData.get("ticket_id");
+    
+            fetch("/xu-entry-violation/{{ ticket.ticket_id }}/update/violations", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCSRFToken()
+                },
+                body: JSON.stringify({
+                    ticket_id: ticketId,
+                    violations: selected
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Violations updated!"); window.location.href="{% url 'evs:TicketDetails' ticket.ticket_id %}";
+                    location.reload();
+                } else {
+                    alert("Error updating violations.");
+                }
+            })
+            .catch(err => {
+                console.error("AJAX error:", err);
+                alert("Request failed.");
+            });
+        });
     });
 </script>
 {% endblock scripts%}

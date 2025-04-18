@@ -93,6 +93,7 @@ h5.style1 {
     cursor: pointer;
 }
 
+
 .controls-claimed{
     padding: 3px 16px;
     border: none;
@@ -697,4 +698,31 @@ h5.style1 {
         font-weight: bold;
         color: #4E647C;
     }
+}
+
+.modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background-color: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px 30px;
+    border-radius: 8px;
+    width: 300px;
+    position: relative;
+    text-align: center;
+}
+
+.close-btn {
+    position: absolute;
+    top: 8px; right: 12px;
+    font-size: 20px;
+    cursor: pointer;
 }

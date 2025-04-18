@@ -1,4 +1,42 @@
 {% extends 'evs_index.html' %}
+
+{% url 'evs:SettingsProfile' %}
+{% url 'evs:AcademicYear' %}
+{% url 'evs:UserManagement' %}
+
 {% block page_name %}
-<h5><i class='bx bx-home-alt'></i>Settings</h5>
+<h5><i class='bx bx-cog'></i>Settings</h5>
 {% endblock page_name %}
+
+{% block content %}
+
+<div class="content" style="min-height: 80vh;">
+    <div class="container-fluid" style="padding: 0;">
+        <div class="row" style="margin: 0;">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2" style="min-height: 100%; padding: 32px 0 32px 0; border-radius: 12px;">
+                <div class="mb-4">
+                    <h5 style="font-weight: 900; color: #19387E;"><i class="bx bx-user"></i> ADMIN SETTINGS</h5>
+                </div>
+                <div class="list-group">
+                    <!--Sidebar Linksssss-->
+                    <a href="{% url 'evs:AcademicYear' %}"
+                       class="list-group-item list-group-item-action {% if active_page == 'academic-year' %}active{% endif %}"
+                       {% if active_page == 'academic-year' %}style="background: #e6edff; color: #2255d5; border: none; font-weight: bold;"{% endif %}>
+                        <i class="bx bx-calendar"></i> Academic Year
+                    </a>
+                    <a href="{% url 'evs:UserManagement' %}"
+                       class="list-group-item list-group-item-action {% if active_page == 'user-management' %}active{% endif %}"
+                       {% if active_page == 'user-management' %}style="background: #e6edff; color: #2255d5; border: none; font-weight: bold;"{% endif %}>
+                        <i class="bx bx-group"></i> User Management
+                    </a>
+                </div>
+            </div>
+            <!-- Main Content -->
+            {% block settings_content %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

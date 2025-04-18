@@ -1,0 +1,39 @@
+{% for ticket in tickets %}
+<tr>
+    <td>{{ ticket.ticket_id }}</td>
+    <td>{{ ticket.student.last_name }}, {{ ticket.student.first_name }} {{ ticket.student.middle_name }}</td>
+    <td>{{ ticket.student.student_id }}</td>
+    <td>
+        {% if ticket.uniform_violation %}Uniform Violation<br>{% endif %}
+        {% if ticket.dress_code_violation %}Dress Code Violation<br>{% endif %}
+        {% if ticket.id_violation %}ID Violation<br>{% endif %}
+        {% if ticket.id_not_claimed_violation %}ID Not Claimed Violation{% endif %}
+    </td>
+    <td>{{ ticket.date_created }}</td>
+    <td class="{% if ticket.ticket_status != 1 and ticket.ticket_status != 2 %}status-pending{% elif ticket.ticket_status != 0 and ticket.ticket_status != 2 %}status-resolved{% else %}status-cleared{% endif %}">
+        {% if ticket.ticket_status != 1 and ticket.ticket_status != 2 %}Pending
+        {% elif ticket.ticket_status != 0 and ticket.ticket_status != 2 %}Resolved 
+        {% else %}Cleared{% endif %}
+    </td>
+    <td>
+        {% if ticket.id_status == 0 %}
+            <form method="POST" action="/xu-entry-violation/{{ ticket.ticket_id }}/update/id-status">
+                {% csrf_token %}
+                <input type="hidden" name="status" value="1">
+                <button type="submit" class="controls-unclaimed" {% if ticket.ticket_status == 0 %} disabled {% endif %}>Unclaimed</button>
+            </form>
+        {% else %}
+            <button type="button" class="controls-claimed" disabled>Claimed</button>
+        {% endif %}
+    </td>
+    <td>
+        <form action="{% url 'evs:TicketDetails' ticket.ticket_id %}">
+            <button class="controls-unclaimed">View/Edit</button>
+        </form>
+    </td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="8">No tickets found.</td>
+</tr>
+{% endfor %}
