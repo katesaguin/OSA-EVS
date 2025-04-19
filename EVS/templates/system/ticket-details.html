@@ -159,7 +159,7 @@
             return;
         }
 
-        fetch('/xu-entry-violation/{{ ticket.ticket_id }}/validate', {
+        fetch('/xu-entry-violation/ticket/{{ ticket.ticket_id }}/validate', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -186,7 +186,7 @@
 
     document.getElementById('id_status').addEventListener('change', function() {
         const id_status = this.value;
-        fetch('/xu-entry-violation/{{ ticket.ticket_id }}/update/id-status', {
+        fetch('/xu-entry-violation/ticket/{{ ticket.ticket_id }}/update/id-status', {
             method: "POST",
             headers: {
                 "Content-Type": 'application/json',
@@ -234,7 +234,7 @@
             const selected = formData.getAll("violation_types");
             const ticketId = formData.get("ticket_id");
     
-            fetch("/xu-entry-violation/{{ ticket.ticket_id }}/update/violations", {
+            fetch("/xu-entry-violation/ticket/{{ ticket.ticket_id }}/update/violations", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
