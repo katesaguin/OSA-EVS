@@ -1,4 +1,7 @@
 {% extends 'evs_index.html' %}
+{% block title %}
+<title>XU OSA - Ticket #{{ ticket.ticket_id }}</title>
+{% endblock title %}
 {% block page_name %}
 <h5><i class='bx bx-home-alt'></i>Tickets</h5>
 {% endblock page_name %}
@@ -126,7 +129,7 @@
     
                 <!-- Action Buttons -->
                 <div class="action-buttons">
-                    <a href="{% url 'evs:ClearTicket' ticket.ticket_id %}" class="buttons clear-violation" style="text-decoration: none;">CLEAR VIOLATION</a>
+                    <button type="button" class="buttons clear-violation" id="clearViolation">CLEAR VIOLATION</button>
                     <button type="button" class="buttons confirm-violation" id="submitReason">CONFIRM</button>
                 </div>
             </div>
@@ -149,6 +152,32 @@
 {% endblock content %}
 {% block scripts%}
 <script>
+    document.getElementById('clearViolation').addEventListener('click', function() {
+        const remark = document.getElementById('remarks').value;
+
+        if (remarks === '') {
+            alert("Please add a remark to proceed.");
+            return;
+        }
+
+        fetch('/xu-entry-violation/ticket/{{ ticket.ticket_id }}/clear-ticket', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken(),
+            },
+            body: JSON.stringify({
+                remarks: remark,
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("Violation cleared."); window.location.href = "{% url 'evs:ViolationTickets' %}";
+            } else {
+                alert("Failed to submit.");
+            }
+        });
+    });
     document.getElementById('submitReason').addEventListener('click', function() {
         const checkedBoxes = document.querySelectorAll('input[type="checkbox"][name="reasons"]:checked');
         const remarks = document.getElementById('remarks').value;
@@ -233,7 +262,12 @@
             const formData = new FormData(form);
             const selected = formData.getAll("violation_types");
             const ticketId = formData.get("ticket_id");
-    
+            
+            if (selected.length === 0) {
+                alert("Please select at least one violation type.");
+                return;
+            }
+
             fetch("/xu-entry-violation/ticket/{{ ticket.ticket_id }}/update/violations", {
                 method: "POST",
                 headers: {

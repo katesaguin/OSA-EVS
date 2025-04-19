@@ -65,6 +65,9 @@ def letter_checker(student_id, acad_year_id):
             violation.apology_letter = 1
             violation.apology_letter_status = 1
             violation.save()
+        else:
+            violation.apology_letter = 0
+            violation.apology_letter_status = 0 
 
 def cs_checker(student_id, acad_year_id):
     for_cs = StudentViolation.objects.filter(student_id=student_id, acad_year_id=acad_year_id)
@@ -73,6 +76,9 @@ def cs_checker(student_id, acad_year_id):
             violation.community_service = 1
             violation.community_service_status = 1
             violation.save()
+        else:
+            violation.community_service = 0
+            violation.community_service_status = 0
 
 def active_list():
     ay = AcademicYear.objects.filter(active=1)
@@ -86,8 +92,7 @@ def dashboard_view(request):
     current_month = datetime.now().month
     month_name = datetime(1900, current_month, 1).strftime('%B')
 
-    ay_list = active_list()
-    ay_ids = [ay.acad_year_id for ay in ay_list]
+    ay_ids = active_list()
 
     tickets = Ticket.objects.filter(acad_year_id__in=ay_ids).order_by('-ticket_id')
     students = Student.objects.all()
@@ -106,7 +111,7 @@ def dashboard_view(request):
             dresscode_violation += violation['count']
         else:
             uniform_violation += violation['count']
-    print(id_violation)
+
     return render(request, 'system/dashboard.html', {
         'id_violation': id_violation,
         'dresscode_violation': dresscode_violation,
@@ -118,8 +123,7 @@ def dashboard_view(request):
 
 #@login_required (ALL FUNCTION)
 def violation_views(request):
-    ay_list = active_list()
-    ay_ids = [ay.acad_year_id for ay in ay_list]
+    ay_ids = active_list()
 
     # Get search parameters
     student_name = request.GET.get('student_name', '')
@@ -159,8 +163,7 @@ def violation_views(request):
 
 def tally_views(request):
     # Get active academic year IDs
-    ay_list = active_list()
-    ay_ids = [ay.acad_year_id for ay in ay_list]
+    ay_ids = active_list()
 
     student_name = request.GET.get('student_name', '')
     student_id = request.GET.get('student_id', '')
@@ -221,10 +224,9 @@ def tally_views(request):
     return render(request, 'system/tally.html', context)
 
 def tallyDetails_views(request, student_id):
-    ay_list = active_list()
-    ay_ids = [ay.acad_year_id for ay in ay_list]
+    ay_ids = active_list()
 
-    tickets = Ticket.objects.filter(student_id=student_id, acad_year_id__in=ay_ids)
+    tickets = Ticket.objects.filter(student_id=student_id, acad_year_id__in=ay_ids, ticket_status=1 or 2)
     student = Student.objects.get(student_id=student_id)
     violations = StudentViolation.objects.filter(student_id=student_id, acad_year_id__in=ay_ids)
     reasons = TicketReason.objects.all()
@@ -264,17 +266,16 @@ def validated_ticket(request, ticket_id):
             remarks = data.get('remarks', '')
 
             ticket = Ticket.objects.get(ticket_id=ticket_id)
-            
+            TicketReason.objects.filter(ticket_id=ticket_id).delete()
+
+            for reason in selected_reasons:
+                TicketReason.objects.create(
+                    ticket_id = ticket_id,
+                    reason_id = reason
+                )
+
             if ticket.ticket_status != 1:
                 count_violation(ticket_id, ticket.acad_year_id)
-
-                TicketReason.objects.filter(ticket_id=ticket_id).delete()
-
-                for reason in selected_reasons:
-                    TicketReason.objects.create(
-                        ticket_id = ticket_id,
-                        reason_id = reason
-                    )
 
                 ticket.ticket_status = 1
                 ticket.remarks = remarks
@@ -283,6 +284,8 @@ def validated_ticket(request, ticket_id):
                 ## ADD AUTO EMAIL NOTIFICATION LOGIC
 
                 return JsonResponse({'message': 'Violation updated successfully'})
+            else:
+                return JsonResponse({'message': 'Violation is already resolved'})
 
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
@@ -325,8 +328,7 @@ def save_status(request, student_id):
         
         print(violations)  # Check the data received
         
-        ay_list = active_list()
-        ay_ids = [ay.acad_year_id for ay in ay_list]
+        ay_ids = active_list()
 
         for violation in violations:
             violation_id = violation.get('violation_id')
@@ -357,8 +359,7 @@ def save_status(request, student_id):
 
 # REFRESH TABLES
 def refresh_ticket_table(request):
-    ay_list = active_list()
-    ay_ids = [ay.acad_year_id for ay in ay_list]
+    ay_ids = active_list()
 
     # Same filtering logic
     student_name = request.GET.get('student_name', '')
@@ -393,10 +394,8 @@ def refresh_ticket_table(request):
     return JsonResponse({'html': html})
 
 def refresh_dashboard_table(request):
-    ay_list = active_list()
-    ay_ids = [ay.acad_year_id for ay in ay_list]
+    ay_ids = active_list()
 
-    # Same filtering logic
     student_name = request.GET.get('student_name', '')
     student_id = request.GET.get('student_id', '')
     filter_date = request.GET.get('filter_date', '')
@@ -435,46 +434,49 @@ def refresh_dashboard_table(request):
 def override_violation(request, ticket_id):
     if request.method == 'POST':
         data = json.loads(request.body)
-        ticket_id = data.get('ticket_id')
         selected = data.get('violations', [])
 
         ticket = Ticket.objects.get(ticket_id=ticket_id)
         ticket.id_violation = 'id_violation' in selected
         ticket.dress_code_violation = 'dress_code_violation' in selected
         ticket.uniform_violation = 'uniform_violation' in selected
+        if ticket.ticket_status != 0:
+            violation_map = {
+                1: ticket.id_violation,
+                2: ticket.dress_code_violation,
+                3: ticket.uniform_violation,
+                4: ticket.id_not_claimed_violation
+            }
 
-        violation_map = {
-            1: ticket.id_violation,
-            2: ticket.dress_code_violation,
-            3: ticket.uniform_violation,
-            4: ticket.id_not_claimed_violation
-        }
+            for violation_id in violation_map.items():
+                violation = StudentViolation.objects.filter(
+                    student_id=ticket.student_id,
+                    acad_year_id=ticket.acad_year_id,
+                    violation_id=violation_id
+                ).first()
 
-        for violation_id, status in violation_map.items():
-            violation = StudentViolation.objects.filter(
-                student_id=ticket.student_id,
-                acad_year_id=ticket.acad_year_id,
-                violation_id=violation_id
-            ).first()
+                if violation:
+                    violation.count -= 1
 
-            if violation:
-                violation.count -= 1
+                    if violation.count < 2:
+                        violation.apology_letter = 0
+                        violation.apology_letter_status = 0
 
-                if violation.count < 2:
-                    violation.apology_letter = 0
-                    violation.apology_letter_status = 0
+                    if violation.count < 3:
+                        violation.community_service = 0
+                        violation.community_service_status = 0
 
-                if violation.count < 3:
-                    violation.community_service = 0
-                    violation.community_service_status = 0
+                    if violation.count <= 0:
+                        violation.delete()
+                    else:
+                        violation.save()
 
-                if violation.count <= 0:
-                    violation.delete()
-                else:
-                    violation.save()
+        cs_checker(ticket.student_id, ticket.acad_year_id)
+        letter_checker(ticket.student_id, ticket.acad_year_id)
 
+        ticket.override_status = 1
         ticket.ticket_status = 0
-        ticket.date_validated = None  # if this is a DateTimeField
+        ticket.date_validated = None 
         ticket.id_status = 0
         ticket.remarks = ''
         ticket.save()
@@ -488,14 +490,54 @@ def statistics_view(request):
     return render(request, 'system/statistics.html')
 
 def clear_violation(request, ticket_id):
-    ticket = Ticket.objects.get(ticket_id=ticket_id)
-    ticket.ticket_status = 2
-    ticket.date_viladated = datetime.now()
-    ticket.save()
-    TicketReason.objects.filter(ticket_id=ticket_id).delete()
+    if request.method == 'POST':
+        ticket = Ticket.objects.get(ticket_id=ticket_id)
+        data = json.loads(request.body)
+        remarks = data.get('remarks')
 
-    return redirect('evs:ViolationTickets')
+        if ticket.ticket_status != 0:
+                violation_map = {
+                    1: ticket.id_violation,
+                    2: ticket.dress_code_violation,
+                    3: ticket.uniform_violation,
+                    4: ticket.id_not_claimed_violation
+                }
 
+                for violation_id in violation_map.items():
+                    violation = StudentViolation.objects.filter(
+                        student_id=ticket.student_id,
+                        acad_year_id=ticket.acad_year_id,
+                        violation_id=violation_id
+                    ).first()
+
+                    if violation:
+                        violation.count -= 1
+
+                        if violation.count < 2:
+                            violation.apology_letter = 0
+                            violation.apology_letter_status = 0
+
+                        if violation.count < 3:
+                            violation.community_service = 0
+                            violation.community_service_status = 0
+
+                        if violation.count <= 0:
+                            violation.delete()
+                        else:
+                            violation.save()
+
+        cs_checker(ticket.student_id, ticket.acad_year_id)
+        letter_checker(ticket.student_id, ticket.acad_year_id)
+
+        ticket.ticket_status = 2
+        ticket.remarks = remarks
+        ticket.date_viladated = datetime.now()
+        ticket.save()
+        
+        TicketReason.objects.filter(ticket_id=ticket_id).delete()
+        return JsonResponse({'success': True})
+    
+    return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
 
@@ -519,6 +561,9 @@ def settings_academic(request):
             messages.warning(request, '!!  Academic Year with this semester and date range already exists  !!')
             return redirect('evs:AcademicYear')
 
+        if active:
+            AcademicYear.objects.update(active=False)
+
         AcademicYear.objects.create(
             description=desc,
             semester=sem,
@@ -530,13 +575,18 @@ def settings_academic(request):
 
         messages.success(request, 'Academic Year successfully created.')
         return redirect('evs:AcademicYear')
+    
     if request.method == 'PATCH':
         data = json.loads(request.body)
         id = data.get('id')
-        value = data.get('active') == '1'  # Ensures it's boolean
+        value = data.get('active') == '1'
 
         ay = AcademicYear.objects.filter(acad_year_id=id).first()
         if ay:
+            if value:
+                # Deactivate all before activating the selected one
+                AcademicYear.objects.update(active=False)
+
             ay.active = value
             ay.save()
             return JsonResponse({
@@ -548,7 +598,7 @@ def settings_academic(request):
 
     ay_list = AcademicYear.objects.all().order_by('-acad_year_id')
 
-    paginator = Paginator(ay_list, 5)
+    paginator = Paginator(ay_list, 3)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     semesters = Semester.objects.all()

@@ -55,6 +55,7 @@ class Ticket(models.Model):
     photo_path = models.CharField(max_length=200, blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_validated = models.DateTimeField(null=True, blank=True)
+    override_status = models.BooleanField(default=0)
     
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE, related_name='tickets_by_semester')

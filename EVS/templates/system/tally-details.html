@@ -1,4 +1,7 @@
 {% extends 'evs_index.html' %}
+{% block title %}
+<title>XU OSA - Student #{{ student.student_id }}</title>
+{% endblock title %}
 {% block page_name %}
 <h5><i class='bx bx-list-ul'></i>Tally</h5>
 {% endblock page_name %}
@@ -85,15 +88,18 @@
                 <table class="table table-bordered table-sm mb-0 text-center">
                     <thead>
                         <tr>
+                            <th>Ticket</th>
                             <th>Date</th>
-                            <th>Type</th>
+                            <th>Violations</th>
                             <th>Reported by</th>
+                            <th>Reason</th>
                             <th>Remarks</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for ticket in tickets %}
                             <tr>
+                                <td>#{{ ticket.ticket_id }}</td>
                                 <td>
                                     {{ ticket.date_created }}
                                 </td>
@@ -107,16 +113,18 @@
                                     {{ ticket.submitted_by }}
                                 </td>
                                 <td>
-                                    {{ ticket.remarks }}
                                     {% for reason in reasons %}
                                         {% if reason.ticket_id == ticket.ticket_id %}
                                             {% for r in all_reasons %}
                                                 {% if r.reason_id == reason.reason_id %}
-                                                    {{ r.description }}
+                                                    {{ r.description }}<br>
                                                 {% endif %}
                                             {% endfor %}
                                         {% endif %}
                                     {% endfor %}
+                                </td>
+                                <td>
+                                    {{ ticket.remarks }}
                                 </td>
                             </tr>
                         {% endfor %}

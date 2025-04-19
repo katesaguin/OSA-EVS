@@ -79,15 +79,10 @@
                               <td>{{ item.year_start }}</td>
                               <td>{{ item.year_end }}</td>
                               <td>
-                                {% if item.active == 1 %}
-                                  <button type="button" class="toggle-status badge bg-danger" data-id="{{ item.acad_year_id }}" data-active="0">
-                                    Deactivate
-                                  </button>
-                                {% else %}
-                                  <button type="button" class="toggle-status badge bg-success" data-id="{{ item.acad_year_id }}" data-active="1">
+                                  <button type="button" class="toggle-status badge bg-success" data-id="{{ item.acad_year_id }}" data-active="1"
+                                  {% if item.active == 1 %}disabled{% endif %}>
                                     Activate
                                   </button>
-                                {% endif %}
                               </td>
                             {% endfor %}
                     </tbody>
