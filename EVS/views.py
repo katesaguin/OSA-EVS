@@ -264,24 +264,25 @@ def validated_ticket(request, ticket_id):
             remarks = data.get('remarks', '')
 
             ticket = Ticket.objects.get(ticket_id=ticket_id)
+            
+            if ticket.ticket_status != 1:
+                count_violation(ticket_id, ticket.acad_year_id)
 
-            count_violation(ticket_id, ticket.acad_year_id)
+                TicketReason.objects.filter(ticket_id=ticket_id).delete()
 
-            TicketReason.objects.filter(ticket_id=ticket_id).delete()
+                for reason in selected_reasons:
+                    TicketReason.objects.create(
+                        ticket_id = ticket_id,
+                        reason_id = reason
+                    )
 
-            for reason in selected_reasons:
-                TicketReason.objects.create(
-                    ticket_id = ticket_id,
-                    reason_id = reason
-                )
+                ticket.ticket_status = 1
+                ticket.remarks = remarks
+                ticket.date_viladated = datetime.now()
+                ticket.save()
+                ## ADD AUTO EMAIL NOTIFICATION LOGIC
 
-            ticket.ticket_status = 1
-            ticket.remarks = remarks
-            ticket.date_viladated = datetime.now()
-            ticket.save()
-            ## ADD AUTO EMAIL NOTIFICATION LOGIC
-
-            return JsonResponse({'message': 'Violation updated successfully'})
+                return JsonResponse({'message': 'Violation updated successfully'})
 
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)

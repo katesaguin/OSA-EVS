@@ -57,7 +57,7 @@
                     </td>
                     <td>
                         {% if ticket.id_status == 0 %}
-                            <form method="POST" action="/xu-entry-violation/{{ ticket.ticket_id }}/update/id-status">
+                            <form method="POST" action="/xu-entry-violation/ticket/{{ ticket.ticket_id }}/update/id-status">
                                 {% csrf_token %}
                                 <input type="hidden" name="status" value="1">
                                 <button type="submit" class="controls-unclaimed" {% if ticket.ticket_status == 0 %} disabled {% endif %}>Unclaimed</button>
