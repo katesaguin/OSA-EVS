@@ -5,7 +5,7 @@ services:
     env_file:
       - .env
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
       - MYSQL_DATABASE=${DB_NAME}
       - MYSQL_USER=${DB_USER}
       - MYSQL_PASSWORD=${DB_PASSWORD}
@@ -22,13 +22,16 @@ services:
   web:
     build: .
     container_name: "XU_OSA_Web"
+    restart: on-failure:3
+
     env_file:
       - .env
     environment:
       - DATABASE_HOST=${DB_HOST}
       - DATABASE_USER=${DB_USER}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     volumes:
       - ./static:/app/staticfiles
 
