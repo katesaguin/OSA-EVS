@@ -39,7 +39,7 @@
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id='tally-table-body'>
                 {% for violation in student_violations %}
                 <tr>
                     <td>{{ violation.student.last_name }}, {{ violation.student.first_name }} {{ violation.student.middle_name }}</td>
@@ -75,7 +75,7 @@
             </tbody>
         </table>
     </div>
-    <div class="pagination">
+    <div class="pagination justify-content-center">
         <ul>
             {% if student_violations.has_previous %}
             <li><a href="{% url 'evs:TallyDetails' %}?page={{ student_violations.previous_page_number }}{% if request.GET.student_name %}&student_name={{ request.GET.student_name }}{% endif %}{% if request.GET.student_id %}&student_id={{ request.GET.student_id }}{% endif %}">&laquo; Previous</a></li>
@@ -143,8 +143,40 @@
         });
     });
 
-    document.getElementById('tallySearch').addEventListener('click', function(){
+    function getFilterParams() {
+        const studentName = document.getElementById('student_name').value;
+        const studentId = document.getElementById('student_id').value;
+        const filterDate = document.getElementById('filter_date').value;
+    
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentPage = urlParams.get('page') || '1'; 
+    
+        const params = new URLSearchParams();
+        if (studentName) params.append('student_name', studentName);
+        if (studentId) params.append('student_id', studentId);
+        if (filterDate) params.append('filter_date', filterDate);
+        params.append('page', currentPage);
+    
+        return params.toString();
+    }
+    
+    function refreshTallyTable() {
+        const baseUrl = "{% url 'evs:ViolationTable' %}";
+        const queryString = getFilterParams();
+        const url = `${baseUrl}?${queryString}`;
+    
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("ticket-table-body").innerHTML = data.html;
+            })
+            .catch(error => console.error("Error loading table:", error));
+    }
 
-    })
+    // Auto-refresh every 30 seconds
+    setInterval(refreshTicketTable, 30000);
+
+    // Refresh once on page load
+    window.addEventListener("DOMContentLoaded", refreshTicketTable);
 </script>
 {% endblock scripts%}

@@ -153,7 +153,7 @@
                                 {% elif ticket.ticket_status != 0 and ticket.ticket_status != 2 %} Resolved 
                                 {% else %} Cleared {% endif %}
                             </td>
-                            <!--!<td>
+                            <!--<td>
                                 {% if ticket.id_status == 0 %}
                                     <form method="POST" action="/xu-entry-violation/{{ ticket.ticket_id }}/update/id-status">
                                         {% csrf_token %}

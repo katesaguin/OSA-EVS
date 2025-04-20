@@ -1,0 +1,32 @@
+{% for violation in student_violations %}
+<tr>
+    <td>{{ violation.student.last_name }}, {{ violation.student.first_name }} {{ violation.student.middle_name }}</td>
+    <td>{{ violation.student.student_id }}</td>
+    <td>{{ violation.id_violation_count }}</td>
+    <td>{{ violation.dress_code_count }}</td>
+    <td>{{ violation.uniform_count }}</td>
+    <td>{{ violation.id_not_claimed_count}}
+    <td {% if violation.community_service_status == -1  %} class="status-pending"
+        {% elif violation.community_service_status == 0 %} class="status-resolved"
+        {% else %} class="status-cleared" {% endif %}>
+        {% if violation.community_service_status == 1 %}
+            <span class="status status-awaiting">Awaiting</span>
+        {% elif violation.community_service_status == 0 %}
+            <span class="status status-completed">Completed</span>
+        {% elif violation.community_service_status == -1 %}
+            <span class="status status-not-required">Not Required</span>
+        {% endif %}
+    </td>
+    <td>
+        <div>
+            <form action="{% url 'evs:TallyDetails' violation.student.student_id %}">
+                <button class="controls-unclaimed">View/Edit</button>
+            </form>
+        </div>
+    </td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="7">No violation records found.</td>
+</tr>
+{% endfor %}

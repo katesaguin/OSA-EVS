@@ -6,14 +6,14 @@ import json
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.http import JsonResponse
 from django.contrib import messages
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from django.template.loader import render_to_string
 #import login_required
 
 # GLOBAL FUNCTIONS
 def paginate_queryset(request, queryset, per_page):
-    paginator = Paginator(queryset, per_page)
     page_number = request.GET.get('page')
+    paginator = Paginator(queryset, per_page)
     return paginator.get_page(page_number)
 
 def count_violation(ticket_id, acad_year_id):
@@ -119,11 +119,11 @@ def dashboard_view(request):
     current_month = datetime.now().month
     month_name = datetime(1900, current_month, 1).strftime('%B')
 
-    ay_ids = active_list()
+    ay_id = active_list()
 
-    tickets = Ticket.objects.filter(acad_year_id__in=ay_ids).order_by('-ticket_id')
+    tickets = Ticket.objects.filter(acad_year_id__in=ay_id).order_by('-ticket_id')
     students = Student.objects.all()
-    violations = StudentViolation.objects.filter(acad_year_id__in=ay_ids)\
+    violations = StudentViolation.objects.filter(acad_year_id__in=ay_id)\
         .values('violation_id')\
         .annotate(count=Sum('count'))
     id_violation = 0
@@ -150,23 +150,22 @@ def dashboard_view(request):
 
 #@login_required (ALL FUNCTION)
 def violation_views(request):
-    ay_ids = active_list()
+    ay_id = active_list()
 
     student_name = request.GET.get('student_name', '')
     student_id = request.GET.get('student_id', '')
     filter_date = request.GET.get('filter_date', '')
 
-    tickets = Ticket.objects.filter(acad_year_id__in=ay_ids)
+    tickets = Ticket.objects.filter(acad_year_id__in=ay_id)
 
     if student_name:
         name_terms = student_name.split()
-        name_query = tickets
         for term in name_terms:
-            name_query = name_query.filter(
-                student__first_name__icontains=term) | \
-                tickets.filter(student__middle_name__icontains=term) | \
-                tickets.filter(student__last_name__icontains=term)
-        tickets = name_query
+            tickets = tickets.filter(
+                Q(student__first_name__icontains=term) |
+                Q(student__middle_name__icontains=term) |
+                Q(student__last_name__icontains=term)
+            )
 
     if student_id:
         tickets = tickets.filter(student__student_id__icontains=student_id)
@@ -187,13 +186,13 @@ def violation_views(request):
     return render(request, 'system/tickets.html', context)
 
 def tally_views(request):
-    ay_ids = active_list()
+    ay_id = active_list()
 
     student_name = request.GET.get('student_name', '')
     student_id = request.GET.get('student_id', '')
 
     students_with_tickets = Student.objects.filter(
-        ticket__acad_year_id__in=ay_ids
+        ticket__acad_year_id__in=ay_id, ticket__ticket_status = 1
     ).distinct()
 
     if student_name:
@@ -212,10 +211,10 @@ def tally_views(request):
     student_violations = []
 
     for student in students_with_tickets:
-        id_violation = StudentViolation.objects.filter(student=student, violation_id=1, acad_year_id__in=ay_ids)
-        dress_code = StudentViolation.objects.filter(student=student, violation_id=2, acad_year_id__in=ay_ids)
-        uniform = StudentViolation.objects.filter(student=student, violation_id=3, acad_year_id__in=ay_ids)
-        id_not_claimed = StudentViolation.objects.filter(student=student, violation_id=4, acad_year_id__in=ay_ids)
+        id_violation = StudentViolation.objects.filter(student=student, violation_id=1, acad_year_id__in=ay_id)
+        dress_code = StudentViolation.objects.filter(student=student, violation_id=2, acad_year_id__in=ay_id)
+        uniform = StudentViolation.objects.filter(student=student, violation_id=3, acad_year_id__in=ay_id)
+        id_not_claimed = StudentViolation.objects.filter(student=student, violation_id=4, acad_year_id__in=ay_id)
 
         statuses = []
         for qs in [id_violation, dress_code, uniform, id_not_claimed]:
@@ -247,11 +246,11 @@ def tally_views(request):
     return render(request, 'system/tally.html', context)
 
 def tallyDetails_views(request, student_id):
-    ay_ids = active_list()
+    ay_id = active_list()
 
-    tickets = Ticket.objects.filter(student_id=student_id, acad_year_id__in=ay_ids, ticket_status=1 or 2)
+    tickets = Ticket.objects.filter(student_id=student_id, acad_year_id__in=ay_id, ticket_status=1 or 2)
     student = Student.objects.get(student_id=student_id)
-    violations = StudentViolation.objects.filter(student_id=student_id, acad_year_id__in=ay_ids)
+    violations = StudentViolation.objects.filter(student_id=student_id, acad_year_id__in=ay_id)
     reasons = TicketReason.objects.all()
     all_reasons = Reason.objects.all()
     types = Violation.objects.all()
@@ -352,7 +351,7 @@ def save_status(request, student_id):
         
         print(violations)  # Check the data received
         
-        ay_ids = active_list()
+        ay_id = active_list()
 
         for violation in violations:
             violation_id = violation.get('violation_id')
@@ -364,7 +363,7 @@ def save_status(request, student_id):
 
             try:
                 # Make sure the violation exists and belongs to the correct student and academic year
-                student_violation = StudentViolation.objects.get(id=violation_id, student_id=student_id, acad_year_id__in=ay_ids)
+                student_violation = StudentViolation.objects.get(id=violation_id, student_id=student_id, acad_year_id__in=ay_id)
                 student_violation.apology_letter_status = letter_status
                 student_violation.community_service = cs_render
                 student_violation.community_service_status = cs_status
@@ -383,13 +382,13 @@ def save_status(request, student_id):
 
 # REFRESH TABLES
 def refresh_ticket_table(request):
-    ay_ids = active_list()
+    ay_id = active_list()
 
     student_name = request.GET.get('student_name', '')
     student_id = request.GET.get('student_id', '')
     filter_date = request.GET.get('filter_date', '')
 
-    tickets = Ticket.objects.filter(acad_year_id__in=ay_ids)
+    tickets = Ticket.objects.filter(acad_year_id__in=ay_id)
 
     if student_name:
         name_terms = student_name.split()
@@ -417,39 +416,75 @@ def refresh_ticket_table(request):
     return JsonResponse({'html': html})
 
 def refresh_dashboard_table(request):
-    ay_ids = active_list()
+    ay_id = active_list()
+
+    tickets = Ticket.objects.filter(acad_year_id__in=ay_id)
+    students = Student.objects.all()
+    tickets = tickets.order_by('-ticket_id')
+    page_obj = paginate_queryset(request, tickets, 10)
+
+    html = render_to_string('system/partials/dashboard-table-body.html', {
+        'tickets': page_obj,
+        'students': students
+        })
+    return JsonResponse({'html': html})
+
+def refresh_tally_table(request):
+    ay_id = active_list()
 
     student_name = request.GET.get('student_name', '')
     student_id = request.GET.get('student_id', '')
-    filter_date = request.GET.get('filter_date', '')
 
-    tickets = Ticket.objects.filter(acad_year_id__in=ay_ids)
+    students_with_tickets = Student.objects.filter(
+        ticket__acad_year_id__in=ay_id, ticket__ticket_status = 1
+    ).distinct()
 
     if student_name:
         name_terms = student_name.split()
+        name_query = students_with_tickets
         for term in name_terms:
-            tickets = tickets.filter(
-                Q(student__first_name__icontains=term) |
-                Q(student__middle_name__icontains=term) |
-                Q(student__last_name__icontains=term)
-            )
+            name_query = name_query.filter(
+                first_name__icontains=term) | \
+                students_with_tickets.filter(middle_name__icontains=term) | \
+                students_with_tickets.filter(last_name__icontains=term)
+        students_with_tickets = name_query
 
     if student_id:
-        tickets = tickets.filter(student__student_id__icontains=student_id)
+        students_with_tickets = students_with_tickets.filter(student_id__icontains=student_id)
 
-    if filter_date:
-        try:
-            date_obj = datetime.strptime(filter_date, "%Y-%m-%d").date()
-            tickets = tickets.filter(date_created__date=date_obj)
-        except ValueError:
-            pass
+    student_violations = []
 
-    tickets = tickets.order_by('-ticket_id')
-    page_obj = paginate_queryset(request, tickets, 15)
+    for student in students_with_tickets:
+        id_violation = StudentViolation.objects.filter(student=student, violation_id=1, acad_year_id__in=ay_id)
+        dress_code = StudentViolation.objects.filter(student=student, violation_id=2, acad_year_id__in=ay_id)
+        uniform = StudentViolation.objects.filter(student=student, violation_id=3, acad_year_id__in=ay_id)
+        id_not_claimed = StudentViolation.objects.filter(student=student, violation_id=4, acad_year_id__in=ay_id)
 
-    html = render_to_string('system/partials/dashboard-table-body.html', {'tickets': page_obj})
+        statuses = []
+        for qs in [id_violation, dress_code, uniform, id_not_claimed]:
+            statuses += [violation.community_service_status for violation in qs]
+
+        if 1 in statuses:
+            community_service_status = 1
+        elif 2 in statuses:
+            community_service_status = 0
+        elif not statuses:
+            community_service_status = -1
+        else:
+            community_service_status = -1
+
+        student_violations.append({
+            'student': student,
+            'id_violation_count': id_violation.aggregate(Sum('count'))['count__sum'] if id_violation else 0,
+            'dress_code_count': dress_code.aggregate(Sum('count'))['count__sum'] if dress_code else 0,
+            'uniform_count': uniform.aggregate(Sum('count'))['count__sum'] if uniform else 0,
+            'id_not_claimed_count': id_not_claimed.aggregate(Sum('count'))['count__sum'] if id_not_claimed else 0,
+            'community_service_status': community_service_status,
+        })
+
+    page_obj = paginate_queryset(request, student_violations, 15)
+    html = render_to_string('system/partials/tally-table-body.html', {'tickets': page_obj})
     return JsonResponse({'html': html})
-
 
 
 
@@ -562,9 +597,7 @@ def settings_academic(request):
 
     ay_list = AcademicYear.objects.all().order_by('-acad_year_id')
 
-    paginator = Paginator(ay_list, 3)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj = paginate_queryset(request, ay_list, 3)
     semesters = Semester.objects.all()
     return render(request, 'system/settings/academic-year.html', {
         'semesters': semesters,
