@@ -48,9 +48,8 @@ ENV PYTHONUNBUFFERED=1
 USER appuser
  
 # Expose the application port
-EXPOSE 8000
+EXPOSE 8001
 
 RUN chmod +x /app/entrypoint.sh
-# Start the application using Gunicorn
+
 CMD ["/app/entrypoint.sh"]
-#CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

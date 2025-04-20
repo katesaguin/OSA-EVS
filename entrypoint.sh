@@ -1,32 +1,32 @@
 #!/usr/bin/env bash
 
-#python manage.py collectstatic --noinput
+python manage.py collectstatic --noinput
 python manage.py makemigrations --noinput
 python manage.py migrate --noinput
 
 mysql -h "$DB_HOST" -u "root" -p"$DB_ROOT_PASSWORD" "$DB_NAME" <<EOF
 
-INSERT INTO EVS_semester (semester)
-VALUES ('First Semester'), ('Second Semester'), ('Intersession');
+INSERT INTO EVS_semester
+VALUES (1, 'First Semester'), (2, 'Second Semester'), (3, 'Intersession');
 
-INSERT INTO EVS_violation (description)
+INSERT INTO EVS_violation
 VALUES
-('Uniform Violation'),
-('Dress Code Violation'),
-('ID Violation'),
-('ID Not Claimed');
+(1, 'Uniform Violation'),
+(2, 'Dress Code Violation'),
+(3, 'ID Violation'),
+(4, 'ID Not Claimed');
 
-INSERT INTO EVS_reason (reason_type, description) VALUES
-('ID', 'Forgotten or misplaced'),
-('ID', 'ID not claimed on time'),
-('Uniform', 'Lack of Awareness of Specific Policy'),
-('Uniform', 'Unforeseen Circumstances'),
-('Uniform', 'Misinterpretation of dress code compliance'),
-('Uniform', 'Substitution of footwear (Unexpected damage/unavailability)'),
-('DressCode', 'Unawareness of mandated garment length requirements'),
-('DressCode', 'Oversight in compliance'),
-('DressCode', 'Personal style preference conflicting with policy'),
-('DressCode', 'Temporary use of restricted footwear due to convenience or necessity');
+INSERT INTO EVS_reason VALUES
+(1, 'ID', 'Forgotten or misplaced'),
+(2, 'ID', 'ID not claimed on time'),
+(3, 'Uniform', 'Lack of Awareness of Specific Policy'),
+(4, 'Uniform', 'Unforeseen Circumstances'),
+(5, 'Uniform', 'Misinterpretation of dress code compliance'),
+(6, 'Uniform', 'Substitution of footwear (Unexpected damage/unavailability)'),
+(7, 'DressCode', 'Unawareness of mandated garment length requirements'),
+(8, 'DressCode', 'Oversight in compliance'),
+(9, 'DressCode', 'Personal style preference conflicting with policy'),
+(10, 'DressCode', 'Temporary use of restricted footwear due to convenience or necessity');
 
 DELIMITER //
 
@@ -110,3 +110,5 @@ EOF
 echo "Database initialized."
 
 python -m gunicorn --bind 0.0.0.0:8001 --workers 3 XUOSA_EVS.wsgi:application
+
+#python manage.py runserver 0.0.0.0:8000

@@ -219,22 +219,9 @@
             });
         });
     });
-    function getFilterParams() {
-        const studentName = document.getElementById('student_name').value;
-        const studentId = document.getElementById('student_id').value;
-        const filterDate = document.getElementById('filter_date').value;
-    
-        const params = new URLSearchParams();
-        if (studentName) params.append('student_name', studentName);
-        if (studentId) params.append('student_id', studentId);
-        if (filterDate) params.append('filter_date', filterDate);
-        return params.toString();
-    }
     
     function refreshTicketTable() {
-        const baseUrl = "{% url 'evs:DashboardTable' %}";
-        const queryString = getFilterParams();
-        const url = `${baseUrl}?${queryString}`;
+        const url = "{% url 'evs:DashboardTable' %}";
     
         fetch(url)
             .then(response => response.json())
