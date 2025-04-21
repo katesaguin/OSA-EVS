@@ -154,15 +154,15 @@
 <script>
     document.getElementById('clearViolation').addEventListener('click', function() {
         
-        if (!confirm('Clear Ticket #{{ ticket.ticket_id }}?')) {
-            location.reload();
-            return;
-        }
-
         const remark = document.getElementById('remarks').value;
 
         if (remarks === '') {
             alert("Please add a remark to proceed.");
+            return;
+        }
+
+        if (!confirm('Clear Ticket #{{ ticket.ticket_id }}?')) {
+            location.reload();
             return;
         }
 
@@ -187,17 +187,17 @@
     
     document.getElementById('submitReason').addEventListener('click', function() {
 
-        if (!confirm('Mark Ticket #{{ ticket.ticket_id }} as resolved?')) {
-            location.reload();
-            return;
-        }
-
         const checkedBoxes = document.querySelectorAll('input[type="checkbox"][name="reasons"]:checked');
         const remarks = document.getElementById('remarks').value;
         const selectedValues = Array.from(checkedBoxes).map(cb => cb.value);
     
         if (selectedValues.length === 0 && remarks === '') {
             alert("Please select at least one reason or add a remark to proceed.");
+            return;
+        }
+
+        if (!confirm('Mark Ticket #{{ ticket.ticket_id }} as resolved?')) {
+            location.reload();
             return;
         }
 
@@ -275,17 +275,17 @@
         form.addEventListener("submit", function (e) {
             e.preventDefault();
 
-            if (!confirm('Save changes?')) {
-                location.reload();
-                return;
-            }
-
             const formData = new FormData(form);
             const selected = formData.getAll("violation_types");
             const ticketId = formData.get("ticket_id");
             
             if (selected.length === 0) {
                 alert("Please select at least one violation type.");
+                return;
+            }
+
+            if (!confirm('Save changes?')) {
+                location.reload();
                 return;
             }
 
@@ -303,7 +303,7 @@
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    alert("Violations updated!"); window.location.href="{% url 'evs:TicketDetails' ticket.ticket_id %}";
+                    alert("Violations for Ticket #{{ ticket.ticket_id }} updated!"); window.location.href="{% url 'evs:TicketDetails' ticket.ticket_id %}";
                     location.reload();
                 } else {
                     alert("Error updating violations.");
