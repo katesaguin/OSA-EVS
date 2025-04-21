@@ -1,4 +1,166 @@
 {% extends 'evs_index.html' %}
+{% load static %}
 {% block page_name %}
 <h5><i class='bx bx-home-alt'></i>Statistics</h5>
+
 {% endblock page_name %}
+
+{% block content %}
+<div class="container-fluid py-4" style="background:#f5f8fc; min-height:100vh; margin-left: 20px; margin-right: 20px;">
+    <div class="mb-4">
+        <h4 class="fw-bold" style="color:#19387E;">Entry Violation Statistics</h4>
+    </div>
+    <div class="row g-3 align-items-stretch">
+        <!-- Left: Summary and Stats -->
+        <div class="col-lg-4 col-md-6">
+            <div class="bg-white rounded shadow-sm p-4 mb-3">
+                <div class="mb-2 text-muted" style="font-size:1rem;">As of</div>
+                <div class="mb-1" style="font-size:2rem; color:#19387E; font-weight:700;">{{ month }}</div> <!-- CHANGE INTO DYNAMIC DATA (Check Emoji✅AHHAHAHA)-->
+                <div class="mb-2" style="font-size:2.5rem; color:#2E5AAC; font-weight:900;">{{ total_violations }}</div> 
+                <div class="text-primary" style="font-size:1rem; font-weight:600;">Total Counts of<br>Student Entry Violation</div>
+            </div>
+            <div class="stats-container d-flex flex-column gap-3">
+                <!-- First Statistic Card -->
+                <div class="stats-card">
+                    <div class="stats-header">
+                        <div class="icon-container" style="background:#E0E9FF;">
+                            <div class="icon"><svg width="24" height="18" viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                             <path d="M22 0H2C0.91 0.04 0.04 0.91 0 2V16C0.04 17.09 0.91 17.96 2 18H22C23.09 17.96 23.96 17.09 24 16V2C23.9816 1.47543 23.765 0.977343 23.3938 0.606185C23.0227 0.235027 22.5246 0.0184054 22 0ZM22 16H2V2H22V16ZM14 14V12.75C14 11.09 10.66 10.25 9 10.25C7.34 10.25 4 11.09 4 12.75V14H14ZM9 4C8.33696 4 7.70107 4.26339 7.23223 4.73223C6.76339 5.20107 6.5 5.83696 6.5 6.5C6.5 6.8283 6.56466 7.15339 6.6903 7.45671C6.81594 7.76002 7.00009 8.03562 7.23223 8.26777C7.70107 8.73661 8.33696 9 9 9C9.3283 9 9.65339 8.93534 9.95671 8.8097C10.26 8.68406 10.5356 8.49991 10.7678 8.26777C10.9999 8.03562 11.1841 7.76002 11.3097 7.45671C11.4353 7.15339 11.5 6.8283 11.5 6.5C11.5 6.1717 11.4353 5.84661 11.3097 5.54329C11.1841 5.23998 10.9999 4.96438 10.7678 4.73223C10.5356 4.50009 10.26 4.31594 9.95671 4.1903C9.65339 4.06466 9.3283 4 9 4ZM14 4V5H20V4H14ZM14 6V7H20V6H14ZM14 8V9H18V8H14Z" 
+                             fill="#19387E"/>
+                             </svg>
+                             </div>
+                        </div>
+                        <div class="stats-info">
+                            <div class="stats-title">ID Violation</div>
+                            <div class="value">{{ id_violation }}</div>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- Second Statistic Card -->
+                <div class="stats-card">
+                    <div class="stats-header">
+                        <div class="icon-container" style="background:#19387E;">
+                            <div class="icon">
+                             <svg width="18" height="20" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                 <path d="M10 17.5H16V13.5H12V11.5H16V3.5H14V8.5L10 6.9V17.5ZM8 17.5V6.9L4 8.5V3.5H2V17.5H8ZM4 1.5V0.5H14V1.5H17C17.2652 1.5 17.5196 1.60536 17.7071 1.79289C17.8946 1.98043 18 2.23478 18 2.5V18.5C18 18.7652 17.8946 19.0196 17.7071 19.2071C17.5196 19.3946 17.2652 19.5 17 19.5H1C0.734784 19.5 0.48043 19.3946 0.292893 19.2071C0.105357 19.0196 0 18.7652 0 18.5V2.5C0 2.23478 0.105357 1.98043 0.292893 1.79289C0.48043 1.60536 0.734784 1.5 1 1.5H4ZM9 5.5L12.5 2.5H5.5L9 5.5Z" 
+                                 fill="white"/>
+                                 </svg>
+                            </div>
+                        </div>
+                        <div class="stats-info">
+                            <div class="stats-title">Uniform Violation</div>
+                            <div class="value">{{ uniform_violation }}</div>
+                        </div>
+                    </div> 
+                </div>
+        
+                <!-- Third Statistic Card -->
+                <div class="stats-card">
+                    <div class="stats-header">
+                        <div class="icon-container" style="background:#245FE9;">
+                            <div class="icon">
+                             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                 <path d="M5.26932 6.96597C4.55032 7.65797 4.19232 8.00397 3.75532 7.99997C2.73232 7.99097 0.926324 6.00397 1.00232 4.98597C1.03332 4.57397 1.39932 4.26497 2.13232 3.64697L4.32932 1.79397C4.97932 1.24497 5.87332 1.22397 6.68532 1.06697C7.00932 1.00497 7.17132 0.972972 7.31532 1.02897C7.77932 1.20897 8.16232 2.05297 8.43932 2.43397C9.60432 4.03797 10.1863 4.83997 11.0003 4.83997C11.8143 4.83997 12.3973 4.03797 13.5623 2.43397C13.8383 2.05297 14.2223 1.20797 14.6853 1.02897C14.8293 0.972972 14.9913 1.00497 15.3153 1.06697C16.1593 1.22997 16.9923 1.22097 17.6713 1.79397L19.8693 3.64697C20.6013 4.26497 20.9683 4.57397 20.9993 4.98597C21.0743 6.00397 19.2693 7.99097 18.2463 7.99997C17.8083 8.00397 17.4503 7.65797 16.7323 6.96597"
+                                 stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                 <path d="M5.00038 6C6.50038 8 5.95638 10.182 5.59838 12.218C5.22038 14.368 4.58338 15.676 4.22038 17.441C3.97038 18.653 3.84538 19.259 4.33438 19.771C5.71238 21.218 15.9344 21.591 17.6664 19.771C18.1554 19.259 18.0304 18.653 17.7804 17.441C17.4174 15.676 16.7804 14.368 16.4024 12.218C16.0444 10.18 15.5004 8 17.0004 6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                 </svg>                                    
+                            </div>
+                        </div>
+                        <div class="stats-info">
+                            <div class="stats-title">Dress Code Violation</div>
+                            <div class="value">{{ dress_code_violation }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Center: Donut Chart -->
+        <div class="col-lg-4 col-md-6 d-flex justify-content-center">
+            <div class="bg-white rounded shadow-sm p-4 w-100 d-flex flex-column align-items-center">
+                <canvas id="violationDonutChart" width="180" height="180"></canvas>
+
+                <!--this calculates the percentage of each violation type (this is a django template tag)-->
+                {% widthratio uniform_violation total_violations 100 as uniform_percent %}
+                {% widthratio dress_code_violation total_violations 100 as dress_code_percent %}
+                {% widthratio id_violation total_violations 100 as id_percent %}
+
+                <div class="mt-3 w-100">
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="me-2 rounded-circle d-inline-block" style="width:18px;height:18px;background:#2E5AAC;"></span>
+                        <span style="font-size:0.95rem;">Uniform Violation</span>
+                        <span class="ms-auto text-muted">{% if total_violations %}{{ uniform_percent|floatformat:2 }}{% else %}0{% endif %}%</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="me-2 rounded-circle d-inline-block" style="width:18px;height:18px;background:#69A8F7;"></span>
+                        <span style="font-size:0.95rem;">Dress Code Violation</span>
+                        <span class="ms-auto text-muted">{% if total_violations %}{{ dress_code_percent|floatformat:2 }}{% else %}0{% endif %}%</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="me-2 rounded-circle d-inline-block" style="width:18px;height:18px;background:#19387E;"></span>
+                        <span style="font-size:0.95rem;">ID Violation</span>
+                        <span class="ms-auto text-muted">{% if total_violations %}{{ id_percent|floatformat:2 }}{% else %}0{% endif %}%</span>
+                    </div>
+                </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-12">
+                    <div class="bg-white rounded shadow-sm p-4 h-100">
+                        <h5 class="style1" style="margin-bottom: 20px;">Common Trends of Student Remarks/Excuses</h5>
+                        <canvas id="remarksBarChart" height="220"></canvas>
+                        <div class="mt-3">
+                            <div class="row gx-2 gy-1 small">
+                                <div class="col-4">
+                                    <!--Placeholder for the reasons! insert dynamic data heree-->
+                                    <span class="me-2 rounded-circle d-inline-block" style="width:14px;height:14px;background:#E74C3C;"></span> Forgotten or misplaced
+                                </div>
+                                <div class="col-4">
+                                    <span class="me-2 rounded-circle d-inline-block" style="width:14px;height:14px;background:#F39C12;"></span> ID not claimed on time
+                                </div>
+                                <div class="col-4">
+                                    <span class="me-2 rounded-circle d-inline-block" style="width:14px;height:14px;background:#F7D358;"></span> Lack of Awareness of Specific Policy
+                                </div>
+                                <div class="col-4">
+                                    <span class="me-2 rounded-circle d-inline-block" style="width:14px;height:14px;background:#A9DFBF;"></span> Unforeseen Circumstances
+                                </div>
+                                <div class="col-4">
+                                    <span class="me-2 rounded-circle d-inline-block" style="width:14px;height:14px;background:#229954;"></span> Misinterpretation of dress code compliance
+                                </div>
+                                <div class="col-4">
+                                    <span class="me-2 rounded-circle d-inline-block" style="width:14px;height:14px;background:#34495E;"></span> Substitution of footwear
+                                </div>
+                                <div class="col-4">
+                                    <span class="me-2 rounded-circle d-inline-block" style="width:14px;height:14px;background:#5DADE2;"></span> Unawareness of mandated garment length requirements
+                                </div>
+                                <div class="col-4">
+                                    <span class="me-2 rounded-circle d-inline-block" style="width:14px;height:14px;background:#A569BD;"></span> Oversight in compliance
+                                </div>
+                                <div class="col-4">
+                                    <span class="me-2 rounded-circle d-inline-block" style="width:14px;height:14px;background:#F5B7B1;"></span> Personal style preference conflicting
+                                </div>
+                                <div class="col-4">
+                                    <span class="me-2 rounded-circle d-inline-block" style="width:14px;height:14px;background:#B2BABB;"></span> Others
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+    </div>
+
+        <!-- Right: Bar Chart -->
+       
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Custom Chart Logic -->
+<script>
+    const donutData = [
+        {{ uniform_violation|default:0 }},
+        {{ dress_code_violation|default:0 }},
+        {{ id_violation|default:0 }}
+    ];
+</script>
+<script src="{% static 'js/statistics_charts.js' %}"></script> <!--More heree!!!!-->
+{% endblock content %}

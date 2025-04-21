@@ -136,7 +136,20 @@ def tallyDetails_views(request):
     return render(request, 'system/tally-details.html')
 
 def statistics_view(request):
-    return render(request, 'system/statistics.html')
+    current_month = datetime.now().month
+    month_name = datetime(1900, current_month, 1).strftime('%B')
+    tickets = Ticket.objects.all()
+    id_violation = Ticket.objects.filter(id_violation=True).count()
+    dress_code_violation = Ticket.objects.filter(dress_code_violation=True).count()
+    uniform_violation = Ticket.objects.filter(uniform_violation=True).count()
+    total_violations = tickets.count()
+    return render(request, 'system/statistics.html', {
+        'id_violation': id_violation,
+        'uniform_violation': uniform_violation,
+        'dress_code_violation': dress_code_violation,
+        'total_violations': total_violations,
+        'month': month_name,
+    })
 
 def settings_views(request):
     return redirect('evs:SettingsAcademicYear')

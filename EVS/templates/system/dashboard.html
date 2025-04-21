@@ -6,10 +6,14 @@
         <div class="content">
             <!-- STATISTICS DASHBOARD -->
            <div class="statistics">
-            <h5 class="style1" style="margin-top: 20px">
-                
-                <i class='bx bx-table'></i> STATISTICS</h5>
-
+            <div class="d-flex align-items-center" style="margin-top: 20px; margin-bottom: 20px; gap: 10px;">
+                <h5 class="style1 mb-0" style="margin-top: 0;">
+                    <i class='bx bx-table'></i> STATISTICS
+                </h5>
+                <div class="controls" style="margin: 0;">
+                    <a href="{% url 'evs:Statistics' %}"><button type="button">View All</button></a>
+                </div>
+            </div>
                <div class="stats-container">
                    <!-- First Statistic Card -->
                    <div class="stats-card">
@@ -25,9 +29,6 @@
                                <div class="stats-title">ID Violation</div>
                                <div class="value">{{ id_violation }}</div>
                            </div>
-                       </div>
-                       <div class="stats-footer">
-                           <a href="{% url 'evs:Statistics' %}" class="view-all">View All</a>
                        </div>
                    </div>
            
@@ -47,9 +48,6 @@
                                <div class="value">{{ uniform_violation }}</div>
                            </div>
                        </div> 
-                       <div class="stats-footer">
-                           <a href="{% url 'evs:Statistics' %}" class="view-all">View All</a>
-                       </div>
                    </div>
            
                    <!-- Third Statistic Card -->
@@ -68,10 +66,6 @@
                                <div class="stats-title">Dress Code Violation</div>
                                <div class="value">{{ dress_code_violation }}</div>
                            </div>
-                       </div>
-                       <div class="stats-footer">
-                           <a href="{% url 'evs:Statistics' %}" class="view-all">View All</a>
-                       
                        </div>
                    </div>
            
@@ -92,10 +86,6 @@
                                <div class="value">{{ month }}</div>
                            </div>
                        </div>
-                       <div class="stats-footer">
-                           <div class="view-all">View All</div>
-     
-                       </div>
                    </div>
                </div>
            </div>
@@ -111,7 +101,7 @@
            <table class="table" id="tickets">
                <thead>
                    <tr>
-                       <th>Ticket #</th>
+                   <th>Ticket #</th>
                        <th>Student Name</th>
                        <th>Student ID</th>
                        <th>Violation</th>

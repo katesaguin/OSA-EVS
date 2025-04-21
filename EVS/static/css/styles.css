@@ -52,7 +52,7 @@ h5.style1 {
 }
 
 .controls button {
-    padding: 3px 16px;
+    padding: 3px 18px;
     border: none;
     border-radius: 20px;
     background-color: #fff;
@@ -324,13 +324,6 @@ h5.style1 {
 .value {
     font-size: 20px;
     font-weight: bold;
-}
-
-.stats-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 10px;
 }
 
 .view-all {
