@@ -69,8 +69,9 @@ def violation_checker(student_id, acad_year_id):
             violation.apology_letter_status = 0 
 
         if violation.count >= 3:
-            violation.community_service = 1
-            violation.community_service_status = 1
+            if violation.community_service == 0:
+                violation.community_service = 6
+                violation.community_service_status = 1
         else:
             violation.community_service = 0
             violation.community_service_status = 0
@@ -356,9 +357,16 @@ def save_status(request, student_id):
 
             try:
                 student_violation = StudentViolation.objects.get(id=violation_id, student_id=student_id, acad_year_id__in=ay_id)
-                student_violation.apology_letter_status = letter_status
-                student_violation.community_service = cs_render
-                student_violation.community_service_status = cs_status
+                
+                if letter_status is not None:
+                    student_violation.apology_letter_status = letter_status
+                
+                if cs_render is not None:
+                    student_violation.community_service = cs_render
+                
+                if cs_status is not None:
+                    student_violation.community_service_status = cs_status
+                
                 student_violation.save()
             except StudentViolation.DoesNotExist:
                 return JsonResponse({'status': 'error', 'message': f"Violation {violation_id} not found for student {student_id}"}, status=400)

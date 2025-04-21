@@ -39,7 +39,6 @@
                                 <th>Total Count</th>
                                 <th>Letter Status</th>
                                 <th>Required CS Hours</th>
-                                <th>CS Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -56,21 +55,15 @@
                                             </select>
                                         </td>
                                         <td>
-                                            <select id="cs_render_{{ violation.id }}" name="cs_render" class="cs_render" data-violation-id="{{ violation.id }}" {% if violation.community_service == 0 %}disabled{% endif %}>
+                                            <select id="cs_render_{{ violation.id }}" name="cs_render" class="cs_render" data-violation-id="{{ violation.id }}" {% if violation.community_service == 0 or violation.community_service == 7 %}disabled{% endif %}>
                                                 <option value="0" {% if violation.community_service == 0 %}selected{% endif %}>Not Applicable</option>
                                                 <option value="1" {% if violation.community_service == 1 %}selected{% endif %}>1hr</option>
-                                                <option value="2" {% if violation.community_service == 1 %}selected{% endif %}>2hrs</option>
-                                                <option value="3" {% if violation.community_service == 1 %}selected{% endif %}>3hrs</option>
-                                                <option value="4" {% if violation.community_service == 1 %}selected{% endif %}>4hrs</option>
-                                                <option value="5" {% if violation.community_service == 1 %}selected{% endif %}>5hrs</option>
-                                                <option value="6" {% if violation.community_service == 1 %}selected{% endif %}>6hrs</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <select id="cs_status_{{ violation.id }}" name="cs_status" class="cs_status" data-violation-id="{{ violation.id }}" {% if violation.community_service_status == 0 %}disabled{% endif %}>
-                                                <option value="0" {% if violation.community_services == 0 %}selected{% endif %}>Not Applicable</option>
-                                                <option value="1" {% if violation.community_services == 1 %}selected{% endif %}>Awaiting</option>
-                                                <option value="2" {% if violation.community_services == 2 %}selected{% endif %}>Passed</option>
+                                                <option value="2" {% if violation.community_service == 2 %}selected{% endif %}>2hrs</option>
+                                                <option value="3" {% if violation.community_service == 3 %}selected{% endif %}>3hrs</option>
+                                                <option value="4" {% if violation.community_service == 4 %}selected{% endif %}>4hrs</option>
+                                                <option value="5" {% if violation.community_service == 5 %}selected{% endif %}>5hrs</option>
+                                                <option value="6" {% if violation.community_service == 6 %}selected{% endif %}>6hrs</option>
+                                                <option value="7" {% if violation.community_service == 7 %}selected{% endif %}>COMPLETED</option>
                                             </select>
                                         </td>
                                     </tr>
@@ -154,29 +147,31 @@
     });
 
     document.getElementById('applyChanges').addEventListener('click', function() {
-        // Confirm before proceeding
+
         if (!confirm('Are you sure you want to make changes?')) {
             return;
         }
-        // Create an array to hold data for each violation
+
         const violationsData = [];
     
-        // Collect the selected data for each violation
-        document.querySelectorAll('.letter_status').forEach(function(selectElement) {
-            const violationId = selectElement.getAttribute('data-violation-id');
-            const letterStatus = selectElement.value;
-    
-            const csRenderElement = document.querySelector(`.cs_render[data-violation-id="${violationId}"]`);
-            const csRender = csRenderElement ? csRenderElement.value : null;
-    
-            const csStatusElement = document.querySelector(`.cs_status[data-violation-id="${violationId}"]`);
-            const csStatus = csStatusElement ? csStatusElement.value : null;
-    
+        document.querySelectorAll('select.letter_status').forEach(function(letterStatusElement) {
+            const rowId = letterStatusElement.getAttribute('data-violation-id');
+            
+            const csRenderElement = document.querySelector(`select.cs_render[data-violation-id="${rowId}"]`);
+            const csStatusElement = document.querySelector(`select.cs_status[data-violation-id="${rowId}"]`);
+            
+            const csRenderValue = csRenderElement ? csRenderElement.value : null;
+            let csStatusValue = csStatusElement ? csStatusElement.value : null;
+            
+            if (csRenderValue === '7') {
+                csStatusValue = '0'; 
+            }
+            
             violationsData.push({
-                violation_id: violationId,
-                letter_status: letterStatus,
-                cs_render: csRender,
-                cs_status: csStatus
+                violation_id: rowId,
+                letter_status: letterStatusElement.value,
+                cs_render: csRenderValue,
+                cs_status: csStatusValue
             });
         });
     
