@@ -55,7 +55,7 @@
                                             </select>
                                         </td>
                                         <td>
-                                            <select id="cs_render_{{ violation.id }}" name="cs_render" class="cs_render" data-violation-id="{{ violation.id }}" {% if violation.community_service == 0 or violation.community_service == 7 %}disabled{% endif %}>
+                                            <select id="cs_render_{{ violation.id }}" name="cs_render" class="cs_render" data-violation-id="{{ violation.id }}" {% if violation.community_service == 0 %}disabled{% endif %}>
                                                 <option value="0" {% if violation.community_service == 0 %}selected{% endif %}>Not Applicable</option>
                                                 <option value="1" {% if violation.community_service == 1 %}selected{% endif %}>1hr</option>
                                                 <option value="2" {% if violation.community_service == 2 %}selected{% endif %}>2hrs</option>
@@ -187,7 +187,8 @@
         .then(response => response.json())
         .then(data => {
             console.log('Success:', data);
-            // Optionally, show a success message or do something after success
+            alert('{{ student.last_name }}, {{ student.first_name}} {{ student.middle_name }} status updated.');
+            window.location.href = "{% url 'evs:Tally' %}";
         })
         .catch((error) => {
             console.error('Error:', error);

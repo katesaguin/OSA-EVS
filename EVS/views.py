@@ -70,7 +70,7 @@ def violation_checker(student_id, acad_year_id):
 
         if violation.count >= 3:
             if violation.community_service == 0:
-                violation.community_service = 6
+                violation.community_service = 3
                 violation.community_service_status = 1
         else:
             violation.community_service = 0
@@ -134,7 +134,7 @@ def dashboard_view(request):
     
 
     for violation in violations:
-        if violation['violation_id'] == 1 or violation['violation_id'] == 4:
+        if violation['violation_id'] == 3 or violation['violation_id'] == 4:
             id_violation += violation['count']
         elif violation['violation_id'] == 2:
             dresscode_violation += violation['count']
@@ -180,7 +180,7 @@ def violation_views(request):
             pass
 
     tickets = tickets.order_by('-ticket_id')
-    page_obj = paginate_queryset(request, tickets, 15)
+    page_obj = paginate_queryset(request, tickets, 10)
 
     context = {
         'tickets': page_obj,
@@ -213,9 +213,10 @@ def tally_views(request):
     student_violations = []
 
     for student in students_with_tickets:
-        id_violation = StudentViolation.objects.filter(student=student, violation_id=1, acad_year_id__in=ay_id)
+        
+        uniform = StudentViolation.objects.filter(student=student, violation_id=1, acad_year_id__in=ay_id)
         dress_code = StudentViolation.objects.filter(student=student, violation_id=2, acad_year_id__in=ay_id)
-        uniform = StudentViolation.objects.filter(student=student, violation_id=3, acad_year_id__in=ay_id)
+        id_violation = StudentViolation.objects.filter(student=student, violation_id=3, acad_year_id__in=ay_id)
         id_not_claimed = StudentViolation.objects.filter(student=student, violation_id=4, acad_year_id__in=ay_id)
 
         statuses = []
@@ -408,7 +409,7 @@ def refresh_ticket_table(request):
             pass
 
     tickets = tickets.order_by('-ticket_id')
-    page_obj = paginate_queryset(request, tickets, 15)
+    page_obj = paginate_queryset(request, tickets, 10)
 
     html = render_to_string('system/partials/ticket-table-body.html', {'tickets': page_obj})
     return JsonResponse({'html': html})
@@ -419,7 +420,7 @@ def refresh_dashboard_table(request):
     tickets = Ticket.objects.filter(acad_year_id__in=ay_id)
     students = Student.objects.all()
     tickets = tickets.order_by('-ticket_id')
-    page_obj = paginate_queryset(request, tickets, 10)
+    page_obj = paginate_queryset(request, tickets, 5)
 
     html = render_to_string('system/partials/dashboard-table-body.html', {
         'tickets': page_obj,
@@ -453,9 +454,9 @@ def refresh_tally_table(request):
     student_violations = []
 
     for student in students_with_tickets:
-        id_violation = StudentViolation.objects.filter(student=student, violation_id=1, acad_year_id__in=ay_id)
+        uniform = StudentViolation.objects.filter(student=student, violation_id=1, acad_year_id__in=ay_id)
         dress_code = StudentViolation.objects.filter(student=student, violation_id=2, acad_year_id__in=ay_id)
-        uniform = StudentViolation.objects.filter(student=student, violation_id=3, acad_year_id__in=ay_id)
+        id_violation = StudentViolation.objects.filter(student=student, violation_id=3, acad_year_id__in=ay_id)
         id_not_claimed = StudentViolation.objects.filter(student=student, violation_id=4, acad_year_id__in=ay_id)
 
         statuses = []
@@ -496,7 +497,7 @@ def override_violation(request, ticket_id):
         ticket.id_violation = 'id_violation' in selected
         ticket.dress_code_violation = 'dress_code_violation' in selected
         ticket.uniform_violation = 'uniform_violation' in selected
-        if ticket.ticket_status != 0:
+        if ticket.ticket_status == 1:
             readjust_violations(ticket)
 
         violation_checker(ticket.student_id, ticket.acad_year_id)
@@ -572,7 +573,7 @@ def settings_academic(request):
         )
 
         messages.success(request, 'Academic Year successfully created.')
-        return redirect('evs:AcademicYear')
+        return render(request, 'system/settings/academic-year.html')
     
     if request.method == 'PATCH':
         data = json.loads(request.body)
