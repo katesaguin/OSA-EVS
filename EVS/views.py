@@ -45,13 +45,13 @@ def count_violation(ticket_id, acad_year_id):
 
         violation_checker(student_id, acad_year_id)
 
-    if violations.id_violation:
+    if violations.uniform_violation:
         update_violation(1)
 
     if violations.dress_code_violation:
         update_violation(2)
 
-    if violations.uniform_violation:
+    if violations.id_violation:
         update_violation(3)
 
     if violations.id_not_claimed_violation:
@@ -61,8 +61,9 @@ def violation_checker(student_id, acad_year_id):
     for_letter = StudentViolation.objects.filter(student_id=student_id, acad_year_id=acad_year_id)
     for violation in for_letter:
         if violation.count >= 2:
-            violation.apology_letter = 1
-            violation.apology_letter_status = 1
+            if violation.apology_letter_status != 2:
+                violation.apology_letter = 1
+                violation.apology_letter_status = 1
         else:
             violation.apology_letter = 0
             violation.apology_letter_status = 0 
@@ -82,9 +83,9 @@ def active_list():
 
 def readjust_violations(ticket):
     violation_map = {
-        1: ticket.id_violation,
+        1: ticket.uniform_violation,
         2: ticket.dress_code_violation,
-        3: ticket.uniform_violation,
+        3: ticket.id_violation,
         4: ticket.id_not_claimed_violation
     }
 
@@ -342,14 +343,8 @@ def update_id_status(request, ticket_id):
 
 def save_status(request, student_id):
     if request.method == 'POST':
-        # Print to check the request body
-        print(request.body)
-        
-        # Parse incoming JSON data
-        data = json.loads(request.body)  # Parse incoming JSON data
+        data = json.loads(request.body)
         violations = data.get('violations')
-        
-        print(violations)  # Check the data received
         
         ay_id = active_list()
 
@@ -359,18 +354,13 @@ def save_status(request, student_id):
             cs_render = violation.get('cs_render')
             cs_status = violation.get('cs_status')
 
-            print(f"Updating violation {violation_id} with letter_status: {letter_status}, cs_render: {cs_render}, cs_status: {cs_status}")
-
             try:
-                # Make sure the violation exists and belongs to the correct student and academic year
                 student_violation = StudentViolation.objects.get(id=violation_id, student_id=student_id, acad_year_id__in=ay_id)
                 student_violation.apology_letter_status = letter_status
                 student_violation.community_service = cs_render
                 student_violation.community_service_status = cs_status
                 student_violation.save()
-                print(f"Successfully updated violation {violation_id}")
             except StudentViolation.DoesNotExist:
-                print(f"Violation {violation_id} not found for student {student_id} in the current academic year.")
                 return JsonResponse({'status': 'error', 'message': f"Violation {violation_id} not found for student {student_id}"}, status=400)
 
         return JsonResponse({'status': 'success', 'message': 'Data updated successfully'})

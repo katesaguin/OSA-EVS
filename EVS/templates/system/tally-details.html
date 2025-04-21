@@ -49,14 +49,14 @@
                                         <td>{% for type in types %}{% if violation.violation_id == type.violation_id %}{{ type.description }}{% endif %}{% endfor %}</td>
                                         <td>{{ violation.count }}</td>
                                         <td>
-                                            <select id="letter_status" name="letter_status" {% if violation.apology_letter_status == 0 %}disabled{% endif %}>
+                                            <select id="letter_status_{{ violation.id }}" name="letter_status" class="letter_status" data-violation-id="{{ violation.id }}" {% if violation.apology_letter_status == 0 %}disabled{% endif %}>
                                                 <option value="0" {% if violation.apology_letter_status == 0 %}selected{% endif %}>Not Applicable</option>
                                                 <option value="1" {% if violation.apology_letter_status == 1 %}selected{% endif %}>Awaiting</option>
                                                 <option value="2" {% if violation.apology_letter_status == 2 %}selected{% endif %}>Passed</option>
                                             </select>
                                         </td>
                                         <td>
-                                            <select id="cs_render" name="cs_render" {% if violation.community_service == 0 %}disabled{% endif %}>
+                                            <select id="cs_render_{{ violation.id }}" name="cs_render" class="cs_render" data-violation-id="{{ violation.id }}" {% if violation.community_service == 0 %}disabled{% endif %}>
                                                 <option value="0" {% if violation.community_service == 0 %}selected{% endif %}>Not Applicable</option>
                                                 <option value="1" {% if violation.community_service == 1 %}selected{% endif %}>1hr</option>
                                                 <option value="2" {% if violation.community_service == 1 %}selected{% endif %}>2hrs</option>
@@ -67,7 +67,7 @@
                                             </select>
                                         </td>
                                         <td>
-                                            <select id="cs_status" name="cs_status" {% if violation.community_service_status == 0 %}disabled{% endif %}>
+                                            <select id="cs_status_{{ violation.id }}" name="cs_status" class="cs_status" data-violation-id="{{ violation.id }}" {% if violation.community_service_status == 0 %}disabled{% endif %}>
                                                 <option value="0" {% if violation.community_services == 0 %}selected{% endif %}>Not Applicable</option>
                                                 <option value="1" {% if violation.community_services == 1 %}selected{% endif %}>Awaiting</option>
                                                 <option value="2" {% if violation.community_services == 2 %}selected{% endif %}>Passed</option>
@@ -132,7 +132,7 @@
                 </table>
             </div>
             <div style="padding:20px; margin-bottom: -10px; text-align: center;">
-                <a href="" name="applyChanges" id="applyChanges" class="btn btn-outline-primary btn-md" onclick="return confirm('Are you sure you want to make changes?');">Apply Changes</a>
+                <button type="button" name="applyChanges" id="applyChanges" class="btn btn-outline-primary btn-md">Apply Changes</button>
             </div>
         </div>
     </div>
@@ -148,25 +148,16 @@
         });
     });
 
+    // Simplified goBackBtn listener without confirmation dialog
     document.getElementById('goBackBtn').addEventListener('click', function(e) {
-        if (isDirty) {
-            const leave = confirm('You have unsaved changes. Are you sure you want to leave without saving?');
-            if (!leave) {
-                e.preventDefault();
-            }
-            // else: allow navigation
-        }
-        // else: allow navigation
-    });
-    // Warn if user tries to leave the page with unsaved changes
-    window.addEventListener('beforeunload', function (e) {
-        if (isDirty) {
-            e.preventDefault();
-            e.returnValue = '';
-        }
+        // Allows navigation without confirmation
     });
 
     document.getElementById('applyChanges').addEventListener('click', function() {
+        // Confirm before proceeding
+        if (!confirm('Are you sure you want to make changes?')) {
+            return;
+        }
         // Create an array to hold data for each violation
         const violationsData = [];
     
@@ -190,11 +181,11 @@
         });
     
         // Send the collected data via fetch
-        fetch('/xu-entry-violation/student/{{ student.student_id }}/save-status/', {
+        fetch('/xu-entry-violation/student/{{ student.student_id }}/save-status', {
             method: 'POST', 
             headers: {
                 'Content-Type': 'application/json', 
-                'X-csrf_token': getCSRFToken()
+                'X-CSRFToken': getCSRFToken()
             },
             body: JSON.stringify({ violations: violationsData })
         })
@@ -209,9 +200,9 @@
     });
 
     function getCSRFToken() {
-        const token = document.querySelector('meta[name="csrf-token"]');
-        if (token) return token.getAttribute('content')
-    }
+    // Django CSRF token is usually stored in a cookie named csrftoken
+    return document.cookie.split(';').find(c => c.trim().startsWith('csrftoken='))?.split('=')[1] || '';
+}
 </script>
 
 {% endblock content %}
