@@ -4,7 +4,7 @@ from datetime import datetime
 from django.core.paginator import Paginator
 import json
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseNotAllowed
 from django.contrib import messages
 from django.db.models import Sum, Q, Count
 from django.template.loader import render_to_string
@@ -704,3 +704,17 @@ def settings_academic(request):
         'ay': page_obj, 
         'activate_page': 'academic-year'
     })
+
+def delete_academic_year(request, acad_year_id):
+    if request.method == 'DELETE':
+        try:
+            tickets = Ticket.objects.filter(acad_year_id=acad_year_id).count()
+            if tickets == 0:
+                ay = AcademicYear.objects.get(acad_year_id=acad_year_id)
+                ay.delete()
+                return JsonResponse({'message': 'Academic year deleted successfully.'})
+            else:
+                return JsonResponse({'message': 'Existing tickets under this Academic Year exists'})
+        except AcademicYear.DoesNotExist:
+            return JsonResponse({'message': 'Academic year not found.'}, status=404)
+    return HttpResponseNotAllowed(['DELETE'])

@@ -77,20 +77,32 @@
                           <tr>
                               <td>{{ item.description }}</td>
                               <td>{% for semester in semesters %}{% if item.semester == semester.semester_id %}{{semester.semester}}{% endif %}{% endfor %}</th>
-                              <td>{% if item.active == 1 %}<span class="badge bg-success">Active</span>
-                                {% else %}<span class="badge bg-secondary">Inactive</span>{% endif %}</td>
+                              <td>{% if item.active == 1 %}<span class="badge bg-success">ACTIVE</span>
+                                {% else %}<span class="badge bg-secondary">INACTIVE</span>{% endif %}</td>
                               <td>{{ item.year_start }}</td>
                               <td>{{ item.year_end }}</td>
                               <td>
                                 <button 
                                   type="button" 
-                                  class="toggle-status badge bg-success" 
+                                  class="toggle-status badge bg-success me-3" 
+                                  id="activateButton"
                                   data-id="{{ item.acad_year_id }}" 
                                   data-active="1"
                                   data-description="{{ item.description }}" 
                                   data-semester="{% for semester in semesters %}{% if item.semester == semester.semester_id %}{{semester.semester}}{% endif %}{% endfor %}"
                                   {% if item.active == 1 %}disabled{% endif %}>
-                                  Activate
+                                  ACTIVATE
+                                </button>
+                                <button 
+                                  type="button" 
+                                  class="toggle-status badge bg-danger" 
+                                  id="activateButton"
+                                  data-id="{{ item.acad_year_id }}" 
+                                  data-active="1"
+                                  data-description="{{ item.description }}" 
+                                  data-semester="{% for semester in semesters %}{% if item.semester == semester.semester_id %}{{semester.semester}}{% endif %}{% endfor %}"
+                                  {% if item.active == 1 %}disabled{% endif %}>
+                                  DELETE
                                 </button>
                               </td>
                             {% endfor %}
@@ -128,48 +140,72 @@
 </div>
   <script>
     document.querySelectorAll('.toggle-status').forEach(button => {
+      const action = button.textContent.trim();
+  
       button.addEventListener('click', function () {
-        const id = this.getAttribute('data-id');
-        const year = this.getAttribute('data-description');
-        const semester = this.getAttribute('data-semester');
-
-        if (!confirm(`Activate ${year} ${semester}?`)) {
-          location.reload();
-          return;
-        }
-    
-        const newStatus = this.getAttribute('data-active');
-
-        fetch('/xu-entry-violation/settings/academic-year', {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCSRFToken(),
-          },
-          body: JSON.stringify({
-            id: id,
-            active: newStatus,
-          }),
-        })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error("Failed to update status.");
+          const id = this.getAttribute('data-id');
+          const year = this.getAttribute('data-description');
+          const semester = this.getAttribute('data-semester');
+  
+          if (action === 'DELETE') {
+              if (!confirm(`Are you sure you want to delete Academic Year ${year} ${semester}?`)) return;
+  
+              fetch(`/xu-entry-violation/delete-academic-year/${id}`, {
+                  method: 'DELETE',
+                  headers: {
+                      'X-CSRFToken': getCSRFToken(),
+                      'Content-Type': 'application/json'
+                  }
+              })
+              .then(response => {
+                  if (!response.ok) throw new Error('Failed to delete academic year.');
+                  return response.json();
+              })
+              .then(data => {
+                  alert(data.message);
+                  location.reload();
+              })
+              .catch(error => {
+                  console.error('Error:', error);
+                  alert('An error occurred while deleting.');
+              });
+  
+          } else if (action === 'ACTIVATE') {
+              if (!confirm(`Activate ${year} ${semester}?`)) return;
+  
+              const newStatus = this.getAttribute('data-active');
+  
+              fetch('/xu-entry-violation/settings/academic-year', {
+                  method: 'PATCH',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'X-CSRFToken': getCSRFToken(),
+                  },
+                  body: JSON.stringify({
+                      id: id,
+                      active: newStatus,
+                  }),
+              })
+              .then(response => {
+                  if (!response.ok) {
+                      throw new Error("Failed to update status.");
+                  }
+                  return response.json();
+              })
+              .then(data => {
+                  if (data.success) {
+                      alert(`${data.description} status updated.`);
+                      location.reload();
+                  } else {
+                      alert("Update failed: " + (data.error || "Unknown error"));
+                  }
+              })
+              .catch(error => {
+                  alert(error.message);
+              });
           }
-          return response.json();  // Parse the JSON response
-        })
-        .then(data => {
-          if (data.success) {
-            alert(`${data.description} status updated.`);
-            window.location.href = "{% url 'evs:AcademicYear' %}";
-          } else {
-            alert("Update failed: " + (data.error || "Unknown error"));
-          }
-        })
-        .catch(error => {
-          alert(error.message);
-        });
-      })
-    });
+      });
+  });
   
   function getCSRFToken() {
       const token = document.querySelector('meta[name="csrf-token"]');

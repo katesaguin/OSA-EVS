@@ -20,5 +20,6 @@ urlpatterns = [
     path('refresh-tickets', views.refresh_ticket_table, name='ViolationTable'),
     path('refresh-drashboard', views.refresh_dashboard_table, name='DashboardTable'),
     path('refresh-tally', views.refresh_tally_table, name='TallyTable'),
-    path('get-reasons', views.get_reasons, name='StatisticReasons')
+    path('get-reasons', views.get_reasons, name='StatisticReasons'),
+    path('delete-academic-year/<int:acad_year_id>', views.delete_academic_year),
 ]
