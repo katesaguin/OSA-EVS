@@ -563,49 +563,56 @@ def override_violation(request, ticket_id):
 
 def statistics_view(request):
     from_date = request.GET.get('from_date')
-    to_date   = request.GET.get('to_date')
+    to_date = request.GET.get('to_date')
     ay_filter = request.GET.get('academic_list')
 
-    if ay_filter:
-        ay = get_object_or_404(AcademicYear, pk=ay_filter)
-    else:
-        ay = get_object_or_404(AcademicYear, active=1)
+    qs = Ticket.objects.filter(ticket_status=1)
+    ay = None
 
-    qs = Ticket.objects.filter(ticket_status=1, acad_year_id=ay.acad_year_id)
+    try:
+        if ay_filter:
+            ay = AcademicYear.objects.get(pk=ay_filter)
+        else:
+            ay = AcademicYear.objects.get(active=1)
+        qs = qs.filter(acad_year_id=ay.acad_year_id)
+    except AcademicYear.DoesNotExist:
+        ay = None
 
     if from_date and to_date:
-        start = datetime.strptime(from_date, '%Y-%m-%d')
-        end   = datetime.strptime(to_date, '%Y-%m-%d')
-        qs = qs.filter(date_validated__date__range=(start, end))
+        try:
+            start = datetime.strptime(from_date, '%Y-%m-%d')
+            end = datetime.strptime(to_date, '%Y-%m-%d')
+            qs = qs.filter(date_validated__date__range=(start, end))
+        except ValueError:
+            pass
 
-    total_violations     = qs.count()
-    id_violation         = qs.filter(id_violation=True).count()
-    uniform_violation    = qs.filter(uniform_violation=True).count()
+    total_violations = qs.count()
+    id_violation = qs.filter(id_violation=True).count()
+    uniform_violation = qs.filter(uniform_violation=True).count()
     dress_code_violation = qs.filter(dress_code_violation=True).count()
 
-    ticket_ids    = qs.values_list('ticket_id', flat=True)
-    reason_ids    = TicketReason.objects.filter(ticket_id__in=ticket_ids) \
-                                       .values_list('reason_id', flat=True)
-    reasons       = Reason.objects.filter(reason_id__in=reason_ids)
+    ticket_ids = qs.values_list('ticket_id', flat=True)
+    reason_ids = TicketReason.objects.filter(ticket_id__in=ticket_ids).values_list('reason_id', flat=True)
+    reasons = Reason.objects.filter(reason_id__in=reason_ids)
 
     semesters = Semester.objects.all()
-    ay_list   = AcademicYear.objects.all()
+    ay_list = AcademicYear.objects.all()
 
     return render(request, 'system/statistics.html', {
         'from_date': from_date,
-        'to_date':   to_date,
-        'selected_ay': ay.acad_year_id,
+        'to_date': to_date,
+        'selected_ay': ay.acad_year_id if ay else None,
 
-        'id_violation':         id_violation,
-        'uniform_violation':    uniform_violation,
+        'id_violation': id_violation,
+        'uniform_violation': uniform_violation,
         'dress_code_violation': dress_code_violation,
-        'total_violations':     total_violations,
+        'total_violations': total_violations,
 
-        'month':    ay.description,
-        'semester': Semester.objects.get(pk=ay.semester).semester,
+        'month': ay.description if ay else 'N/A',
+        'semester': Semester.objects.get(pk=ay.semester).semester if ay else 'N/A',
 
-        'reasons':   reasons,
-        'ay_list':   ay_list,
+        'reasons': reasons,
+        'ay_list': ay_list,
         'semesters': semesters,
     })
 

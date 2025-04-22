@@ -17,16 +17,16 @@ VALUES
 (4, 'ID Not Claimed');
 
 INSERT INTO EVS_reason VALUES
-(1, 'ID', 'Forgotten or misplaced'),
-(2, 'ID', 'ID not claimed on time'),
-(3, 'Uniform', 'Lack of Awareness of Specific Policy'),
-(4, 'Uniform', 'Unforeseen Circumstances'),
-(5, 'Uniform', 'Misinterpretation of dress code compliance'),
-(6, 'Uniform', 'Substitution of footwear (Unexpected damage/unavailability)'),
-(7, 'DressCode', 'Unawareness of mandated garment length requirements'),
-(8, 'DressCode', 'Oversight in compliance'),
-(9, 'DressCode', 'Personal style preference conflicting with policy'),
-(10, 'DressCode', 'Temporary use of restricted footwear due to convenience or necessity');
+(1, 'ID', 'Forgotten or misplaced', '#E74C3C'),
+(2, 'ID', 'ID not claimed on time', '#F39C12'),
+(3, 'Uniform', 'Lack of Awareness of Specific Policy', '#F7D358'),
+(4, 'Uniform', 'Unforeseen Circumstances', '#A9DFBF'),
+(5, 'Uniform', 'Misinterpretation of dress code compliance', '#229954'),
+(6, 'Uniform', 'Substitution of footwear (Unexpected damage/unavailability)', '#34495E'),
+(7, 'DressCode', 'Unawareness of mandated garment length requirements', '#5DADE2'),
+(8, 'DressCode', 'Oversight in compliance', '#A569BD'),
+(9, 'DressCode', 'Personal style preference conflicting with policy', '#F5B7B1'),
+(10, 'DressCode', 'Temporary use of restricted footwear due to convenience or necessity', '#B2BABB');
 
 DELIMITER //
 
