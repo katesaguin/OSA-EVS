@@ -19,5 +19,6 @@ urlpatterns = [
     path('student/<int:student_id>/details', views.tallyDetails_views, name='TallyDetails'),
     path('refresh-tickets', views.refresh_ticket_table, name='ViolationTable'),
     path('refresh-drashboard', views.refresh_dashboard_table, name='DashboardTable'),
-    path('refresh-tally', views.refresh_tally_table, name='TallyTable')
+    path('refresh-tally', views.refresh_tally_table, name='TallyTable'),
+    path('get-reasons', views.get_reasons, name='StatisticReasons')
 ]

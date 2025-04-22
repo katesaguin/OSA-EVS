@@ -37,6 +37,7 @@ class Reason(models.Model):
     reason_id = models.AutoField(primary_key=True)
     reason_type = models.CharField(max_length=200)
     description = models.CharField(max_length=200) 
+    color = models.CharField(max_length=7, default='#000000')
 
     def __str__(self):
         return self.description 
@@ -67,6 +68,8 @@ class Ticket(models.Model):
 class TicketReason(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
     reason = models.ForeignKey(Reason, on_delete=models.CASCADE)
+    acad_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
+    date_created = models.DateTimeField(null=True, blank=True)
 
 class StudentViolation(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)

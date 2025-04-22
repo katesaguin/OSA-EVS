@@ -14,7 +14,7 @@
             <input id="filter_date" name="filter_date" type="date" value="{{ request.GET.filter_date|default:'' }}">
             <input id="student_name" name="student_name" type="text" placeholder="Search Student Name" value="{{ request.GET.student_name|default:'' }}">
             <input id="student_id" name="student_id" type="text" placeholder="Search Student ID" value="{{ request.GET.student_id|default:'' }}">
-            <button type="submit" id="dashboardSearch">Search</button>
+            <button type="submit">Search</button>
             {% if request.GET.student_name or request.GET.student_id or request.GET.filter_date %}
                 <a href="{% url 'evs:ViolationTickets' %}"><button type="button">Clear</button></a>
             {% endif %}

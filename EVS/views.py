@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Student, Ticket, TicketReason, Reason, AcademicYear, StudentViolation, Semester, Violation
 from datetime import datetime
 from django.core.paginator import Paginator
@@ -6,7 +6,7 @@ import json
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.http import JsonResponse
 from django.contrib import messages
-from django.db.models import Sum, Q
+from django.db.models import Sum, Q, Count
 from django.template.loader import render_to_string
 #import login_required
 
@@ -112,6 +112,50 @@ def readjust_violations(ticket):
                 violation.delete()
             else:
                 violation.save()
+
+def get_reasons(request):
+    from_date = request.GET.get('from_date')
+    to_date   = request.GET.get('to_date')
+    ay_filter = request.GET.get('academic_list')
+
+    if ay_filter:
+        ay = get_object_or_404(AcademicYear, pk=ay_filter)
+    else:
+        ay = get_object_or_404(AcademicYear, active=1)
+
+    tickets = Ticket.objects.filter(
+        ticket_status=1,
+        acad_year_id=ay.acad_year_id
+    )
+
+    if from_date and to_date:
+        start = datetime.strptime(from_date, '%Y-%m-%d')
+        end   = datetime.strptime(to_date, '%Y-%m-%d')
+        tickets = tickets.filter(date_validated__date__range=(start, end))
+
+    ticket_ids = tickets.values_list('ticket_id', flat=True)
+    reason_counts = (
+        TicketReason.objects
+        .filter(ticket_id__in=ticket_ids)
+        .values('reason_id')
+        .annotate(count=Count('reason_id'))
+        .order_by('-count')
+    )
+
+    results = []
+    for entry in reason_counts:
+        try:
+            r = Reason.objects.get(reason_id=entry['reason_id'])
+            results.append({
+                'reason_id':   entry['reason_id'],
+                'reason_text': r.description,
+                'count':       entry['count'],
+                'color':       r.color,
+            })
+        except Reason.DoesNotExist:
+            continue
+
+    return JsonResponse({'reason_counts': results})
 
 
 
@@ -290,6 +334,8 @@ def validated_ticket(request, ticket_id):
             data = json.loads(request.body)
             selected_reasons = data.get('reasons', [])
             remarks = data.get('remarks', '')
+            now = datetime.now()
+            ay_id = AcademicYear.objects.get(active=1)
 
             ticket = Ticket.objects.get(ticket_id=ticket_id)
             TicketReason.objects.filter(ticket_id=ticket_id).delete()
@@ -297,7 +343,9 @@ def validated_ticket(request, ticket_id):
             for reason in selected_reasons:
                 TicketReason.objects.create(
                     ticket_id = ticket_id,
-                    reason_id = reason
+                    reason_id = reason,
+                    acad_year_id = ay_id.acad_year_id,
+                    date_created = now
                 )
 
             if ticket.ticket_status != 1:
@@ -305,7 +353,7 @@ def validated_ticket(request, ticket_id):
 
                 ticket.ticket_status = 1
                 ticket.remarks = remarks
-                ticket.date_viladated = datetime.now()
+                ticket.date_validated = now
                 ticket.save()
                 ## ADD AUTO EMAIL NOTIFICATION LOGIC
 
@@ -514,7 +562,52 @@ def override_violation(request, ticket_id):
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def statistics_view(request):
-    return render(request, 'system/statistics.html')
+    from_date = request.GET.get('from_date')
+    to_date   = request.GET.get('to_date')
+    ay_filter = request.GET.get('academic_list')
+
+    if ay_filter:
+        ay = get_object_or_404(AcademicYear, pk=ay_filter)
+    else:
+        ay = get_object_or_404(AcademicYear, active=1)
+
+    qs = Ticket.objects.filter(ticket_status=1, acad_year_id=ay.acad_year_id)
+
+    if from_date and to_date:
+        start = datetime.strptime(from_date, '%Y-%m-%d')
+        end   = datetime.strptime(to_date, '%Y-%m-%d')
+        qs = qs.filter(date_validated__date__range=(start, end))
+
+    total_violations     = qs.count()
+    id_violation         = qs.filter(id_violation=True).count()
+    uniform_violation    = qs.filter(uniform_violation=True).count()
+    dress_code_violation = qs.filter(dress_code_violation=True).count()
+
+    ticket_ids    = qs.values_list('ticket_id', flat=True)
+    reason_ids    = TicketReason.objects.filter(ticket_id__in=ticket_ids) \
+                                       .values_list('reason_id', flat=True)
+    reasons       = Reason.objects.filter(reason_id__in=reason_ids)
+
+    semesters = Semester.objects.all()
+    ay_list   = AcademicYear.objects.all()
+
+    return render(request, 'system/statistics.html', {
+        'from_date': from_date,
+        'to_date':   to_date,
+        'selected_ay': ay.acad_year_id,
+
+        'id_violation':         id_violation,
+        'uniform_violation':    uniform_violation,
+        'dress_code_violation': dress_code_violation,
+        'total_violations':     total_violations,
+
+        'month':    ay.description,
+        'semester': Semester.objects.get(pk=ay.semester).semester,
+
+        'reasons':   reasons,
+        'ay_list':   ay_list,
+        'semesters': semesters,
+    })
 
 def clear_violation(request, ticket_id):
     if request.method == 'POST':
@@ -573,7 +666,15 @@ def settings_academic(request):
         )
 
         messages.success(request, 'Academic Year successfully created.')
-        return render(request, 'system/settings/academic-year.html')
+        ay_list = AcademicYear.objects.all().order_by('-acad_year_id')
+
+        page_obj = paginate_queryset(request, ay_list, 3)
+        semesters = Semester.objects.all()
+        return render(request, 'system/settings/academic-year.html', {
+            'semesters': semesters,
+            'ay': page_obj, 
+            'activate_page': 'academic-year'
+        })
     
     if request.method == 'PATCH':
         data = json.loads(request.body)
