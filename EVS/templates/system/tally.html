@@ -143,40 +143,40 @@
         });
     });
 
-    function getFilterParams() {
-        const studentName = document.getElementById('student_name').value;
-        const studentId = document.getElementById('student_id').value;
-        const filterDate = document.getElementById('filter_date').value;
+    //function getFilterParams() {
+    //    const studentName = document.getElementById('student_name').value;
+    //    const studentId = document.getElementById('student_id').value;
+    //    const filterDate = document.getElementById('filter_date').value;
     
-        const urlParams = new URLSearchParams(window.location.search);
-        const currentPage = urlParams.get('page') || '1'; 
+    //    const urlParams = new URLSearchParams(window.location.search);
+    //    const currentPage = urlParams.get('page') || '1'; 
     
-        const params = new URLSearchParams();
-        if (studentName) params.append('student_name', studentName);
-        if (studentId) params.append('student_id', studentId);
-        if (filterDate) params.append('filter_date', filterDate);
-        params.append('page', currentPage);
+    //    const params = new URLSearchParams();
+    //    if (studentName) params.append('student_name', studentName);
+    //    if (studentId) params.append('student_id', studentId);
+    //    if (filterDate) params.append('filter_date', filterDate);
+    //    params.append('page', currentPage);
     
-        return params.toString();
-    }
+    //    return params.toString();
+    //}
     
-    function refreshTallyTable() {
-        const baseUrl = "{% url 'evs:ViolationTable' %}";
-        const queryString = getFilterParams();
-        const url = `${baseUrl}?${queryString}`;
+    //function refreshTallyTable() {
+    //    const baseUrl = "{% url 'evs:TallyTable' %}";
+    //    const queryString = getFilterParams();
+    //    const url = `${baseUrl}?${queryString}`;
     
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("ticket-table-body").innerHTML = data.html;
-            })
-            .catch(error => console.error("Error loading table:", error));
-    }
+    //    fetch(url)
+    //        .then(response => response.json())
+    //        .then(data => {
+    //            document.getElementById("ticket-table-body").innerHTML = data.html;
+    //        })
+    //        .catch(error => console.error("Error loading table:", error));
+    //}
 
     // Auto-refresh every 30 seconds
-    setInterval(refreshTicketTable, 30000);
+    //setInterval(refreshTallyTable, 30000);
 
     // Refresh once on page load
-    window.addEventListener("DOMContentLoaded", refreshTicketTable);
+    //window.addEventListener("DOMContentLoaded", refreshTallyTable);
 </script>
 {% endblock scripts%}

@@ -1,5 +1,4 @@
 {% extends 'evs_index.html' %}
-{% load static %}
 {% block page_name %}
 <h5><i class='bx bx-home-alt'></i>Statistics</h5>
 {% endblock page_name %}
@@ -12,13 +11,13 @@
         <h4 class="fw-bold" style="color:#19387E;">Entry Violation Statistics</h4>
     </div>
     <div class="controls">
-        <form action="{% url 'evs:Statistics' %}" class="search-form">
+        <form action="{% url 'evs:Statistics' %}" class="search-form" id="filterForm">
             <button>Filters:</button>
             From:<input id="from_date" name="from_date" type="date" value="{{ request.GET.from_date|default:'' }}">
-            To: <input id="to_date" name="to_date" type="date" value="{{ request.GET.to_date|default:'' }}">
+            To:<input id="to_date" name="to_date" type="date" value="{{ request.GET.to_date|default:'' }}">
             Academic Year: 
             <select id="academic_list" name="academic_list">
-                <option value="">None</option>
+                <option value="0">None</option>
                 {% for item in ay_list %}
                     <option value="{{ item.acad_year_id }}" 
                             {% if item.acad_year_id|stringformat:"s" == request.GET.academic_list|stringformat:"s" %}selected{% endif %}>
@@ -31,7 +30,7 @@
                     </option>
                 {% endfor %}
             </select>
-            <button type="submit">Filter</button>
+            <button type="submit" onclick="return validateFilter()">Filter</button>
             {% if request.GET.from_date or request.GET.to_date or request.GET.academic_list %}
                 <a href="{% url 'evs:Statistics' %}"><button type="button">Clear</button></a>
             {% endif %}
@@ -42,29 +41,32 @@
         <div class="col-lg-4 col-md-6">
             <div class="bg-white rounded shadow-sm p-4 mb-3">
                 <!--<div class="mb-2 text-muted" style="font-size:1rem;">As of</div>-->
-                <div class="mb-1" style="font-size:2rem; color:#19387E; font-weight:700;">{{ month }}<br>{{ semester }}</div> <!-- CHANGE INTO DYNAMIC DATA (Check Emoji✅AHHAHAHA)-->
-                <div class="mb-2" style="font-size:2.5rem; color:#2E5AAC; font-weight:900;">{{ total_violations }}</div> 
-                <div class="text-primary" style="font-size:1rem; font-weight:600;">Total Counts of<br>Confirmed Violations</div>
+                <div class="mb-1" style="font-size:2rem; color:#19387E; font-weight:700;">
+                    {% if from_date != to_date and selected_ay == None %}
+                        {{ from_date }} to <br> {{ to_date }}
+                    {% elif from_date == to_date and selected_ay == None %}
+                        {{ from_date }}
+                    {% elif from_date != to_date and selected_ay != None %}
+                        {{ ay }}<br>{{ semester }}<br>{{ from_date }} to <br> {{ to_date }}
+                    {% elif from_date != None and from_date == to_date and selected_ay != None %}
+                        {{ ay }}<br>{{ semester }}<br>{{ from_date }}
+                    {% else %}
+                        {{ ay }}<br>{{ semester }}
+                    {% endif %}
+                </div> <!-- CHANGE INTO DYNAMIC DATA (Check Emoji✅AHHAHAHA)-->
+                <div class="row mt-5">
+                    <div class="col-md-6 d-flex justify-content-between align-items-center">
+                        <div class="text-primary" style="font-size:1rem; font-weight:600;">Total Resolved Violations:</div>
+                        <div style="font-size:2.5rem; color:#2E5AAC; font-weight:900;">{{ total_violations }}</div>
+                    </div>
+                    <div class="col-md-6 d-flex justify-content-between align-items-center">
+                        <div class="text-primary" style="font-size:1rem; font-weight:600;">Total Resolved Tickets:</div>
+                        <div style="font-size:2.5rem; color:#2E5AAC; font-weight:900;">{{ total_tickets }}</div>
+                    </div>
+                </div>
             </div>
             <div class="stats-container d-flex flex-column gap-3">
                 <!-- First Statistic Card -->
-                <div class="stats-card">
-                    <div class="stats-header">
-                        <div class="icon-container" style="background:#E0E9FF;">
-                            <div class="icon"><svg width="24" height="18" viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                             <path d="M22 0H2C0.91 0.04 0.04 0.91 0 2V16C0.04 17.09 0.91 17.96 2 18H22C23.09 17.96 23.96 17.09 24 16V2C23.9816 1.47543 23.765 0.977343 23.3938 0.606185C23.0227 0.235027 22.5246 0.0184054 22 0ZM22 16H2V2H22V16ZM14 14V12.75C14 11.09 10.66 10.25 9 10.25C7.34 10.25 4 11.09 4 12.75V14H14ZM9 4C8.33696 4 7.70107 4.26339 7.23223 4.73223C6.76339 5.20107 6.5 5.83696 6.5 6.5C6.5 6.8283 6.56466 7.15339 6.6903 7.45671C6.81594 7.76002 7.00009 8.03562 7.23223 8.26777C7.70107 8.73661 8.33696 9 9 9C9.3283 9 9.65339 8.93534 9.95671 8.8097C10.26 8.68406 10.5356 8.49991 10.7678 8.26777C10.9999 8.03562 11.1841 7.76002 11.3097 7.45671C11.4353 7.15339 11.5 6.8283 11.5 6.5C11.5 6.1717 11.4353 5.84661 11.3097 5.54329C11.1841 5.23998 10.9999 4.96438 10.7678 4.73223C10.5356 4.50009 10.26 4.31594 9.95671 4.1903C9.65339 4.06466 9.3283 4 9 4ZM14 4V5H20V4H14ZM14 6V7H20V6H14ZM14 8V9H18V8H14Z" 
-                             fill="#19387E"/>
-                             </svg>
-                             </div>
-                        </div>
-                        <div class="stats-info">
-                            <div class="stats-title">ID Violation</div>
-                            <div class="value">{{ id_violation }}</div>
-                        </div>
-                    </div>
-                </div>
-        
-                <!-- Second Statistic Card -->
                 <div class="stats-card">
                     <div class="stats-header">
                         <div class="icon-container" style="background:#19387E;">
@@ -81,8 +83,9 @@
                         </div>
                     </div> 
                 </div>
+                
         
-                <!-- Third Statistic Card -->
+                <!-- Second Statistic Card -->
                 <div class="stats-card">
                     <div class="stats-header">
                         <div class="icon-container" style="background:#245FE9;">
@@ -100,6 +103,42 @@
                         </div>
                     </div>
                 </div>
+        
+                <!-- Third Statistic Card -->
+                <div class="stats-card">
+                    <div class="stats-header">
+                        <div class="icon-container" style="background:#E0E9FF;">
+                            <div class="icon"><svg width="24" height="18" viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                             <path d="M22 0H2C0.91 0.04 0.04 0.91 0 2V16C0.04 17.09 0.91 17.96 2 18H22C23.09 17.96 23.96 17.09 24 16V2C23.9816 1.47543 23.765 0.977343 23.3938 0.606185C23.0227 0.235027 22.5246 0.0184054 22 0ZM22 16H2V2H22V16ZM14 14V12.75C14 11.09 10.66 10.25 9 10.25C7.34 10.25 4 11.09 4 12.75V14H14ZM9 4C8.33696 4 7.70107 4.26339 7.23223 4.73223C6.76339 5.20107 6.5 5.83696 6.5 6.5C6.5 6.8283 6.56466 7.15339 6.6903 7.45671C6.81594 7.76002 7.00009 8.03562 7.23223 8.26777C7.70107 8.73661 8.33696 9 9 9C9.3283 9 9.65339 8.93534 9.95671 8.8097C10.26 8.68406 10.5356 8.49991 10.7678 8.26777C10.9999 8.03562 11.1841 7.76002 11.3097 7.45671C11.4353 7.15339 11.5 6.8283 11.5 6.5C11.5 6.1717 11.4353 5.84661 11.3097 5.54329C11.1841 5.23998 10.9999 4.96438 10.7678 4.73223C10.5356 4.50009 10.26 4.31594 9.95671 4.1903C9.65339 4.06466 9.3283 4 9 4ZM14 4V5H20V4H14ZM14 6V7H20V6H14ZM14 8V9H18V8H14Z" 
+                             fill="#19387E"/>
+                             </svg>
+                             </div>
+                        </div>
+                        <div class="stats-info">
+                            <div class="stats-title">ID Violation</div>
+                            <div class="value">{{ id_violation }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fourth Statistic Card -->
+                <div class="stats-card">
+                    <div class="stats-header">
+                        <div class="icon-container" style="background:#19387E">
+                            <div class="icon">
+                             <svg width="18" height="20" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                 <path d="M4 9H6V11H4V9ZM4 13H6V15H4V13ZM8 9H10V11H8V9ZM8 13H10V15H8V13ZM12 9H14V11H12V9ZM12 13H14V15H12V13Z" fill="white"/>
+                                 <path d="M2 20H16C17.103 20 18 19.103 18 18V4C18 2.897 17.103 2 16 2H14V0H12V2H6V0H4V2H2C0.897 2 0 2.897 0 4V18C0 19.103 0.897 20 2 20ZM16 6L16.001 18H2V6H16Z" 
+                                 fill="white"/>
+                                 </svg>                                    
+                            </div>
+                        </div>
+                        <div class="stats-info">
+                            <div class="stats-title">ID Not Claimed</div>
+                            <div class="value">{{ id_not_claimed_violation }}</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- Center: Donut Chart -->
@@ -111,22 +150,28 @@
                 {% widthratio uniform_violation total_violations 100 as uniform_percent %}
                 {% widthratio dress_code_violation total_violations 100 as dress_code_percent %}
                 {% widthratio id_violation total_violations 100 as id_percent %}
+                {% widthratio id_not_claimed_violation total_violations 100 as id_not_claimed_percent %}
 
                 <div class="mt-3 w-100">
                     <div class="d-flex align-items-center mb-2">
                         <span class="me-2 rounded-circle d-inline-block" style="width:18px;height:18px;background:#2E5AAC;"></span>
                         <span style="font-size:0.95rem;">Uniform Violation</span>
-                        <span class="ms-auto text-muted">{% if total_violations %}{{ uniform_percent|floatformat:2 }}{% else %}0{% endif %}%</span>
+                        <span class="ms-auto text-muted">{{ uniform_percent|floatformat:2 }}%</span>
                     </div>
                     <div class="d-flex align-items-center mb-2">
                         <span class="me-2 rounded-circle d-inline-block" style="width:18px;height:18px;background:#69A8F7;"></span>
                         <span style="font-size:0.95rem;">Dress Code Violation</span>
                         <span class="ms-auto text-muted">{% if total_violations %}{{ dress_code_percent|floatformat:2 }}{% else %}0{% endif %}%</span>
                     </div>
-                    <div class="d-flex align-items-center">
+                    <div class="d-flex align-items-center mb-2">
                         <span class="me-2 rounded-circle d-inline-block" style="width:18px;height:18px;background:#19387E;"></span>
                         <span style="font-size:0.95rem;">ID Violation</span>
                         <span class="ms-auto text-muted">{% if total_violations %}{{ id_percent|floatformat:2 }}{% else %}0{% endif %}%</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="me-2 rounded-circle d-inline-block" style="width:18px;height:18px;background:#7393B3;"></span>
+                        <span style="font-size:0.95rem;">ID Not Claimed Violation</span>
+                        <span class="ms-auto text-muted">{% if total_violations %}{{ id_not_claimed_percent|floatformat:2 }}{% else %}0{% endif %}%</span>
                     </div>
                 </div>
                     </div>
@@ -164,11 +209,123 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!-- Custom Chart Logic -->
 <script>
+    function validateFilter() {
+        const fromDate = document.getElementById('from_date').value;
+        const toDate = document.getElementById('to_date').value;
+        const academicList = document.getElementById('academic_list').value;
+    
+        if (!fromDate && !toDate && !academicList) {
+            alert('Please select at least one filter option: Date range or Academic Year.');
+            return false;
+        }
+    
+        if ((fromDate && !toDate) || (toDate && !fromDate)) {
+            alert('Please select both From Date and To Date.');
+            return false;
+        }
+    
+        if (fromDate && toDate) {
+            const start = new Date(fromDate);
+            const end = new Date(toDate);
+    
+            if (end < start) {
+                alert('To Date must be greater than or equal to From Date.');
+                return false;
+            }
+        }
+    
+        return true; // allow form to submit
+    }
+
     const donutData = [
         {{ uniform_violation|default:0 }},
         {{ dress_code_violation|default:0 }},
-        {{ id_violation|default:0 }}
+        {{ id_violation|default:0 }},
+        {{ id_not_claimed_violation|default:0 }}
     ];
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Donut Chart (Violation Distribution)
+        const donutCtx = document.getElementById('violationDonutChart').getContext('2d');
+        new Chart(donutCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Uniform Violation', 'Dress Code Violation', 'ID Violation', 'ID Not Claimed Violation'],
+                datasets: [{
+                    data: typeof donutData !== 'undefined' ? donutData : [0, 0, 0, 0],
+                    backgroundColor: ['#2E5AAC', '#69A8F7', '#19387E', '#7393B3'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+    
+        // ——— Element refs ———
+      const fromInput = document.getElementById('from_date');
+      const toInput   = document.getElementById('to_date');
+      const aySelect  = document.getElementById('academic_list');
+      const filterForm = document.querySelector('.search-form');
+    
+      // ——— Bar chart setup ———
+      const barCtx = document.getElementById('remarksBarChart').getContext('2d');
+      let barChartInstance = null;
+    
+      // Function to (re)load bar chart with optional filters
+      function loadBarChart() {
+        // Build query string from current filter values
+        const params = new URLSearchParams();
+        if (fromInput.value) params.append('from_date', fromInput.value);
+        if (toInput.value)   params.append('to_date',   toInput.value);
+        if (aySelect.value)  params.append('academic_list', aySelect.value);
+    
+        fetch('/xu-entry-violation/get-reasons?' + params.toString())
+          .then(res => {
+            if (!res.ok) throw new Error('Network response was not ok');
+            return res.json();
+          })
+          .then(data => {
+            const counts = data.reason_counts;
+            const labels = counts.map(o => o.reason_text);
+            const values = counts.map(o => o.count);
+            const colors = counts.map(o => o.color || '#000000');
+    
+            // destroy old chart if it exists
+            if (barChartInstance) barChartInstance.destroy();
+    
+            barChartInstance = new Chart(barCtx, {
+              type: 'bar',
+              data: {
+                labels: labels,
+                datasets: [{
+                  data: values,
+                  backgroundColor: colors,
+                  borderWidth: 0
+                }]
+              },
+              options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                  x: { display: false },
+                  y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 50 }
+                  }
+                }
+              }
+            });
+          })
+          .catch(err => console.error('Error fetching reason counts:', err));
+      }
+    
+      // Initial load
+      loadBarChart();
+    });
 </script>
-<script src="{% static 'js/statistics_charts.js' %}"></script> <!--More heree!!!!-->
 {% endblock content %}

@@ -165,7 +165,7 @@
     }
     
     function refreshTicketTable() {
-        const baseUrl = "{% url 'evs:TallyTable' %}";
+        const baseUrl = "{% url 'evs:ViolationTable' %}";
         const queryString = getFilterParams();
         const url = `${baseUrl}?${queryString}`;
     
@@ -178,7 +178,7 @@
     }
 
     // Auto-refresh every 30 seconds
-    setInterval(refreshTallyTable, 30000);
+    setInterval(refreshTicketTable, 30000);
 
     // Refresh once on page load
     window.addEventListener("DOMContentLoaded", refreshTicketTable);

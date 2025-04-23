@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from .models import Student, Ticket, TicketReason, Reason, AcademicYear, StudentViolation, Semester, Violation
 from datetime import datetime
 from django.core.paginator import Paginator
@@ -118,22 +118,28 @@ def get_reasons(request):
     to_date   = request.GET.get('to_date')
     ay_filter = request.GET.get('academic_list')
 
-    if ay_filter:
-        ay = get_object_or_404(AcademicYear, pk=ay_filter)
-    else:
-        ay = get_object_or_404(AcademicYear, active=1)
+    qs = Ticket.objects.filter(ticket_status=1)
+    ay = None
 
-    tickets = Ticket.objects.filter(
-        ticket_status=1,
-        acad_year_id=ay.acad_year_id
-    )
+    try:
+        if ay_filter:
+            ay = AcademicYear.objects.get(pk=ay_filter)
+        else:
+            ay = AcademicYear.objects.get(active=1)
+        qs = qs.filter(acad_year_id=ay.acad_year_id)
+    except AcademicYear.DoesNotExist:
+        ay = None
 
     if from_date and to_date:
-        start = datetime.strptime(from_date, '%Y-%m-%d')
-        end   = datetime.strptime(to_date, '%Y-%m-%d')
-        tickets = tickets.filter(date_validated__date__range=(start, end))
+        try:
+            start = datetime.strptime(from_date, '%Y-%m-%d')
+            end = datetime.strptime(to_date, '%Y-%m-%d')
+            qs = qs.filter(date_validated__date__range=(start, end))
+        except ValueError:
+            pass
 
-    ticket_ids = tickets.values_list('ticket_id', flat=True)
+
+    ticket_ids = qs.values_list('ticket_id', flat=True)
     reason_counts = (
         TicketReason.objects
         .filter(ticket_id__in=ticket_ids)
@@ -175,13 +181,16 @@ def dashboard_view(request):
     id_violation = 0
     dresscode_violation = 0
     uniform_violation = 0
+    id_not_claimed_violation = 0
     
 
     for violation in violations:
-        if violation['violation_id'] == 3 or violation['violation_id'] == 4:
+        if violation['violation_id'] == 3:
             id_violation += violation['count']
         elif violation['violation_id'] == 2:
             dresscode_violation += violation['count']
+        elif violation['violation_id'] == 4:
+            id_not_claimed_violation += violation['count']
         else:
             uniform_violation += violation['count']
 
@@ -189,6 +198,7 @@ def dashboard_view(request):
         'id_violation': id_violation,
         'dresscode_violation': dresscode_violation,
         'uniform_violation': uniform_violation,
+        'id_not_claimed': id_not_claimed_violation,
         'month': month_name,
         'tickets': tickets,
         'students': students,
@@ -565,7 +575,7 @@ def statistics_view(request):
     from_date = request.GET.get('from_date')
     to_date = request.GET.get('to_date')
     ay_filter = request.GET.get('academic_list')
-
+    
     qs = Ticket.objects.filter(ticket_status=1)
     ay = None
 
@@ -586,10 +596,13 @@ def statistics_view(request):
         except ValueError:
             pass
 
-    total_violations = qs.count()
+    total_tickets = qs.count()
+
     id_violation = qs.filter(id_violation=True).count()
     uniform_violation = qs.filter(uniform_violation=True).count()
     dress_code_violation = qs.filter(dress_code_violation=True).count()
+    id_not_claimed_violation = qs.filter(id_not_claimed_violation=True).count()
+    total_violations = id_violation + uniform_violation + dress_code_violation + id_not_claimed_violation
 
     ticket_ids = qs.values_list('ticket_id', flat=True)
     reason_ids = TicketReason.objects.filter(ticket_id__in=ticket_ids).values_list('reason_id', flat=True)
@@ -606,14 +619,17 @@ def statistics_view(request):
         'id_violation': id_violation,
         'uniform_violation': uniform_violation,
         'dress_code_violation': dress_code_violation,
+        'id_not_claimed_violation': id_not_claimed_violation,
         'total_violations': total_violations,
 
-        'month': ay.description if ay else 'N/A',
+        'ay': ay.description if ay else 'N/A',
         'semester': Semester.objects.get(pk=ay.semester).semester if ay else 'N/A',
 
         'reasons': reasons,
         'ay_list': ay_list,
         'semesters': semesters,
+
+        'total_tickets': total_tickets,
     })
 
 def clear_violation(request, ticket_id):
@@ -653,12 +669,10 @@ def settings_academic(request):
         active = 'setActive' in request.POST
 
         if start > end:
-            messages.warning(request, '!!  Year Start must be less than or equal to Year End  !!')
-            return redirect('evs:AcademicYear')
+            return HttpResponse("<script>alert('!!  Year Start must be less than or equal to Year End  !!'); window.history.back();</script>")
         
         if AcademicYear.objects.filter(semester=sem, year_start=start, year_end=end).exists():
-            messages.warning(request, '!!  Academic Year with this semester and date range already exists  !!')
-            return redirect('evs:AcademicYear')
+            return HttpResponse("<script>alert('!!  Academic Year with this semester and date range already exists  !!'); window.history.back();</script>")
 
         if active:
             AcademicYear.objects.update(active=False)
@@ -672,7 +686,6 @@ def settings_academic(request):
             osa_id='111'
         )
 
-        messages.success(request, 'Academic Year successfully created.')
         ay_list = AcademicYear.objects.all().order_by('-acad_year_id')
 
         page_obj = paginate_queryset(request, ay_list, 3)
