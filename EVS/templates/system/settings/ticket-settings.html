@@ -1,0 +1,144 @@
+{% extends 'system/settings.html' %}
+
+{% block settings_content %}
+<div class="col-md-9 col-lg-10 d-flex flex-column ps-4" style="padding: 32px 0;">
+    <div class="card mb-4" style="width: 100%; max-width: 900px; padding: 40px;">
+        <h2>Ticket Settings</h2>
+        <p class="subtitle">Violation Reasons Management</p>
+        <div class="table-container">
+            <table class="settings-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Violation</th>
+                        <th>List of Violation Reasons</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {# Example static rows, replace with dynamic data as needed #}
+                    <tr>
+                        <td>1</td>
+                        <td>ID</td>
+                        <td><span class="dot dot-blue"></span>Forgotten or Misplaced</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm me-2">Edit</button>
+                            <button class="btn btn-outline-danger btn-sm">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>ID</td>
+                        <td><span class="dot dot-orange"></span>ID not claimed on time</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm me-2">Edit</button>
+                            <button class="btn btn-outline-danger btn-sm">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Uniform</td>
+                        <td><span class="dot dot-yellow"></span>Lack of Awareness of Specific Policy</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm me-2">Edit</button>
+                            <button class="btn btn-outline-danger btn-sm">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Uniform</td>
+                        <td><span class="dot dot-green"></span>Unforeseen Circumstances</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm me-2">Edit</button>
+                            <button class="btn btn-outline-danger btn-sm">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Uniform</td>
+                        <td><span class="dot dot-cyan"></span>Misinterpretation of dress code compliance</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm me-2">Edit</button>
+                            <button class="btn btn-outline-danger btn-sm">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Uniform</td>
+                        <td><span class="dot dot-violet"></span>Substitution of footwear (unexpected damage/unavailability)</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm me-2">Edit</button>
+                            <button class="btn btn-outline-danger btn-sm">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Dress Code</td>
+                        <td><span class="dot dot-gray"></span>Unawareness of mandated garment length requirements</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm me-2">Edit</button>
+                            <button class="btn btn-outline-danger btn-sm">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>Dress Code</td>
+                        <td><span class="dot dot-red"></span>Oversight in compliance</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm me-2">Edit</button>
+                            <button class="btn btn-outline-danger btn-sm">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>Dress Code</td>
+                        <td><span class="dot dot-brown"></span>Personal style preference conflicting with policy</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm me-2">Edit</button>
+                            <button class="btn btn-outline-danger btn-sm">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>Dress Code</td>
+                        <td><span class="dot dot-dark"></span>Temporary use of restricted footwear due to convenience or necessity</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm me-2">Edit</button>
+                            <button class="btn btn-outline-danger btn-sm">Remove</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="add-reason-form">
+            <h4>Add Reasons Here</h4>
+            <form>
+                <select name="violation_type" class="input-select">
+                    <option value="">Violation Type</option>
+                    <option value="ID">ID</option>
+                    <option value="Uniform">Uniform</option>
+                    <option value="Dress Code">Dress Code</option>
+                </select>
+                <input type="text" name="reason" placeholder="Input Reason Here" class="input-text" />
+                <input type="color" name="color" class="input-color" />
+                <button type="submit" class="btn-add">+ Add Reasons</button>
+            </form>
+        </div>
+        <!-- Modal for violation types (copied attributes from ticket-details.html) -->
+        <div id="violationModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close-btn" id="closeModal">&times;</span>
+                <h3>Select Violation Types to Override</h3>
+                <form id="violationForm">
+                    <label><input type="checkbox" name="violation_types" value="id_violation" {% if ticket.id_violation == 1 %}checked{% endif %}> ID Violation</label><br>
+                    <label><input type="checkbox" name="violation_types" value="dress_code_violation" {% if ticket.dress_code_violation == 1 %}checked{% endif %}> Dress Code Violation</label><br>
+                    <label><input type="checkbox" name="violation_types" value="uniform_violation" {% if ticket.uniform_violation == 1 %}checked{% endif %}> Uniform Violation</label><br>
+                    <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}">
+                    <button type="submit" class="buttons confirm-violation">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

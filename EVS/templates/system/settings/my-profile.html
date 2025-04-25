@@ -1,0 +1,57 @@
+{% extends 'system/settings.html' %}
+
+{% block settings_content %}
+<div class="col-md-9 col-lg-10 d-flex flex-column ps-4" style="padding: 32px 0;">
+    <div class="card mb-4" style="width: 100%; max-width: 420px;">
+        <div class="card-body">
+            <h5 class="card-title mb-1" style="color: #19387E; font-weight:900;">My Profile</h5>
+            <div class="mb-3" style="font-weight: 600; font-size: 1rem; color: #222;">Basic Info</div>
+            <form>
+                <!-- Name -->
+                <div class="row align-items-center mb-3">
+                    <div class="col-12 col-md-4 col-lg-3">
+                        <label class="form-label mb-1">Name</label>
+                        <input type="text" class="form-control" value="Ivan Subrabas" disabled>
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-outline-primary btn-sm">Change</button>
+                    </div>
+                </div>
+                <!-- Email -->
+                <div class="row align-items-center mb-3">
+                    <div class="col-12 col-md-4 col-lg-3">
+                        <label class="form-label mb-1">Email</label>
+                        <input type="email" class="form-control" value="isubrabas@xu.edu.ph" disabled>
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-outline-primary btn-sm">Change</button>
+                    </div>
+                </div>
+                <!-- Number -->
+                <div class="row align-items-center mb-3">
+                    <div class="col-12 col-md-4 col-lg-3">
+                        <label class="form-label mb-1">Number</label>
+                        <input type="text" class="form-control" value="09123456789" disabled>
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-outline-primary btn-sm">Change</button>
+                    </div>
+                </div>
+                <!-- Password -->
+                <div class="row align-items-center mb-3">
+                    <div class="col-12 col-md-4 col-lg-3">
+                        <label class="form-label mb-1">Password</label>
+                        <input type="password" class="form-control" value="password" disabled>
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-outline-primary btn-sm">Change</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

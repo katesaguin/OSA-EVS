@@ -657,8 +657,15 @@ def clear_violation(request, ticket_id):
 
 
 # SETTINGS BACKEND
+
+def settings_my_profile(request):
+    return render(request, 'system/settings/my-profile.html')
+
 def settings_user_management(request):
     return render(request, 'system/settings/user-management.html')
+
+def settings_ticket_settings(request):
+    return render(request, 'system/settings/ticket-settings.html')
 
 def settings_academic(request):
     if request.method == 'POST':

@@ -28,10 +28,20 @@
                        {% if active_page == 'academic-year' %}style="background: #e6edff; color: #2255d5; border: none; font-weight: bold;"{% endif %}>
                         <i class="bx bx-calendar"></i> Academic Year
                     </a>
+                    <a href="{% url 'evs:MyProfile' %}"
+                       class="list-group-item list-group-item-action {% if active_page == 'my-profile' %}active{% endif %}"
+                       {% if active_page == 'my-profile' %}style="background: #e6edff; color: #2255d5; border: none; font-weight: bold;"{% endif %}>
+                        <i class="bx bx-calendar"></i> My Profile
+                    </a>
                     <a href="{% url 'evs:UserManagement' %}"
                        class="list-group-item list-group-item-action {% if active_page == 'user-management' %}active{% endif %}"
                        {% if active_page == 'user-management' %}style="background: #e6edff; color: #2255d5; border: none; font-weight: bold;"{% endif %}>
                         <i class="bx bx-group"></i> User Management
+                    </a>
+                    <a href="{% url 'evs:TicketSettings' %}"
+                       class="list-group-item list-group-item-action {% if active_page == 'ticket-settings' %}active{% endif %}"
+                       {% if active_page == 'ticket-settings' %}style="background: #e6edff; color: #2255d5; border: none; font-weight: bold;"{% endif %}>
+                        <i class="bx bx-group"></i> Ticket Settings
                     </a>
                 </div>
             </div>

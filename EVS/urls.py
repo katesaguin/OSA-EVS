@@ -10,6 +10,8 @@ urlpatterns = [
     path('statistics', views.statistics_view, name="Statistics"),
     path('settings/academic-year', views.settings_academic, name="AcademicYear"),
     path('settings/user-management', views.settings_user_management, name="UserManagement"),
+    path('settings/my-profile', views.settings_my_profile, name="MyProfile"),
+    path('settings/ticket-settings', views.settings_ticket_settings, name="TicketSettings"),
     path('ticket/<int:ticket_id>/details', views.ticketDetails_views, name="TicketDetails"),
     path('ticket/<int:ticket_id>/clear-ticket',views.clear_violation, name="ClearTicket"),
     path('ticket/<int:ticket_id>/validate', views.validated_ticket),
