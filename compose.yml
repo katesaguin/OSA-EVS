@@ -1,0 +1,41 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: 'test_db'
+    environment:
+      MYSQL_DB: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql1/data
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+
+  web:
+    build: .
+    container_name: 'test_web'
+    restart: on-failure:3
+    ports:
+      - "8008:8008"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_NAME: ${DB_NAME}
+      DATABASE_USERNAME: ${DB_USER}
+      DATABASE_PASSWORD: ${DB_PASSWORD}
+      DATABASE_HOST: ${DB_HOST}
+    env_file:
+      - .env
+
+volumes:
+  mysql_data:
