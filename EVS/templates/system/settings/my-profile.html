@@ -6,48 +6,98 @@
         <div class="card-body">
             <h5 class="card-title mb-1" style="color: #19387E; font-weight:900;">My Profile</h5>
             <div class="mb-3" style="font-weight: 600; font-size: 1rem; color: #222;">Basic Info</div>
-            <form>
+            <form id="profileForm" autocomplete="off">
                 <!-- Name -->
                 <div class="row align-items-center mb-3">
-                    <div class="col-12 col-md-4 col-lg-3">
+                    <div class="col-12 col-md-10 col-lg-8">
                         <label class="form-label mb-1">Name</label>
-                        <input type="text" class="form-control" value="Ivan Subrabas" disabled>
+                        <input id="nameInput" type="text" class="form-control" value="Ivan Subrabas" disabled>
                     </div>
-                    <div class="col-auto">
-                        <button type="button" class="btn btn-outline-primary btn-sm">Change</button>
+                    <div class="col-auto" id="nameBtnGroup">
+                        <button type="button" class="btn btn-outline-primary btn-sm my-profile-btn" onclick="editField('name')">Change</button>
+                    </div>
+                    <div class="col-auto d-none" id="nameEditGroup">
+                        <button type="button" class="btn btn-success btn-sm my-profile-btn" onclick="saveField('name')">Save</button>
+                        <button type="button" class="btn btn-secondary btn-sm my-profile-btn" onclick="cancelEdit('name')">Cancel</button>
                     </div>
                 </div>
                 <!-- Email -->
                 <div class="row align-items-center mb-3">
-                    <div class="col-12 col-md-4 col-lg-3">
+                    <div class="col-12 col-md-10 col-lg-8">
                         <label class="form-label mb-1">Email</label>
-                        <input type="email" class="form-control" value="isubrabas@xu.edu.ph" disabled>
+                        <input id="emailInput" type="email" class="form-control" value="isubrabas@xu.edu.ph" disabled>
                     </div>
-                    <div class="col-auto">
-                        <button type="button" class="btn btn-outline-primary btn-sm">Change</button>
+                    <div class="col-auto" id="emailBtnGroup">
+                        <button type="button" class="btn btn-outline-primary btn-sm my-profile-btn" onclick="editField('email')">Change</button>
+                    </div>
+                    <div class="col-auto d-none" id="emailEditGroup">
+                        <button type="button" class="btn btn-success btn-sm my-profile-btn" onclick="saveField('email')">Save</button>
+                        <button type="button" class="btn btn-secondary btn-sm my-profile-btn" onclick="cancelEdit('email')">Cancel</button>
                     </div>
                 </div>
                 <!-- Number -->
                 <div class="row align-items-center mb-3">
-                    <div class="col-12 col-md-4 col-lg-3">
+                    <div class="col-12 col-md-10 col-lg-8">
                         <label class="form-label mb-1">Number</label>
-                        <input type="text" class="form-control" value="09123456789" disabled>
+                        <input id="numberInput" type="text" class="form-control" value="09123456789" disabled>
                     </div>
-                    <div class="col-auto">
-                        <button type="button" class="btn btn-outline-primary btn-sm">Change</button>
+                    <div class="col-auto" id="numberBtnGroup">
+                        <button type="button" class="btn btn-outline-primary btn-sm my-profile-btn" onclick="editField('number')">Change</button>
+                    </div>
+                    <div class="col-auto d-none" id="numberEditGroup">
+                        <button type="button" class="btn btn-success btn-sm my-profile-btn" onclick="saveField('number')">Save</button>
+                        <button type="button" class="btn btn-secondary btn-sm my-profile-btn" onclick="cancelEdit('number')">Cancel</button>
                     </div>
                 </div>
                 <!-- Password -->
                 <div class="row align-items-center mb-3">
-                    <div class="col-12 col-md-4 col-lg-3">
+                    <div class="col-12 col-md-10 col-lg-8">
                         <label class="form-label mb-1">Password</label>
-                        <input type="password" class="form-control" value="password" disabled>
+                        <input id="passwordInput" type="password" class="form-control" value="password" disabled>
                     </div>
-                    <div class="col-auto">
-                        <button type="button" class="btn btn-outline-primary btn-sm">Change</button>
+                    <div class="col-auto" id="passwordBtnGroup">
+                        <button type="button" class="btn btn-outline-primary btn-sm my-profile-btn" onclick="editField('password')">Change</button>
+                    </div>
+                    <div class="col-auto d-none" id="passwordEditGroup">
+                        <button type="button" class="btn btn-success btn-sm my-profile-btn" onclick="saveField('password')">Save</button>
+                        <button type="button" class="btn btn-secondary btn-sm my-profile-btn" onclick="cancelEdit('password')">Cancel</button>
                     </div>
                 </div>
             </form>
+
+<script>
+// Store original values for cancel
+const originalValues = {
+    name: document.getElementById('nameInput') ? document.getElementById('nameInput').value : '',
+    email: document.getElementById('emailInput') ? document.getElementById('emailInput').value : '',
+    number: document.getElementById('numberInput') ? document.getElementById('numberInput').value : '',
+    password: document.getElementById('passwordInput') ? document.getElementById('passwordInput').value : ''
+};
+
+function editField(field) {
+    document.getElementById(field + "Input").disabled = false;
+    document.getElementById(field + "BtnGroup").classList.add('d-none');
+    document.getElementById(field + "EditGroup").classList.remove('d-none');
+}
+
+function cancelEdit(field) {
+    // Reset to original value
+    document.getElementById(field + "Input").value = originalValues[field];
+    document.getElementById(field + "Input").disabled = true;
+    document.getElementById(field + "BtnGroup").classList.remove('d-none');
+    document.getElementById(field + "EditGroup").classList.add('d-none');
+}
+
+function saveField(field) {
+    // Optionally: send AJAX to save
+    originalValues[field] = document.getElementById(field + "Input").value;
+    document.getElementById(field + "Input").disabled = true;
+    document.getElementById(field + "BtnGroup").classList.remove('d-none');
+    document.getElementById(field + "EditGroup").classList.add('d-none');
+    // Show a success message or handle errors as needed
+}
+</script>
+
 
         </div>
     </div>

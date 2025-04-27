@@ -6,6 +6,18 @@ body, .content {
 }
 
 
+/* Add more horizontal spacing to settings-table columns */
+.settings-table {
+    border-spacing: 0 1rem;
+    border-collapse: separate !important;
+}
+.settings-table th,
+.settings-table td {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+}
+
+
 /* Override Bootstrap button styles */
 .btn {
     font-family: 'Overpass', sans-serif;
@@ -179,7 +191,9 @@ h5.style1 {
 }
 
 /**/
-
+.my-profile-btn {
+    margin-top: 26px;
+}
 
 /* Main Content   -  TRBL*/
 .main-content {

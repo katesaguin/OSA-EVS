@@ -3,8 +3,8 @@
 {% block settings_content %}
 <div class="col-md-9 col-lg-10 d-flex flex-column ps-4" style="padding: 32px 0;">
     <div class="card mb-4" style="width: 100%; max-width: 900px; padding: 40px;">
-        <h2>Ticket Settings</h2>
-        <p class="subtitle">Violation Reasons Management</p>
+        <h4 class="card-title mb-3" style="color: #19387E; font-weight:900;">Ticket Settings</h4>
+        <p style="margin-top:-10px;">Violation Reasons Management</p>
         <div class="table-container">
             <table class="settings-table">
                 <thead>
@@ -15,37 +15,8 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
-                    {# Example static rows, replace with dynamic data as needed #}
-                    <tr>
-                        <td>1</td>
-                        <td>ID</td>
-                        <td><span class="dot dot-blue"></span>Forgotten or Misplaced</td>
-                        <td>
-                            <button class="btn btn-primary btn-sm me-2">Edit</button>
-                            <button class="btn btn-outline-danger btn-sm">Remove</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>ID</td>
-                        <td><span class="dot dot-orange"></span>ID not claimed on time</td>
-                        <td>
-                            <button class="btn btn-primary btn-sm me-2">Edit</button>
-                            <button class="btn btn-outline-danger btn-sm">Remove</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Uniform</td>
-                        <td><span class="dot dot-yellow"></span>Lack of Awareness of Specific Policy</td>
-                        <td>
-                            <button class="btn btn-primary btn-sm me-2">Edit</button>
-                            <button class="btn btn-outline-danger btn-sm">Remove</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
+                <tbody id="reasons-table-body">
+                    <!-- Dynamic rows will be rendered by JS -->
                         <td>Uniform</td>
                         <td><span class="dot dot-green"></span>Unforeseen Circumstances</td>
                         <td>
@@ -111,19 +82,111 @@
             </table>
         </div>
         <div class="add-reason-form">
-            <h4>Add Reasons Here</h4>
-            <form>
-                <select name="violation_type" class="input-select">
-                    <option value="">Violation Type</option>
+
+
+            <h4 class="card-title mb-3" style="color: #19387E; font-weight:900; margin-top: 40px;">Add Reasons Here</h4>
+            <!--ADD REASON HEREEEEEE-->
+    <form id="addReasonForm" onsubmit="return false;">
+        <div class="d-flex gap-2 align-items-end mb-3 flex-wrap">
+            <div style="min-width:220px;">
+                <label class="form-label">Violation Type <span class="text-danger">*</span></label>
+                <select name="violation_type" id="violationType" class="form-select" required>
+                    <option value="">Select Violation Type</option>
                     <option value="ID">ID</option>
                     <option value="Uniform">Uniform</option>
                     <option value="Dress Code">Dress Code</option>
                 </select>
-                <input type="text" name="reason" placeholder="Input Reason Here" class="input-text" />
-                <input type="color" name="color" class="input-color" />
-                <button type="submit" class="btn-add">+ Add Reasons</button>
-            </form>
+                <div class="invalid-feedback">Violation type is required.</div>
+            </div>
+            <div style="min-width:260px;">
+                <label class="form-label">Reason <span class="text-danger">*</span></label>
+                <input type="text" name="reason" id="reasonInput" class="form-control" placeholder="Input Reason Here" required />
+                <div class="invalid-feedback">Reason is required.</div>
+            </div>
+            <div style="min-width:90px;">
+                <label class="form-label">Color</label>
+                <input type="color" name="color" id="colorInput" class="form-control form-control-color" value="#E74C3C" title="Choose color" style="height: 38px;" />
+            </div>
+            <div class="d-flex align-items-end" style="min-width:130px; margin-left: -40px;">
+                <button type="submit" class="btn btn-primary btn-md" onclick="addReason()">+ Add Reason</button>
+            </div>
         </div>
+    </form>
+</div>
+
+<script>
+// Default reasons!!!!!!!!! if none in = lcoalstorage
+const defaultReasons = [
+  {violation: 'ID', reason: 'Forgotten or misplaced', color: '#E74C3C'},
+  {violation: 'ID', reason: 'ID not claimed on time', color: '#F39C12'},
+  {violation: 'Uniform', reason: 'Lack of Awareness of Specific Policy', color: '#F7D358'},
+  {violation: 'Uniform', reason: 'Unforeseen Circumstances', color: '#A9DFBF'},
+  {violation: 'Uniform', reason: 'Misinterpretation of dress code compliance', color: '#229954'},
+  {violation: 'Uniform', reason: 'Substitution of footwear', color: '#34495E'},
+  {violation: 'Dress Code', reason: 'Unawareness of mandated garment length requirements', color: '#5DADE2'},
+  {violation: 'Dress Code', reason: 'Oversight in compliance', color: '#A569BD'},
+  {violation: 'Dress Code', reason: 'Personal style preference conflicting', color: '#F5B7B1'},
+  {violation: 'Dress Code', reason: 'Others', color: '#B2BABB'}
+];
+
+let reasons = JSON.parse(localStorage.getItem('reasons')) || defaultReasons.slice();
+
+function renderReasonsTable() {
+  const tbody = document.getElementById('reasons-table-body');
+  tbody.innerHTML = '';
+  reasons.forEach((item, idx) => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${idx+1}</td>
+        <td>${item.violation}</td>
+        <td><span class="rounded-circle d-inline-block me-2" style="width:16px;height:16px;background:${item.color};margin-top:2px;"></span>${item.reason}</td>
+        <td>
+          <button class="btn btn-primary btn-sm me-2" onclick="editReason(${idx})">Edit</button>
+          <button class="btn btn-outline-danger btn-sm" onclick="deleteReason(${idx})">Remove</button>
+        </td>
+      </tr>
+    `;
+  });
+  localStorage.setItem('reasons', JSON.stringify(reasons));
+}
+
+function addReason() {
+  const violation = document.getElementById('violationType').value;
+  const reason = document.getElementById('reasonInput').value.trim();
+  const color = document.getElementById('colorInput').value;
+  if (violation && reason) {
+    reasons.push({violation, reason, color});
+    renderReasonsTable();
+    document.getElementById('reasonInput').value = '';
+    document.getElementById('colorInput').value = '#E74C3C';
+    document.getElementById('violationType').value = '';
+  }
+}
+
+function editReason(idx) {
+  const newReason = prompt('Edit Reason:', reasons[idx].reason);
+  if (newReason !== null && newReason.trim() !== '') {
+    reasons[idx].reason = newReason.trim();
+    renderReasonsTable();
+  }
+}
+function deleteReason(idx) {
+  if (confirm('Remove this reason?')) {
+    reasons.splice(idx, 1);
+    renderReasonsTable();
+  }
+}
+document.addEventListener('DOMContentLoaded', renderReasonsTable);
+</script>
+
+<!-- Integration instructions: -->
+<!--
+To use these reasons in your chart or dropdowns on other pages, use:
+const reasons = JSON.parse(localStorage.getItem('reasons')) || [];
+const reasonLabels = reasons.map(r => r.reason);
+const reasonColors = reasons.map(r => r.color);
+-->
+
         <!-- Modal for violation types (copied attributes from ticket-details.html) -->
         <div id="violationModal" class="modal" style="display: none;">
             <div class="modal-content">

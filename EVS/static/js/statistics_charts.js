@@ -25,25 +25,36 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Bar Chart (Common Trends)
     const barCtx = document.getElementById('remarksBarChart').getContext('2d');
+    // Get dynamic reasons from localStorage, fallback to defaults
+    const defaultReasons = [
+      {reason: 'Forgotten or misplaced', color: '#E74C3C'},
+      {reason: 'ID not claimed on time', color: '#F39C12'},
+      {reason: 'Lack of Awareness of Specific Policy', color: '#F7D358'},
+      {reason: 'Unforeseen Circumstances', color: '#A9DFBF'},
+      {reason: 'Misinterpretation of dress code compliance', color: '#229954'},
+      {reason: 'Substitution of footwear', color: '#34495E'},
+      {reason: 'Unawareness of mandated garment length requirements', color: '#5DADE2'},
+      {reason: 'Oversight in compliance', color: '#A569BD'},
+      {reason: 'Personal style preference conflicting', color: '#F5B7B1'},
+      {reason: 'Others', color: '#B2BABB'}
+    ];
+    let reasons = [];
+    try {
+      reasons = JSON.parse(localStorage.getItem('reasons')) || defaultReasons;
+    } catch (e) {
+      reasons = defaultReasons;
+    }
+    const reasonLabels = reasons.map(r => r.reason);
+    const reasonColors = reasons.map(r => r.color);
+    // You may want to fetch data dynamically, for now use dummy data of same length
+    const dummyData = Array(reasonLabels.length).fill(0).map((_,i) => (21 + i*5) % 100);
     new Chart(barCtx, {
         type: 'bar',
         data: {
-            labels: [
-                'Forgotten or misplaced', 'ID not claimed on time',
-                'Lack of Awareness of Specific Policy', 'Unforeseen Circumstances',
-                'Misinterpretation of dress code compliance', 'Substitution of footwear',
-                'Unawareness of mandated garment length requirements', 'Oversight in compliance',
-                'Personal style preference conflicting', 'Others'
-            ],
+            labels: reasonLabels,
             datasets: [{
-                data: [21, 2, 152, 79, 166, 39, 179, 141, 55, 12],
-                backgroundColor: [
-                    '#E74C3C', '#F39C12',
-                    '#F7D358', '#A9DFBF',
-                    '#229954', '#34495E',
-                    '#5DADE2', '#A569BD',
-                    '#F5B7B1', '#B2BABB'
-                ],
+                data: dummyData,
+                backgroundColor: reasonColors,
                 borderWidth: 0
             }]
         },
