@@ -25,3 +25,4 @@ urlpatterns = [
     path('get-reasons', views.get_reasons, name='StatisticReasons'),
     path('delete-academic-year/<int:acad_year_id>', views.delete_academic_year),
 ]
+

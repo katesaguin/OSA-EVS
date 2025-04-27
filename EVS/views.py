@@ -266,6 +266,7 @@ def tally_views(request):
 
     student_violations = []
 
+
     for student in students_with_tickets:
         
         uniform = StudentViolation.objects.filter(student=student, violation_id=1, acad_year_id__in=ay_id)
@@ -386,11 +387,22 @@ def update_id_status(request, ticket_id):
                 new_status = data.get('status')
             else:
                 new_status = request.POST.get('status')
+            content_type = request.META.get('CONTENT_TYPE', '')
+
+            if 'application/json' in content_type:
+                data = json.loads(request.body)
+                new_status = data.get('status')
+            else:
+                new_status = request.POST.get('status')
 
             ticket = Ticket.objects.get(ticket_id=ticket_id)
             ticket.id_status = new_status
             ticket.save()
 
+            if 'application/json' in content_type:
+                return JsonResponse({'message': 'ID Status updated successfully'})
+            else:
+                return redirect('evs:ViolationTickets')
             if 'application/json' in content_type:
                 return JsonResponse({'message': 'ID Status updated successfully'})
             else:

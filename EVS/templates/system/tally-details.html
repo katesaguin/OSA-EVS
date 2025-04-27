@@ -98,7 +98,6 @@
                                 </td>
                                 <td>
                                     {% if ticket.id_violation %} ID Violation<br> {% endif %}
-                                    {% if ticket.id_not_claimed_violation %} ID Not Claimed Violation<br> {% endif %}
                                     {% if ticket.dress_code_violation %} Dress Code Violation<br> {% endif %}
                                     {% if ticket.uniform_violation %} Uniform Violation<br> {% endif %}
                                 </td>
@@ -121,15 +120,6 @@
                                 </td>
                             </tr>
                         {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            <div style="padding:20px; margin-bottom: -10px; text-align: center;">
-                <button type="button" name="applyChanges" id="applyChanges" class="btn btn-outline-primary btn-md">Apply Changes</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script>
     let isDirty = false; // if nay changes
