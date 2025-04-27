@@ -11,6 +11,25 @@ from django.template.loader import render_to_string
 #import login_required
 
 # GLOBAL FUNCTIONS
+from django.urls import reverse
+from django.http import HttpResponseRedirect
+
+def login(request):
+    error_message = None
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        pin = request.POST.get('pin')
+        # Static demo credentialss
+        valid_email = 'admin@xu.edu.ph'
+        valid_password = 'password123'
+        valid_pin = '123456'
+        if email == valid_email and password == valid_password and pin == valid_pin:
+            return HttpResponseRedirect(reverse('evs:Dashboard'))
+        else:
+            error_message = 'Invalid email, password, or PIN.'
+    return render(request, 'system/login.html', {'login_body': True, 'error_message': error_message})
+
 def paginate_queryset(request, queryset, per_page):
     page_number = request.GET.get('page')
     paginator = Paginator(queryset, per_page)
@@ -671,13 +690,19 @@ def clear_violation(request, ticket_id):
 # SETTINGS BACKEND
 
 def settings_my_profile(request):
-    return render(request, 'system/settings/my-profile.html')
+    return render(request, 'system/settings/my-profile.html', {
+        'active_page': 'my-profile'
+    })
 
 def settings_user_management(request):
-    return render(request, 'system/settings/user-management.html')
+    return render(request, 'system/settings/user-management.html', {
+        'active_page': 'user-management'
+    })
 
 def settings_ticket_settings(request):
-    return render(request, 'system/settings/ticket-settings.html')
+    return render(request, 'system/settings/ticket-settings.html', {
+        'active_page': 'ticket-settings'
+    })
 
 def settings_academic(request):
     if request.method == 'POST':
@@ -712,7 +737,7 @@ def settings_academic(request):
         return render(request, 'system/settings/academic-year.html', {
             'semesters': semesters,
             'ay': page_obj, 
-            'activate_page': 'academic-year'
+            'active_page': 'academic-year'
         })
     
     if request.method == 'PATCH':

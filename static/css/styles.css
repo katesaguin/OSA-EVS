@@ -5,16 +5,19 @@ body, .content {
     height: 100%;
 }
 
-
+.login-body {
+    background:#245FE9;
+    /* Any other styles for the login page only */
+}
 /* Add more horizontal spacing to settings-table columns */
 .settings-table {
-    border-spacing: 0 1rem;
-    border-collapse: separate !important;
+    margin-left:10px;
+    margin-right:10px;
+    border-collapse: separate;
 }
 .settings-table th,
 .settings-table td {
-    padding-left: 24px !important;
-    padding-right: 24px !important;
+    padding: 5px;
 }
 
 

@@ -1,0 +1,156 @@
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block title %}<title>XU OSA - Login</title>{% endblock title %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-DQvkBjpPgn7RC31MCQoOeC9TI2kdqa4+BSgNMNj8v77fdC77Kj5zpWFTJaaAoMbC" crossorigin="anonymous">
+</head>
+<body class="login-body">
+    <div class="container d-flex justify-content-center align-items-center" style="min-height: 90vh;">
+        <div class="card shadow p-4" style="max-width: 400px; width: 100%; border-radius: 18px;">
+            <div class="mb-4 text-center">
+                <!--pure logo design h-->
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 29 29" fill="none">
+                    <g clip-path="url(#clip0_348_3445)">
+                      <path d="M25.9336 1.74878H3.16672C1.44552 1.74878 0.050293 3.14427 0.050293 4.86547V24.2219C0.050293 25.9431 1.44552 27.3383 3.16672 27.3383H25.9339C27.6551 27.3383 29.0503 25.9431 29.0503 24.2219V4.86547C29.0503 3.14427 27.6551 1.74905 25.9339 1.74905L25.9336 1.74878ZM9.04781 19.0293C9.10071 19.0293 9.12756 19.0626 9.12756 19.1289V21.4017C9.12756 21.4548 9.10071 21.4814 9.04781 21.4814H2.60847C2.5553 21.4814 2.52872 21.4484 2.52872 21.3818L2.54886 7.68572C2.54886 7.63283 2.57544 7.60597 2.62861 7.60597H9.02794C9.08084 7.60597 9.10769 7.63927 9.10769 7.70559V9.93833C9.10769 9.99149 9.08084 10.0181 9.02794 10.0181H4.94109V13.1281H9.02794C9.08084 13.1281 9.10769 13.1549 9.10769 13.2078L9.12756 15.4604C9.12756 15.5136 9.10071 15.5402 9.04781 15.5402H4.94109V19.029H9.04781V19.0293ZM18.3579 7.68572L15.6467 21.3818C15.6332 21.4484 15.5999 21.4814 15.5468 21.4814H13.1347C13.0815 21.4814 13.0482 21.4484 13.035 21.3818L10.2838 7.68572C10.2704 7.63283 10.297 7.60597 10.3636 7.60597H12.6162C12.6691 7.60597 12.7026 7.63283 12.716 7.68572L14.3508 16.8164L15.9458 7.68572C15.9587 7.63283 15.9922 7.60597 16.0454 7.60597H18.2781C18.3445 7.60597 18.371 7.63283 18.3579 7.68572ZM26.0434 19.717C25.6911 20.3219 25.2191 20.8004 24.6278 21.1525C24.0362 21.5045 23.3819 21.6809 22.6641 21.6809C21.9464 21.6809 21.2914 21.498 20.7004 21.1326C20.1089 20.7671 19.6368 20.2822 19.2851 19.6772C18.9328 19.0725 18.7566 18.4047 18.7566 17.6738V16.7568C18.7566 16.6905 18.7897 16.6572 18.8565 16.6572H21.0893C21.1422 16.6572 21.169 16.6905 21.169 16.7568V17.6738C21.169 18.1123 21.3151 18.4882 21.6075 18.8002C21.8996 19.1128 22.2519 19.2688 22.6641 19.2688C23.0763 19.2688 23.4281 19.1093 23.7207 18.7903C24.0129 18.4713 24.1592 18.0994 24.1592 17.6741C24.1592 17.1824 23.8402 16.7571 23.2022 16.3981C22.9893 16.2783 22.6571 16.0925 22.2055 15.8398C21.7536 15.5874 21.3282 15.3482 20.9295 15.1221C20.1986 14.6967 19.6567 14.1621 19.3047 13.5171C18.9524 12.8727 18.7765 12.145 18.7765 11.3341C18.7765 10.59 18.9559 9.92195 19.3146 9.33067C19.6734 8.73939 20.1486 8.27083 20.7399 7.92524C21.3312 7.57993 21.9724 7.407 22.6638 7.407C23.3553 7.407 24.0158 7.58342 24.6077 7.93545C25.1989 8.28774 25.6707 8.75953 26.023 9.35081C26.375 9.94235 26.5515 10.6037 26.5515 11.3344V12.9691C26.5515 13.0223 26.5246 13.0488 26.4717 13.0488H24.239C24.1858 13.0488 24.1592 13.0223 24.1592 12.9691L24.1394 11.3344C24.1394 10.8693 23.993 10.4904 23.7006 10.198C23.4082 9.90583 23.0626 9.75949 22.6641 9.75949C22.2656 9.75949 21.8996 9.91577 21.6075 10.2281C21.3148 10.5406 21.169 10.9093 21.169 11.3346C21.169 11.76 21.2616 12.1388 21.448 12.431C21.6338 12.7234 21.9729 13.0027 22.4646 13.2682C22.5309 13.3082 22.6606 13.3778 22.8534 13.4774C23.0457 13.5773 23.2551 13.6903 23.4812 13.8163C23.707 13.9427 23.91 14.0526 24.0894 14.1452C24.2688 14.2384 24.3783 14.298 24.4183 14.3246C25.0827 14.697 25.6076 15.1519 25.9932 15.6903C26.3785 16.2284 26.5713 16.89 26.5713 17.6738C26.5713 18.4576 26.3949 19.1125 26.0432 19.7172L26.0434 19.717Z"
+                      fill="#245FE9"/>
+                    </g>
+                    <defs>
+                      <clipPath id="clip0_348_3445">
+                        <rect width="40" height="40" fill="white"/>
+                      </clipPath>
+                    </defs>
+                  </svg>
+                <h3 class="mt-3 mb-2" style="color: #245FE9; font-weight: 900; letter-spacing: 0.5px;">XU OSA<BR>Entry Violation System</h3>
+                <h5 class="mt-3 mb-2" style="color: #19387E; font-weight: 900; letter-spacing: 0.5px;">LOGIN</h5>
+                <div style="color: #888; font-size: 1rem;">Sign in to your account</div>
+            </div>
+            {% if error_message %}
+<div class="alert alert-danger text-center" role="alert">{{ error_message }}</div>
+{% endif %}
+<form id="main-login-form" method="post" autocomplete="off">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" required>
+    </div>
+    <div class="mb-2">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+    </div>
+    <input type="hidden" id="pin" name="pin">
+    <div class="mb-3 text-end">
+        <a href="#" style="font-size:0.95rem; text-decoration:none; color: #245FE9;">Forgotten password?</a>
+    </div>
+    <button type="button" id="login-btn" class="btn btn-login w-100 mb-3" style="background: #245FE9; color: #fff; font-weight: 700; border-radius: 8px; border: none;" data-bs-toggle="modal" data-bs-target="#pinModal" disabled>Log In</button>
+</form>
+    
+    <!-- PIN Modal HERE -->
+    <div class="modal fade" id="pinModal" tabindex="-1" aria-labelledby="pinModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="pinModalLabel">Enter 6-Digit PIN</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="pin-form" autocomplete="off" onsubmit="return false;">
+              <div class="d-flex justify-content-center gap-2 mb-3">
+                <input type="text" maxlength="1" class="form-control pin-input text-center" style="width: 40px; font-size: 1.5rem;" required>
+                <input type="text" maxlength="1" class="form-control pin-input text-center" style="width: 40px; font-size: 1.5rem;" required>
+                <input type="text" maxlength="1" class="form-control pin-input text-center" style="width: 40px; font-size: 1.5rem;" required>
+                <input type="text" maxlength="1" class="form-control pin-input text-center" style="width: 40px; font-size: 1.5rem;" required>
+                <input type="text" maxlength="1" class="form-control pin-input text-center" style="width: 40px; font-size: 1.5rem;" required>
+                <input type="text" maxlength="1" class="form-control pin-input text-center" style="width: 40px; font-size: 1.5rem;" required>
+              </div>
+              <div class="text-center">
+                <button type="submit" class="btn btn-primary" id="submit-pin-btn" disabled>Confirm PIN</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+<div class="text-center mb-2" style="color: #b0b0b0; font-weight: 500; font-size: 0.97rem;">──────── or ────────</div>
+<a href="#" class="btn w-100 d-flex align-items-center justify-content-center" style="border: 1px solid #e0e0e0; background: #fff; color: #444; font-weight: 500; border-radius: 8px;">
+    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" style="height: 20px; margin-right: 8px;"> Sign in with Google
+</a>
+</div>
+</div>
+</body>
+</html>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Enable/disable Log In button based on email and password
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const loginBtn = document.getElementById('login-btn');
+function checkLoginFields() {
+    loginBtn.disabled = !(emailInput.value.trim() && passwordInput.value.trim());
+}
+emailInput.addEventListener('input', checkLoginFields);
+passwordInput.addEventListener('input', checkLoginFields);
+</script>
+<script>
+// PIN input focus and validation
+const pinInputs = document.querySelectorAll('.pin-input');
+pinInputs.forEach((input, idx) => {
+    input.addEventListener('input', function(e) {
+        if (this.value.length === 1 && idx < 5) {
+            pinInputs[idx+1].focus();
+        }
+        // Only allow digits only
+        this.value = this.value.replace(/[^0-9]/g, '');
+        checkPinFilled();
+    });
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Backspace' && this.value === '' && idx > 0) {
+            pinInputs[idx-1].focus();
+        }
+    });
+});
+function checkPinFilled() {
+    const allFilled = Array.from(pinInputs).every(input => input.value.length === 1);
+    document.getElementById('submit-pin-btn').disabled = !allFilled;
+}
+// On PIN submit, submit the main form
+const pinForm = document.getElementById('pin-form');
+pinForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    // Combine PIN values
+    const pinValue = Array.from(pinInputs).map(input => input.value).join('');
+    if(pinValue.length === 6) {
+        document.getElementById('pin').value = pinValue;
+        // Close the modal before submitting (optional, for UX)
+        const pinModal = bootstrap.Modal.getInstance(document.getElementById('pinModal'));
+        if(pinModal) pinModal.hide();
+        document.getElementById('main-login-form').submit();
+    }
+    pinInput.value = pin;
+    // Close modal and submit main form
+    var modal = bootstrap.Modal.getInstance(document.getElementById('pinModal'));
+    modal.hide();
+    mainForm.submit();
+});
+// Autofocus first PIN input when modal opens
+var pinModal = document.getElementById('pinModal');
+pinModal.addEventListener('shown.bs.modal', function () {
+    pinInputs[0].focus();
+    pinInputs.forEach(input => input.value = '');
+    checkPinFilled();
+});
+</script>
+
+{% endblock content %}
