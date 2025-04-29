@@ -5,7 +5,6 @@ from django.core.paginator import Paginator
 import json
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.http import JsonResponse, HttpResponseNotAllowed
-from django.contrib import messages
 from django.db.models import Sum, Q, Count
 from django.template.loader import render_to_string
 #import login_required
@@ -320,7 +319,7 @@ def tallyDetails_views(request, student_id):
         'all_reasons': all_reasons
     })
 
-@ensure_csrf_cookie
+#@ensure_csrf_cookie
 def ticketDetails_views(request, ticket_id):
     ticket = Ticket.objects.get(ticket_id=ticket_id)
     student = Student.objects.get(student_id=ticket.student.student_id)

@@ -3,7 +3,7 @@
 <title>XU OSA - Ticket #{{ ticket.ticket_id }}</title>
 {% endblock title %}
 {% block page_name %}
-<h5><i class='bx bx-table'></i>Tickets</h5>
+<h5 class="col-6"><i class='bx bx-table'></i>Tickets</h5>
 {% endblock page_name %}
 {% block content %}
      <!-- Container for Header and Ticket Content -->
@@ -166,7 +166,7 @@
             return;
         }
 
-        fetch('/xu-entry-violation/ticket/{{ ticket.ticket_id }}/clear-ticket', {
+        fetch('/admin/xu-entry-violation/ticket/{{ ticket.ticket_id }}/clear-ticket', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -201,7 +201,7 @@
             return;
         }
 
-        fetch('/xu-entry-violation/ticket/{{ ticket.ticket_id }}/validate', {
+        fetch('/admin/xu-entry-violation/ticket/{{ ticket.ticket_id }}/validate', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -234,7 +234,7 @@
         }
 
         const id_status = this.value;
-        fetch('/xu-entry-violation/ticket/{{ ticket.ticket_id }}/update/id-status', {
+        fetch('/admin/xu-entry-violation/ticket/{{ ticket.ticket_id }}/update/id-status', {
             method: "POST",
             headers: {
                 "Content-Type": 'application/json',
@@ -289,7 +289,7 @@
                 return;
             }
 
-            fetch("/xu-entry-violation/ticket/{{ ticket.ticket_id }}/update/violations", {
+            fetch("/admin/xu-entry-violation/ticket/{{ ticket.ticket_id }}/update/violations", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

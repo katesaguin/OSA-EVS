@@ -147,7 +147,7 @@
           if (action === 'DELETE') {
               if (!confirm(`Are you sure you want to delete Academic Year ${year} ${semester}?`)) return;
   
-              fetch(`/xu-entry-violation/delete-academic-year/${id}`, {
+              fetch(`/admin/xu-entry-violation/delete-academic-year/${id}`, {
                   method: 'DELETE',
                   headers: {
                       'X-CSRFToken': getCSRFToken(),
@@ -172,7 +172,7 @@
   
               const newStatus = this.getAttribute('data-active');
   
-              fetch('/xu-entry-violation/settings/academic-year', {
+              fetch('/admin/xu-entry-violation/settings/academic-year', {
                   method: 'PATCH',
                   headers: {
                       'Content-Type': 'application/json',

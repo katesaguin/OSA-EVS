@@ -23,7 +23,6 @@ services:
     build: .
     container_name: "XU_OSA_Web"
     restart: on-failure:3
-
     env_file:
       - .env
     environment:

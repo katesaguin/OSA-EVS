@@ -3,9 +3,8 @@
 <title>XU OSA - Student #{{ student.student_id }}</title>
 {% endblock title %}
 {% block page_name %}
-<h5><i class='bx bx-list-ul'></i>Tally</h5>
+<h5 class="col-6"><i class='bx bx-list-ul'></i>Tally</h5>
 {% endblock page_name %}
-
 {% block content %}
 <div class="content">
     <div class="card mb-4 p-4" style="border-radius: 15px;">
@@ -176,7 +175,7 @@
         });
     
         // Send the collected data via fetch
-        fetch('/xu-entry-violation/student/{{ student.student_id }}/save-status', {
+        fetch('/admin/xu-entry-violation/student/{{ student.student_id }}/save-status', {
             method: 'POST', 
             headers: {
                 'Content-Type': 'application/json', 

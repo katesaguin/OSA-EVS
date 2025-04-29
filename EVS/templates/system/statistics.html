@@ -1,6 +1,6 @@
 {% extends 'evs_index.html' %}
 {% block page_name %}
-<h5><i class='bx bx-home-alt'></i>Statistics</h5>
+<h5 class="col-6"><i class='bx bx-bar-chart'></i>Statistics</h5>
 {% endblock page_name %}
 {% block title %}
 <title>XU OSA - Statistics</title>
@@ -35,13 +35,14 @@
                 <a href="{% url 'evs:Statistics' %}"><button type="button">Clear</button></a>
             {% endif %}
         </form>
+        <div></div>
     </div>
     <div class="row g-3 align-items-stretch">
         <!-- Left: Summary and Stats -->
         <div class="col-lg-4 col-md-6">
             <div class="bg-white rounded shadow-sm p-4 mb-3">
                 <!--<div class="mb-2 text-muted" style="font-size:1rem;">As of</div>-->
-                <div class="mb-1" style="font-size:2rem; color:#19387E; font-weight:700;">
+                <div class="mb-1 text-center" style="font-size:2rem; color:#19387E; font-weight:700;">
                     {% if from_date != to_date and selected_ay == None %}
                         {{ from_date }} to <br> {{ to_date }}
                     {% elif from_date == to_date and selected_ay == None %}
@@ -178,7 +179,7 @@
                 </div>
                 <div class="col-lg-4 col-12">
                     <div class="bg-white rounded shadow-sm p-4 h-100">
-                        <h5 class="style1" style="margin-bottom: 20px;">Common Trends of Student Reason for Violations</h5>
+                        <h5 class="style1 text-center" style="margin-bottom: 20px;">Common Trends of Student Reason for Violations</h5>
                         <canvas id="remarksBarChart" height="220"></canvas>
                         <div class="mt-3">
                             <div class="row gx-2 gy-1 small">
@@ -214,7 +215,7 @@
         const toDate = document.getElementById('to_date').value;
         const academicList = document.getElementById('academic_list').value;
     
-        if (!fromDate && !toDate && !academicList) {
+        if (!fromDate && !toDate && academicList == 0) {
             alert('Please select at least one filter option: Date range or Academic Year.');
             return false;
         }
@@ -281,11 +282,11 @@
       function loadBarChart() {
         // Build query string from current filter values
         const params = new URLSearchParams();
-        if (fromInput.value) params.append('from_date', fromInput.value);
-        if (toInput.value)   params.append('to_date',   toInput.value);
-        if (aySelect.value)  params.append('academic_list', aySelect.value);
+        if (fromInput.value != "") params.append('from_date', fromInput.value);
+        if (toInput.value != "")   params.append('to_date',   toInput.value);
+        if (aySelect.value != 0)  params.append('academic_list', aySelect.value);
     
-        fetch('/xu-entry-violation/get-reasons?' + params.toString())
+        fetch('/admin/xu-entry-violation/get-reasons?' + params.toString())
           .then(res => {
             if (!res.ok) throw new Error('Network response was not ok');
             return res.json();
@@ -294,11 +295,11 @@
             const counts = data.reason_counts;
             const labels = counts.map(o => o.reason_text);
             const values = counts.map(o => o.count);
-            const colors = counts.map(o => o.color || '#000000');
+            const colors = counts.map(o => o.color);
     
             // destroy old chart if it exists
             if (barChartInstance) barChartInstance.destroy();
-    
+
             barChartInstance = new Chart(barCtx, {
               type: 'bar',
               data: {
@@ -323,7 +324,7 @@
           })
           .catch(err => console.error('Error fetching reason counts:', err));
       }
-    
+      
       // Initial load
       loadBarChart();
     });

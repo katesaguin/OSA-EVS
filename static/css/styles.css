@@ -726,3 +726,8 @@ h5.style1 {
     font-size: 20px;
     cursor: pointer;
 }
+
+#date-time-container {
+    font-family: sans-serif;
+    font-size: 1rem;
+  }

@@ -46,6 +46,10 @@
     <div class="main-content">
         <div class="header">
             {%block page_name %}{% endblock page_name %}
+            <div class="text-end col-6" id="date-time-container">
+                <div id="date"></div>
+                <div id="time"></div>
+            </div>
         </div>
         {% block content %}{% endblock content %}
 </body>
@@ -102,5 +106,20 @@
             idStatusInput.value = status; // Update the input field value
             document.getElementById('status-dropdown').style.display = 'none'; // Hide the dropdown
         }
+        
+        function updateDateTime() {
+            const now = new Date();
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const timeOptions = { hour: '2-digit', minute: '2-digit'};
+          
+            const formattedDate = now.toLocaleDateString(undefined, dateOptions);
+            const formattedTime = now.toLocaleTimeString(undefined, timeOptions);
+          
+            document.getElementById('date').textContent = formattedDate;
+            document.getElementById('time').textContent = formattedTime;
+          }
+
+          updateDateTime();
+          setInterval(updateDateTime, 1000);
     </script>
 </html>
