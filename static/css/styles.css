@@ -112,7 +112,7 @@ h5.style1 {
 /*SIDEBAR NAVIGATION*/
 .sidebar {
     width: 60px; /* Collapsed width - just enough for icons */
-    background-color: #245FE9;
+    background-color: #19387E;
     color: white;
     position: fixed;
     height: 100%;
@@ -126,7 +126,7 @@ h5.style1 {
     width: 250px; /* Expanded width */
 }
 .sidebar .active {
-    background-color:#19387E;
+    background-color:#245FE9;
 }
 
 .sidebar-title:hover, .sidebar-title.active {

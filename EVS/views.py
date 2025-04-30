@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
-from .models import Student, Ticket, TicketReason, Reason, AcademicYear, StudentViolation, Semester, Violation
+from .models import *
 from datetime import datetime
 from django.core.paginator import Paginator
 import json
