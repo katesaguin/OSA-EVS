@@ -8,5 +8,5 @@ urlpatterns = [
     path('<int:acad_year_id>/get-academic-year', views.get_academic, name="getAcademicYear"),
     path('<int:ticket_id>/check_ticket', views.ticket_checker),
     path('<int:ticket_id>/get-data', views.get_ticket_data),
-    path('<int:ticket_id>/update-id-status', views.id_status_update)
+    path('<int:ticket_id>/update-status', views.id_status_update)
 ]

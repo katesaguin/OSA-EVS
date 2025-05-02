@@ -17,10 +17,10 @@
         </td>
         <td>
             {% if ticket.id_status == 0 %}
-                <form method="POST" action="{% url 'evs:updateIDStatus' ticket.ticket_id %}">
+                <form>
                     {% csrf_token %}
                     <input type="hidden" name="status" value="1">
-                    <button type="submit" class="controls-unclaimed" {% if ticket.ticket_status == 0 %} disabled {% endif %}>Unclaimed</button>
+                    <button type="button" class="controls-unclaimed" onclick="update_id({{ticket.ticket_id}}, 1)"{% if ticket.ticket_status == 0 %} disabled {% endif %}>Unclaimed</button>
                 </form>
             {% else %}
                 <button type="button" class="controls-claimed" disabled>Claimed</button>

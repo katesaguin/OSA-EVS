@@ -378,26 +378,18 @@ def validated_ticket(request, ticket_id):
 def update_id_status(request, ticket_id):
     if request.method == 'POST':
         try:
-            content_type = request.META.get('CONTENT_TYPE', '')
-            new_status = (
-                json.loads(request.body).get('status')
-                if 'application/json' in content_type
-                else request.POST.get('status')
-            )
+            data = json.loads(request.body)
+
+            new_status = data.get('status')
 
             ticket = Ticket.objects.get(pk=ticket_id)
             ticket.id_status = new_status
             ticket.save()
 
-            if 'application/json' in content_type:
-                return JsonResponse({'message': 'ID Status updated successfully'})
-            else:
-                return redirect('evs:ViolationTickets')
+            return JsonResponse({'message': 'ID Status updated successfully'})
 
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
-
-    return redirect('evs:ViolationTickets')
 
 def save_status(request, student_id):
     if request.method == 'POST':

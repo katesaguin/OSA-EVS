@@ -294,7 +294,6 @@
             if (response.ok)
             {
                 get_ticket_data({{ticket.ticket_id}}) 
-                window.location.href = "{% url 'evs:TicketDetails' ticket.ticket_id %}";
             }
             else
             {
