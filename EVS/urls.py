@@ -13,7 +13,7 @@ urlpatterns = [
     path('ticket/<int:ticket_id>/details', views.ticketDetails_views, name="TicketDetails"),
     path('ticket/<int:ticket_id>/clear-ticket',views.clear_violation, name="ClearTicket"),
     path('ticket/<int:ticket_id>/validate', views.validated_ticket),
-    path('ticket/<int:ticket_id>/update/id-status', views.update_id_status),
+    path('ticket/<int:ticket_id>/update/id-status', views.update_id_status, name="updateIDStatus"),
     path('ticket/<int:ticket_id>/update/violations', views.override_violation, name='ViolationUpdate'),
     path('student/<int:student_id>/save-status', views.save_status, name='Status'),
     path('student/<int:student_id>/details', views.tallyDetails_views, name='TallyDetails'),

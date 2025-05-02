@@ -178,7 +178,8 @@
         })
         .then(response => {
             if (response.ok) {
-                alert("Violation cleared."); window.location.href = "{% url 'evs:ViolationTickets' %}";
+                get_ticket_data({{ticket.ticket_id}})
+                window.location.href = "{% url 'evs:ViolationTickets' %}";
             } else {
                 alert("Failed to submit.");
             }
@@ -214,12 +215,57 @@
         })
         .then(response => {
             if (response.ok) {
-                alert("Violation confirmed."); window.location.href = "{% url 'evs:ViolationTickets' %}";
+                get_ticket_data({{ticket.ticket_id}})
+                window.location.href = "{% url 'evs:ViolationTickets' %}";
             } else {
                 alert("Failed to submit.");
             }
         });
     });
+
+    function get_ticket_data(ticket_id){
+        fetch(`/evs/dev/api/${ticket_id}/get-data`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken(),
+            },
+        })
+        .then(res => {
+            if (!res.ok) {
+                throw new Error("Failed to fetch ticket data");
+              }
+              return res.json();
+        })
+        .then(data => {
+            update_id_status(ticket_id, data)
+          })
+          .catch(error => {
+            console.error("Error fetching ticket data:", error);
+            alert("Could not fetch ticket data.");
+          });
+    }
+
+    function update_id_status(ticket_id, data){
+        fetch(`http://localhost:8002/ts/dev/api/${ticket_id}/update-status`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (response.ok)
+            {
+              alert('Ticket updated.');
+              location.reload();
+            }
+          })
+          .catch(error => {
+            console.error("Failed to submit status to SSIO", error);
+            alert("Could not fetch ticket data.");
+          });
+    }
 
     function getCSRFToken() {
         const token = document.querySelector('meta[name="csrf-token"]');
@@ -247,7 +293,8 @@
         .then(response => {
             if (response.ok)
             {
-                alert("ID Status Changed"); window.location.href = "{% url 'evs:TicketDetails' ticket.ticket_id %}";
+                get_ticket_data({{ticket.ticket_id}}) 
+                window.location.href = "{% url 'evs:TicketDetails' ticket.ticket_id %}";
             }
             else
             {
@@ -303,7 +350,7 @@
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    alert("Violations for Ticket #{{ ticket.ticket_id }} updated!"); window.location.href="{% url 'evs:TicketDetails' ticket.ticket_id %}";
+                    get_ticket_data({{ticket.ticket_id}})
                     location.reload();
                 } else {
                     alert("Error updating violations.");

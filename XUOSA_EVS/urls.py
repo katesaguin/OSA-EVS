@@ -17,5 +17,6 @@ Including another URLconf
 from django.urls import path, include
 
 urlpatterns = [
-    path('admin/xu-entry-violation/',include('EVS.urls'))
+    path('admin/xu-entry-violation/',include('EVS.urls')),
+    path('evs/dev/api/', include('OSA_API.urls'))
 ]

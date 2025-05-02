@@ -379,14 +379,13 @@ def update_id_status(request, ticket_id):
     if request.method == 'POST':
         try:
             content_type = request.META.get('CONTENT_TYPE', '')
+            new_status = (
+                json.loads(request.body).get('status')
+                if 'application/json' in content_type
+                else request.POST.get('status')
+            )
 
-            if 'application/json' in content_type:
-                data = json.loads(request.body)
-                new_status = data.get('status')
-            else:
-                new_status = request.POST.get('status')
-
-            ticket = Ticket.objects.get(ticket_id=ticket_id)
+            ticket = Ticket.objects.get(pk=ticket_id)
             ticket.id_status = new_status
             ticket.save()
 
@@ -394,10 +393,10 @@ def update_id_status(request, ticket_id):
                 return JsonResponse({'message': 'ID Status updated successfully'})
             else:
                 return redirect('evs:ViolationTickets')
-        
+
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
-    
+
     return redirect('evs:ViolationTickets')
 
 def save_status(request, student_id):
@@ -661,39 +660,38 @@ def settings_user_management(request):
 
 def settings_academic(request):
     if request.method == 'POST':
-        desc = request.POST.get('ayLabel')
-        sem = request.POST.get('aySem')
-        start = request.POST.get('ayStart')
-        end = request.POST.get('ayEnd')
-        active = 'setActive' in request.POST
+        try:
+            data = json.loads(request.body)
+            acad_data = data.get('acad_year', {})
 
-        if start > end:
-            return HttpResponse("<script>alert('!!  Year Start must be less than or equal to Year End  !!'); window.history.back();</script>")
-        
-        if AcademicYear.objects.filter(semester=sem, year_start=start, year_end=end).exists():
-            return HttpResponse("<script>alert('!!  Academic Year with this semester and date range already exists  !!'); window.history.back();</script>")
+            desc = acad_data.get('description')
+            sem = int(acad_data.get('semester'))
+            start = acad_data.get('year_start')
+            end = acad_data.get('year_end')
+            active = bool(int(acad_data.get('active', 0)))
 
-        if active:
-            AcademicYear.objects.update(active=False)
+            if start > end:
+                return JsonResponse({'success': False, 'error': 'Year Start must be less than or equal to Year End'}, status=400)
+            
+            if AcademicYear.objects.filter(semester=sem, year_start=start, year_end=end).exists():
+                return JsonResponse({'success': False, 'error': 'Academic Year with this semester and date range already exists'}, status=400)
 
-        AcademicYear.objects.create(
-            description=desc,
-            semester=sem,
-            year_start=start,
-            year_end=end,
-            active=active,
-            osa_id='111'
-        )
+            if active:
+                AcademicYear.objects.update(active=False)
 
-        ay_list = AcademicYear.objects.all().order_by('-acad_year_id')
+            new_ay = AcademicYear.objects.create(
+                description=desc,
+                semester=sem,
+                year_start=start,
+                year_end=end,
+                active=active,
+                osa_id=111
+            )
+            
+            return JsonResponse({'success': True, 'message': 'Academic year added successfully', 'acad_year_id': new_ay.acad_year_id})
 
-        page_obj = paginate_queryset(request, ay_list, 3)
-        semesters = Semester.objects.all()
-        return render(request, 'system/settings/academic-year.html', {
-            'semesters': semesters,
-            'ay': page_obj, 
-            'activate_page': 'academic-year'
-        })
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=500)
     
     if request.method == 'PATCH':
         data = json.loads(request.body)

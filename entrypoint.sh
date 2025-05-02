@@ -110,5 +110,3 @@ EOF
 echo "Database initialized."
 
 python -m gunicorn --bind 0.0.0.0:8001 --workers 3 XUOSA_EVS.wsgi:application
-
-#python manage.py runserver 0.0.0.0:8000

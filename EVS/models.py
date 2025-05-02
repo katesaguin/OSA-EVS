@@ -18,7 +18,7 @@ class Semester(models.Model):
     semester = models.CharField(max_length = 200)
 
 class Student(models.Model):
-    student_id = models.AutoField(primary_key=True)
+    student_id = models.IntegerField(primary_key=True)
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
     middle_name = models.CharField(max_length=200, blank=True)
@@ -43,7 +43,7 @@ class Reason(models.Model):
         return self.description 
 
 class Ticket(models.Model):
-    ticket_id = models.AutoField(primary_key=True)
+    ticket_id = models.IntegerField(primary_key=True)
     uniform_violation = models.BooleanField(default=0)
     dress_code_violation = models.BooleanField(default=0)
     id_violation = models.BooleanField(default=0)
@@ -54,7 +54,7 @@ class Ticket(models.Model):
     ticket_status = models.IntegerField(default=0)
     remarks = models.CharField(max_length=200, blank=True, null=True)
     photo_path = models.CharField(max_length=200, blank=True, null=True)
-    date_created = models.DateTimeField(auto_now_add=True)
+    date_created = models.DateTimeField(blank=False)
     date_validated = models.DateTimeField(null=True, blank=True)
     override_status = models.BooleanField(default=0)
     

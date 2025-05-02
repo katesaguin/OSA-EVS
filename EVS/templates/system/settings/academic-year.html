@@ -7,7 +7,7 @@
             <h5 class="card-title mb-3" style="color: #19387E; font-weight:900;">Add New Academic Year</h5>
 
             <!--FORMS HERE-->
-           <form id="addAcademicYearForm" method='POST' action="{% url 'evs:AcademicYear' %}">
+           <form id="addAcademicYearForm">
             {% csrf_token %}
                <div class="row mb-3">
                    <div class="col">
@@ -44,8 +44,7 @@
                            <label class="form-check-label" for="setActive">Set as Active</label>
                        </div>
                    </div>
-                   <button type="submit" class="buttons confirm-violation"
-                      onclick="return confirm('Proceed adding new Academic Year / Semester?');">
+                   <button type="submit" class="buttons confirm-violation">
                       Add Year
                   </button>
                </div>
@@ -92,7 +91,7 @@
                                 </button>
                                 <button 
                                   type="button" 
-                                  class="toggle-status badge bg-danger" 
+                                  class="toggle-status badge bg-danger me-3" 
                                   id="activateButton"
                                   data-id="{{ item.acad_year_id }}" 
                                   data-active="1"
@@ -100,6 +99,13 @@
                                   data-semester="{% for semester in semesters %}{% if item.semester == semester.semester_id %}{{semester.semester}}{% endif %}{% endfor %}"
                                   {% if item.active == 1 %}disabled{% endif %}>
                                   DELETE
+                                </button>
+                                <button 
+                                  type="button" 
+                                  class="toggle-status badge bg-warning" 
+                                  id="resendButton"
+                                  data-id="{{ item.acad_year_id }}">
+                                  RESEND
                                 </button>
                               </td>
                             {% endfor %}
@@ -136,6 +142,121 @@
   </div>
 </div>
   <script>
+    document.getElementById('addAcademicYearForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+    
+        const form = e.target;
+    
+        const acadYearLabel = form.ayLabel.value;
+        const semester = form.aySem.value;
+        const yearStart = form.ayStart.value;
+        const yearEnd = form.ayEnd.value;
+        const isActive = form.setActive.checked ? 1 : 0;
+    
+        if (!confirm("Proceed adding new Academic Year / Semester?")) {
+            return;
+        }
+    
+        const formData = {
+            description: acadYearLabel,
+            year_start: yearStart,
+            year_end: yearEnd,
+            semester: semester,
+            active: isActive
+        };
+    
+        fetch("{% url 'evs:AcademicYear' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken()
+            },
+            body: JSON.stringify({ acad_year: formData })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                get_acad_year(data.acad_year_id)
+            } else {
+                alert("Failed to add academic year: " + (data.error || "Unknown error"));
+            }
+        })
+        .catch(err => {
+            console.error("Local API error:", err);
+            alert("Failed to add academic year.");
+        });
+    
+        function getCSRFToken() {
+            return document.cookie.split(';').find(c => c.trim().startsWith('csrftoken='))?.split('=')[1] || '';
+        }
+    });
+
+    function get_acad_year(acad_year_id){
+        fetch(`/evs/dev/api/${acad_year_id}/get-academic-year`, {
+            method: "GET",
+            headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCSRFToken() // optional for GET, but safe to include
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+              throw new Error("Failed to fetch academic year data");
+            }
+            return response.json();
+          })
+          .then(data => {
+            send_acad_year(data)
+          })
+          .catch(error => {
+            console.error("Failed to fetch academic year data:", error);
+            alert("Could not fetch ticket data.");
+          });
+    }
+
+    function send_acad_year(data){
+        fetch("http://localhost:8002/ts/dev/api/change-active", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ acad_year: data })
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Failed to sync with external system");
+            return res.json();
+        })
+        .then(() => {
+            alert("Academic Year added successfully in both systems.");
+            location.reload();
+        })
+        .catch(err => {
+            console.error("Error posting to external system:", err);
+            alert("Academic Year added locally but failed to sync with other system.");
+        });
+    }
+    
+    function check_acad_year(acad_year_id){
+        fetch(`http://localhost:8002/ts/dev/api/check-acad-year/${acad_year_id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                get_acad_year(acad_year_id); 
+            } else {
+                alert("Academic Year already sent to SSIO.");
+                location.reload();
+            }
+        })
+        .catch(err => {
+            console.error("Error posting to external system:", err);
+        });
+    }
+
     document.querySelectorAll('.toggle-status').forEach(button => {
       const action = button.textContent.trim();
   
@@ -160,14 +281,37 @@
               })
               .then(data => {
                   alert(data.message);
-                  location.reload();
-              })
-              .catch(error => {
-                  console.error('Error:', error);
-                  alert('An error occurred while deleting.');
-              });
+                  fetch('http://127.0.0.1:8002/ts/dev/api/change-active', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        acad_year_id: id 
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to sync with other system.');
+                    return response.json();
+                })
+                .then(data => {
+                    alert('Academic Year deleted successfully in both systems.');
+                    location.reload(); // Reload the page or redirect as needed
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while deleting from the other system.');
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while deleting.');
+            });
   
-          } else if (action === 'ACTIVATE') {
+          } else if (action === 'RESEND'){
+            check_acad_year(id)
+          }
+          else if (action === 'ACTIVATE') {
               if (!confirm(`Activate ${year} ${semester}?`)) return;
   
               const newStatus = this.getAttribute('data-active');
@@ -191,15 +335,35 @@
               })
               .then(data => {
                   if (data.success) {
-                      alert(`${data.description} status updated.`);
-                      location.reload();
-                  } else {
-                      alert("Update failed: " + (data.error || "Unknown error"));
-                  }
-              })
-              .catch(error => {
-                  alert(error.message);
-              });
+                    fetch('http://127.0.0.1:8002/ts/dev/api/change-active', {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            acad_year_id: id,
+                            active: newStatus,
+                        }),
+                    })
+                    .then(res => res.json())
+                    .then(updateData => {
+                        if (updateData.success) {
+                            alert(`${data.description} status updated.`);
+                            location.reload();
+                        } else {
+                            alert("Update failed.");
+                        }
+                    })
+                    .catch(error => {
+                        alert("Error updating: " + error.message);
+                    });
+                } else {
+                    alert("Initial fetch failed: " + (data.error || "Unknown error"));
+                }
+            })
+            .catch(error => {
+                alert("Request failed: " + error.message);
+            });
           }
       });
   });
