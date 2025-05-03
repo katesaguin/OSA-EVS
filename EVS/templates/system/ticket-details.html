@@ -178,7 +178,7 @@
         })
         .then(response => {
             if (response.ok) {
-                get_ticket_data({{ticket.ticket_id}})
+                get_status({{ticket.ticket_id}})
                 window.location.href = "{% url 'evs:ViolationTickets' %}";
             } else {
                 alert("Failed to submit.");
@@ -215,7 +215,7 @@
         })
         .then(response => {
             if (response.ok) {
-                get_ticket_data({{ticket.ticket_id}})
+                get_status({{ticket.ticket_id}})
                 window.location.href = "{% url 'evs:ViolationTickets' %}";
             } else {
                 alert("Failed to submit.");
@@ -223,8 +223,8 @@
         });
     });
 
-    function get_ticket_data(ticket_id){
-        fetch(`/evs/dev/api/${ticket_id}/get-data`, {
+    function get_status(ticket_id){
+        fetch(`/evs/dev/api/${ticket_id}/get-status`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -260,6 +260,7 @@
               alert('Ticket updated.');
               location.reload();
             }
+            response.json()
           })
           .catch(error => {
             console.error("Failed to submit status to SSIO", error);
@@ -293,7 +294,7 @@
         .then(response => {
             if (response.ok)
             {
-                get_ticket_data({{ticket.ticket_id}}) 
+                get_status({{ticket.ticket_id}}) 
             }
             else
             {
@@ -349,7 +350,7 @@
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    get_ticket_data({{ticket.ticket_id}})
+                    get_status({{ticket.ticket_id}})
                     location.reload();
                 } else {
                     alert("Error updating violations.");

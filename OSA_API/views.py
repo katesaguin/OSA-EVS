@@ -79,7 +79,7 @@ def ticket_checker(request, ticket_id):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
        
-def get_ticket_data(request, ticket_id):
+def get_status(request, ticket_id):
     try:
         ticket = Ticket.objects.get(pk=ticket_id)
         data = {
